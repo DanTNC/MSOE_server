@@ -12222,6 +12222,7 @@ if (!window.ABCJS)
 			$(paper).append(cursor);
 			$(paper).css({ position: "relative" });
 		}
+
 		stopNextTime = false;
 		var beatsPerMinute = getBeatsPerMinute(tune, options);
 		var beatsPerMillisecond = beatsPerMinute / 60000;
@@ -13893,7 +13894,7 @@ if (!window.ABCJS.midi)
 		if (options.loopToggle)
 			html += '<button class="abcjs-midi-loop abcjs-btn" title="' + options.tooltipLoop + '"></button>';
 		if (options.standard)
-			html += '<button class="abcjs-midi-reset abcjs-btn" title="' + options.tooltipReset + '"></button><button class="abcjs-midi-start abcjs-btn" title="' + options.tooltipPlay + '"></button><button class="abcjs-midi-progress-background" title="' + options.tooltipProgress + '"><span class="abcjs-midi-progress-indicator"></span></button><span class="abcjs-midi-clock"> 0:00</span>';
+			html += '<button class="abcjs-midi-reset abcjs-btn ui button" title="' + options.tooltipReset + '"><i class="step backward icon"></i></button><button class="abcjs-midi-start abcjs-btn ui button" title="' + options.tooltipPlay + '"><i class="play icon"></i></button><button class="abcjs-midi-progress-background" title="' + options.tooltipProgress + '"><span class="abcjs-midi-progress-indicator"></span></button><span class="abcjs-midi-clock"> 0:00</span>';
 		if (options.tempo) {
 			var startTempo = tune && tune.metaText && tune.metaText.tempo ? tune.metaText.tempo.bpm : 180;
 			html += '<span class="abcjs-tempo-wrapper"><input class="abcjs-midi-tempo" value="100" type="number" min="1" max="300" data-start-tempo="' + startTempo + '" title="' + options.tooltipTempo + '" />% (<span class="abcjs-midi-current-tempo">' + startTempo + '</span> BPM)</span>';
@@ -14121,10 +14122,8 @@ if (!window.ABCJS.midi)
 						midiControl.abcjsListener(midiControl, position);
 					}
 					if (midiControl.abcjsAnimate) {
-						//var epsilon = parseInt(midiControl.abcjsQpm, 10) / 60 / 64; // The length of a 1/64th note.
-						var epsilon = 0.1;
+						var epsilon = parseInt(midiControl.abcjsQpm, 10) / 60 / 64; // The length of a 1/64th note.
 						var index = findElements(midiControl.abcjsTune.noteTimings, position.currentTime, epsilon);
-						console.log(index)
 						if (index !== midiControl.abcjsLastIndex) {
 							var last = midiControl.abcjsLastIndex >= 0 ? midiControl.abcjsTune.noteTimings[midiControl.abcjsLastIndex] : null;
 							midiControl.abcjsAnimate(last,

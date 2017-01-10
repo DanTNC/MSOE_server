@@ -12,6 +12,7 @@ var MSOE = new function msoe () {
 	var strs=[];//voices
 	var clef=[];//clef of voices
 	var tuneObjectArray;
+
   var page=[];
 	clef[0]="treble";//default value
 	this.AddVoice = () => {
@@ -389,66 +390,69 @@ var MSOE = new function msoe () {
 		console.log("after rmsmb:"+str);
 		return str.replace(/[*]|[$]|[#]/g,"");
 	};
-	this.save = function(e) {
+	this.msg = null;
+    this.save = function(e) {
   		var url = location.href.split("?")[1];
-  		var urlIndex;
-  		var urlKey;
-  		var rcvUrl = "";
-  		var push = false;
-  		if(url == null) {
-    		urlIndex = "";
-    		urlKey = "";
-    		push = true;
-  		}
-  		else {
+  		var urlIndex = "";
+  		var urlKey = "";
+        var insert = false;
+        var pointer = this;
+  		if(url != null) {
+            insert = false;
+            console.log("update");
     		urlIndex = url.split("!")[1];
     		urlKey = url.split("!")[2];
-
-    		if(urlIndex == null) {
-      			urlIndex = "";
-    		}
-    		if(urlKey ==null)
-      		urlKey = "";
+            
+            if(urlIndex == null) urlIndex = "";
+            if(urlKey == null) urlKey = "";
   		}
+        else {
+            console.log("insert");
+            insert = true;
+        }
   		if(history.pushState) {
     
     		e.preventDefault();
     		$.ajax( {
-   	   				url: "./js/save.njs",
+   	   				url: "/save",
+                    method: 'POST',
     				async: false,
       				data: {
-					ttlstr: ttlstr,
+					cmpstr: "",
+                    ttlstr: ttlstr,
 					tmpstr: tmpstr,
 					abcstr: abcstr,           
+                    abcindex: 0,
+                    Lstr: "",
+                    strs: null,
+                    clef: null,
 					index: urlIndex,
 					key: urlKey,
+                    insert: insert,
 				},
 				success: function(rcvData) {
-					rcvUrl += rcvData;
+                    console.log(rcvData);
+                    pointer.msg = rcvData;
+					//rcvUrl += rcvData;
 				},
 				error: function() {
 					console.log('connect to save.njs failed');
 				}
 			});
-
+            /*
 			if(push) {
 				history.pushState( {title: ""}, "", location.href.split("?")[0]+"?"+rcvUrl);
 				url = rcvUrl;
 			}
-			else {
-				if(!url.localeCompare(rcvUrl))
-				{
-					console.log("process url error");
-					window.location.replace("http://luffy.ee.ncku.edu.tw/~lin11220206/MSOE/");
-				}
-			}
 			document.getElementById("url").setAttribute('value', location.href.split("?")[0]+"?"+rcvUrl);  
+            */
 		}
 		else {
 			console.log("web brower doesn't support history api");
 		}
 	};
 	this.urlload=()=>{
+        var pointer = this;
 		var url = location.href.split("?")[1];
 		if(url != null) {
 			var urlIndex = url.split("!")[1];
@@ -469,13 +473,17 @@ var MSOE = new function msoe () {
 			if(urlIndex.length != 0 && check)
 			{
 				$.ajax( {
-					url: "./js/load.njs",
+					url: "/load",
+                    method: 'POST',
 					async: false,
 					data: {
 						index: urlIndex,
 						key: urlKey,
 					},
 					success: function(rcvData) {
+                        console.log(rcvData);
+                        pointer.msg = rcvData;
+                    /*
 					MSOE.ttlstr=rcvData.split("!")[0]; 
 					MSOE.tmpstr=rcvData.split("!")[1];
 					MSOE.abcstr=rcvData.split("!")[2];
@@ -487,7 +495,7 @@ var MSOE = new function msoe () {
 						keyboard: false,
 						show: false
 						})});
-					}
+					}*/
 					},
 					error: function(){
 						console.log("connect to load.njs failed");
@@ -1086,13 +1094,13 @@ var chgttl = (a) => {MSOE.chgttl(a)};
 
 $("#save").click(function(e){MSOE.save(e)});
 
-window.onload = () => {
+$(document).ready(function (){
 	MSOE.urlload();
 	MSOE.print();
 	document.onkeypress=key;
  	document.onkeydown=move;
-  window.ABCJS.midi.soundfontUrl = "soundfonts/";
-  window.ABCJS.midi.instruments = "acoustic_grand_piano-ogg.js";
-  document.onkeyup=chord;
-  $("#showpages").hide();
-};
+    window.ABCJS.midi.soundfontUrl = "soundfonts/";
+    window.ABCJS.midi.instruments = "acoustic_grand_piano-ogg.js";
+    document.onkeyup=chord;
+    $("#showpages").hide();
+});
