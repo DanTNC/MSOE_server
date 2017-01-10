@@ -1,0 +1,219 @@
+*{
+font-family: Calibri;
+font-size: 24px;
+padding: -15px;
+margin: 0px;
+}
+
+.modal-content {
+  background-color:#808080;
+color:#FFFFFF;
+
+}
+
+.modal-backdrop {
+opacity: 1 !important;
+filter: Alpha(opacity=50);
+        background-image: url("http://i.giphy.com/rmPO4UCJXGNNu.gif");
+        background-size:cover;  
+}
+
+html, body {
+background-image: url("http://i.imgur.com/PdQaLSf.jpg");
+background-size: 800px;  
+background-repeat: repeat;
+width: 100%;
+height: 100%;
+padding: -15px;
+margin: 0px;
+}
+
+
+.row {
+  margin-left: -15px;
+  margin-right: -15px;
+}
+.top {
+height: 70%;
+overflow-y: scroll;
+}
+.bottom {
+height: 30%;
+}
+.left {
+padding: 10px;
+}
+.left input {
+  margin-left: 10px;
+border: solid 1px black;
+width: 50%;
+}
+.right {
+heught
+button{
+padding: 0px;
+border: 0px;
+background: rgba(0,0,0,0);
+}
+.extra_note{
+width: 80%;
+margin: 0px;
+padding: 0px;
+}
+
+.panel-group {
+width:200px;
+}
+
+.panel-heading {
+font-size:14px;
+}
+
+.panel-body {
+font-size: 12px;
+}
+
+.edit_line {
+position: fixed;
+bottom: 0%;
+height: 30%;
+border-top: solid 1px #222222;
+background-color:#F2EBDB;
+background-repeat: repeat;
+background-size: 1500px;
+}
+
+.keyboard button {
+position: absolute;
+border: solid 1px;
+}
+.white{
+  background-color: white;
+height: 200px;
+width: 12%;
+       font-size: 25px;
+color: #222222;
+       z-index: 1;
+       padding-top: 150px;
+}
+
+.black{
+  background-color: black;
+height: 130px;
+width: 8%;
+       z-index: 2;
+}
+
+#C{
+left: 0%;
+}
+#CS{
+left: 8%;
+}
+#D{
+left: 12%;
+}
+#DS{
+left: 20%;
+}
+#E{
+left: 24%;
+}
+#F{
+left: 36%;
+}
+#FS{
+left: 44%;
+}
+#G{
+left: 48%;
+}
+#GS{
+left: 56%;
+}
+#A{
+left: 60%;
+}
+#AS{
+left: 68%;
+}
+#B{
+left: 72%;
+}
+#CC{
+left: 84%;
+}
+.triangle{
+position: absolute;
+}
+#left_triangle{
+width: 0;
+height: 0;
+        border-style: solid;
+        border-width: 10px 15px 10px 0;
+        border-color: transparent black transparent transparent;
+left: 90px;
+top: 80px;
+}
+
+#right_triangle{
+width: 0;
+height: 0;
+        border-style: solid;
+        border-width: 10px 0 10px 15px;
+        border-color: transparent transparent transparent black;
+left: 210px;
+top: 80px;
+}
+
+.edit_note{
+position: absolute;
+width: 30%;
+top: 10px;
+padding: 0px;
+margin: 0px;
+}
+
+#quarter2{
+  left: -66666px;
+}
+#sixty-fourth {
+  left: -77777px;
+}
+#thirty-second{
+left: -88888px;
+}
+#sixteenth {
+left: -99999px;
+}
+#eighth{
+left: 0px;
+}
+#quarter{
+left: 100px;
+}
+#half{
+left: 200px;
+}
+#whole{ 
+left: -77777px;
+}
+#breve{ 
+  left: -55555px;
+}
+
+.octave{
+display: inline-block;
+}
+
+.save{
+  background-color: white;
+width: 10%;
+border: solid 1px;
+}
+.site{
+width: 50%;
+border: solid 1px;
+}
+
+
