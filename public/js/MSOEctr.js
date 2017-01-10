@@ -1,19 +1,27 @@
-var MSOE = new function msoe () {
+var MSOE = new function() {
+    
+    var url = "";
+    var index = "";
+    var key = "";
+
 	var abcstr="$"; //abcstring
 	var Tstate=1; //0:A, 1:A  2:a  3:a'
 	var Dstate=5; //Mn, n=0~8. n=5 for N=1, n+1=>N*2, n-1=>N/2. 1n=N*(1+1/2), 2n=N*(1+1/2+1/4)... and so on
 	var CrtPos=0; //current position
 	var abcjs=window.ABCJS;
 	var ttlstr="";//title string
+    var cmpstr="";
 	//-----------------------------------------//for voices
 	var abcindex=0;//index for abcstrings
 	var vicchga;//Ath voice for VicChg;
 	var maxoffset=0;//the maximum of offset
 	var strs=[];//voices
 	var clef=[];//clef of voices
-	var tuneObjectArray;
+    var page=[];
 
-  var page=[];
+    var host = "http://luffy.ee.ncku.edu.tw:7725/";
+    this.edit = true;
+
 	clef[0]="treble";//default value
 	this.AddVoice = () => {
 		var temindex=clef.length;
@@ -81,15 +89,23 @@ var MSOE = new function msoe () {
     if((N - 2) % 4 == 0 && N != 2){
       page[p] = finalstr;
       p++;
-      finalstr = "";
       start = abcstr.length;  
       $('#pg').text("第" + (p + 1) + "頁");
-      var pgstr = '<button class="pagebutton" id="p' +  (p + 1) + ' onclick="">' +  (p + 1) + '</button>';
-      $("#showpages").append(pgstr);
+      var pgstr = '<button class="pagebutton" id="p' +  (p + 1) + '" onclick="printpage(this)">' +  (p + 1) + '</button>';
+      $('#showpages').append(pgstr);
+      var pgdiv = '<div class="boo" id="boo' + (p + 1) + '"></div>';
+      $('#sheet').append(pgdiv);
     }
-		console.log(finalstr);
+    var hddiv = '#boo' + p + '';
+    $(hddiv).hide();
+		
+    console.log(finalstr);
+    console.log('n' + N);
+    console.log('p' + p);
+    console.log('hddiv' + hddiv);
 		return finalstr;
 	};
+
 	//-----------------------------------------//for clef
 	var clefmode=false;
 	this.ClfMdTgl = () => {//toggle clefmode
@@ -118,7 +134,7 @@ var MSOE = new function msoe () {
 	};
 	//-----------------------------------------//
 	this.print = () => {//output svg
-		tuneObjectArray = abcjs.renderAbc('boo',"T: "+ttlstr+"\nM: "+tmpstr+"\nL: "+Lstr+"\n"+ForPrint(),{},{add_classes:true, editable:true, listener:{highlight:(abcElem)=>{//update CrtPos when note is clicked
+		abcjs.renderAbc('boo' + (p + 1),"T: "+ttlstr+"\nM: "+tmpstr+"\nL: "+Lstr+"\n"+ForPrint(),{},{add_classes:true, editable:true, listener:{highlight:(abcElem)=>{//update CrtPos when note is clicked
 			console.log(abcElem.startChar);
 			var ignsmbs=["$","#","*"];//symbols that won't be in the final abcstring
 			var NumBefCrt=0;//number of chars before current position
@@ -390,128 +406,116 @@ var MSOE = new function msoe () {
 		console.log("after rmsmb:"+str);
 		return str.replace(/[*]|[$]|[#]/g,"");
 	};
-	this.msg = null;
-    this.save = function(e) {
-  		var url = location.href.split("?")[1];
-  		var urlIndex = "";
-  		var urlKey = "";
-        var insert = false;
-        var pointer = this;
-  		if(url != null) {
-            insert = false;
-            console.log("update");
-    		urlIndex = url.split("!")[1];
-    		urlKey = url.split("!")[2];
-            
-            if(urlIndex == null) urlIndex = "";
-            if(urlKey == null) urlKey = "";
-  		}
-        else {
-            console.log("insert");
-            insert = true;
-        }
-  		if(history.pushState) {
-    
-    		e.preventDefault();
-    		$.ajax( {
-   	   				url: "/save",
-                    method: 'POST',
-    				async: false,
-      				data: {
-					cmpstr: "",
+	this.save = function(e) {
+        var push = false;
+        if(index === "" && key === "")
+            push = true;
+
+        if(history.pushState) {
+            e.preventDefault();
+            $.ajax( {
+                url: "/save",
+                method: "POST",
+                async: false,
+                data: {
+                    insert: push,
+                    index: index,
+                    key: key,
+                    cmpstr: cmpstr,
                     ttlstr: ttlstr,
-					tmpstr: tmpstr,
-					abcstr: abcstr,           
-                    abcindex: 0,
-                    Lstr: "",
-                    strs: null,
-                    clef: null,
-					index: urlIndex,
-					key: urlKey,
-                    insert: insert,
-				},
-				success: function(rcvData) {
-                    console.log(rcvData);
-                    pointer.msg = rcvData;
-					//rcvUrl += rcvData;
-				},
-				error: function() {
-					console.log('connect to save.njs failed');
-				}
-			});
-            /*
-			if(push) {
-				history.pushState( {title: ""}, "", location.href.split("?")[0]+"?"+rcvUrl);
-				url = rcvUrl;
-			}
-			document.getElementById("url").setAttribute('value', location.href.split("?")[0]+"?"+rcvUrl);  
-            */
-		}
-		else {
-			console.log("web brower doesn't support history api");
-		}
+                    tmpstr: tmpstr,
+                    abcstr: abcstr,
+                    abcindex: abcindex,
+                    Lstr: Lstr,
+                    strs: strs,
+                    clef: clef
+                },
+                success: function(msg) {
+                    console.log(msg);
+                    if(msg.status.error)    {
+                        return console.log(msg.status.msg);
+                    }
+                    if(msg.status.success) {
+                        index = msg.url.index;
+                        key = msg.url.key;
+
+                        console.log(msg.status.msg);
+                    }
+                    else {
+                        console.log(msg.status.msg);
+                    }
+                }, error: function() {
+                    console.log("Ajax error when POST /save");
+                }
+            });
+            if(push) {
+                history.pushState( {title: ""}, "", host+"?!"+index+"!"+key);
+            }
+            document.getElementById("url").setAttribute('value', host+"?!"+index+"!"+key);
+        }
+        else {
+            console.log("Web browser doesn't support history api");
+        }
 	};
-	this.urlload=()=>{
+    this.printall=()=> {
+        console.log(url);
+        console.log(index);
+        console.log(key);
+    };
+    this.urlload=()=>{
+        url = location.href.split("?")[1] || "";
+        index = url.split("!")[1] || "";
+        key = url.split("!")[2] || "";
+        
         var pointer = this;
-		var url = location.href.split("?")[1];
-		if(url != null) {
-			var urlIndex = url.split("!")[1];
-			var urlKey = url.split("!")[2];
+        console.log(abcstr);
+        if(index !== "") { //call ajax to load sheet data
+            $.ajax( {
+                url: "/load",
+                method: "POST",
+                async: false,
+                data: {
+                    index: index,
+                    key: key,
+                },
+                success: function(msg) {
+                    console.log(msg);
+                    if(msg.status.error)    {
+                        return console.log(msg.status.msg);
+                        window.location.replace(host);
+                    }
+                    if(msg.status.success) {
+                        cmpstr = msg.sheet.cmpstr;
+                        ttlstr = msg.sheet.ttlstr;
+                        tmpstr = msg.sheet.tmpstr;
+                        abcstr = msg.sheet.abcstr;
+                        abcindex = msg.sheet.abcindex;
+                        Lstr = msg.sheet.Lstr;
+                        strs = msg.sheet.strs;
+                        clef = msg.sheet.clef;
 
-			var check = true;
-
-			if(urlIndex == null)
-			{
-				urlIndex = "";
-				check = false;
-			}
-			if(urlKey == null)
-			{
-				urlKey = "";
-			}
-
-			if(urlIndex.length != 0 && check)
-			{
-				$.ajax( {
-					url: "/load",
-                    method: 'POST',
-					async: false,
-					data: {
-						index: urlIndex,
-						key: urlKey,
-					},
-					success: function(rcvData) {
-                        console.log(rcvData);
-                        pointer.msg = rcvData;
-                    /*
-					MSOE.ttlstr=rcvData.split("!")[0]; 
-					MSOE.tmpstr=rcvData.split("!")[1];
-					MSOE.abcstr=rcvData.split("!")[2];
-					if(rcvData.trim().length < 4)
-						window.location.replace("http://luffy.ee.ncku.edu.tw/~lin11220206/MSOE/");
-					else
-					{
-						$(function () { $('#myModal').modal({
-						keyboard: false,
-						show: false
-						})});
-					}*/
-					},
-					error: function(){
-						console.log("connect to load.njs failed");
-					}
-				});
-			}
-			else
-				window.location.replace("http://luffy.ee.ncku.edu.tw/~lin11220206/MSOE/");
-		}
-		else
-		{
-			$(function () { $('#myModal').modal({
-				keyboard: false
-			})});
-		}
-	};
+                        pointer.edit = msg.status.edit;
+                        
+                        console.log(msg.status.msg);
+                    }
+                    else {
+                        console.log(msg.status.msg);
+                        window.location.replace(host);
+                    }
+                }, error: function() {
+                    console.log("Ajax error when POST /load");
+                }
+            });
+        }
+        else if(location.href !== host){ // redirect to main page
+            url = "";
+            index = "";
+            key = "";
+            console.log("Error url, redirect to main page");
+            redirect = false;
+            window.location.replace(host);
+        }
+    }
 	this.outinsert = (ch,Toabcnote,md,Checkbar) => {
 		var legalchars = ["A","B","C","D","E","F","G","z"," ","|","_","^"];
 		if(!legalchars.includes(ch)) return;
@@ -771,9 +775,7 @@ var MSOE = new function msoe () {
 	}
 }
 
-//var MSOE = new msoe();
-var Edit = true; //if it's editable
-
+var Edit = true; //if it'mpeditable
 
 $("#DDDD").click(function(){
   if(!MSOE.checkpause()){//Pause with duration of 8 is illegal
@@ -781,6 +783,7 @@ $("#DDDD").click(function(){
   }else{
     alert("Pause with duration of 2 is illegal.");
   }
+  break;
 });
 
 
@@ -869,7 +872,7 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
 	// ----------Change Tstate-----------
     	case 122://"Z"
       		MSOE.outinsert("C",1,0,1);
-		console.log(MSOE.miditone("C",0));
+			MSOE.miditone("C",0);
       		highlight("#C");
       		break;
     	case 120://"X"
@@ -1094,13 +1097,11 @@ var chgttl = (a) => {MSOE.chgttl(a)};
 
 $("#save").click(function(e){MSOE.save(e)});
 
-$(document).ready(function (){
+$(document).ready(function(){
 	MSOE.urlload();
 	MSOE.print();
 	document.onkeypress=key;
  	document.onkeydown=move;
-    window.ABCJS.midi.soundfontUrl = "soundfonts/";
-    window.ABCJS.midi.instruments = "acoustic_grand_piano-ogg.js";
     document.onkeyup=chord;
     $("#showpages").hide();
 });

@@ -20,8 +20,6 @@ router.post('/', function(req, res) {
             key: ""
         }
     };
-    console.log(req.body.insert);
-    console.log(typeof req.body.insert);
     if(req.body.insert === 'true') { //insert new sheet data
         console.log("Preprare to insert new sheet data...");
         var index = "";

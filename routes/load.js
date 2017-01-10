@@ -55,6 +55,7 @@ router.post('/', function(req, res) {
                 message.sheet.tmpstr = sheet.tmpstr;
                 message.sheet.abcstr = sheet.abcstr;
                 message.sheet.abcindex = sheet.abcindex;
+                message.sheet.Lstr = sheet.Lstr;
                 message.sheet.strs = sheet.strs;
                 message.sheet.clef = sheet.clef;
     
