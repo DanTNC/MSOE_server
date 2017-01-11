@@ -13907,7 +13907,7 @@ if (!window.ABCJS.midi)
 
 	// The default location for the sound font files. Simply set this to a different value if the files are served in a different place.
 	window.ABCJS.midi.soundfontUrl = "/soundfont/";
-	window.ABCJS.midi.instruments = "";
+	window.ABCJS.midi.instruments = "acoustic_grand_piano";
 
 	function hasClass(element, cls) {
 		if (!element)

@@ -350,7 +350,10 @@ var MSOE = new function() {
 				break;
 		}
 		console.log(48+(Tstate)*12+temnum);
+        MIDI.noteOn(0, 48+(Tstate)*12+temnum, 127, 0);
+        MIDI.noteOff(0, 48+(Tstate)*12+temnum, 0.75);
 		return 48+(Tstate)*12+temnum;
+
 	};
 	var toabcnote = (ch) => {//generate a string for a note in ABC format
 		if(ch!="z"){//pause has no tune
@@ -775,7 +778,7 @@ var MSOE = new function() {
 	}
 }
 
-var Edit = true; //if it'mpeditable
+var Edit = false; //if it'mpeditable
 
 $("#DDDD").click(function(){
   if(!MSOE.checkpause()){//Pause with duration of 8 is illegal
@@ -1103,5 +1106,9 @@ $(document).ready(function(){
 	document.onkeypress=key;
  	document.onkeydown=move;
     document.onkeyup=chord;
+    MIDI.setup({
+        soundfontUrl: window.ABCJS.midi.soundfountUrl,
+        instruments: window.ABCJS.midi.instruments
+    });
     $("#showpages").hide();
 });
