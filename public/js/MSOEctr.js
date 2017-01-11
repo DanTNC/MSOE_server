@@ -497,7 +497,7 @@ var MSOE = new function() {
                         strs = msg.sheet.strs;
                         clef = msg.sheet.clef;
 
-                        pointer.edit = msg.status.edit;
+                        Edit = msg.status.edit;
                         
                         console.log(msg.status.msg);
                     }
@@ -778,7 +778,7 @@ var MSOE = new function() {
 	}
 }
 
-var Edit = false; //if it'mpeditable
+var Edit = true; //if it'mpeditable
 
 $("#DDDD").click(function(){
   if(!MSOE.checkpause()){//Pause with duration of 8 is illegal
