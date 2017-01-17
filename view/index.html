@@ -64,7 +64,7 @@
             <a class="item" onclick="edit_mode()">編輯</a>
             <a class="item" onclick="preview_mode()">預覽</a></div>
     </div>
-<div class="ui grid">
+    <div class="ui grid">
         <div class="four wide column">
             <div class="rows">
                 <div class="logo"><img src="img/logo.png" class="logo" width=300px></div>
@@ -190,80 +190,79 @@
                         <br> G:貼上
                         <br>
                         <br> </p>
+                </div>
             </div>
         </div>
-    </div>
+        <script src='js/abcjs_basic_midi.js'></script>
+        <!--<script src="js/initializedlogpage.js"></script>-->
+        <script src="js/MSOEctr.js"></script>
+        <script src="js/modechange.js"></script>
+        <script type="text/javascript">
+        $('#mannualback,#mannualgo').click(function() {
+            $('#sidebar').sidebar('toggle');
+        });
+        </script>
+        <script type="text/javascript">
+        $('#infohome,#infomodal').click(function() {
+            $('#modaldiv2').modal('setting', 'transition', 'fade down')
+                .modal('show')
+                .modal({
+                    allowMultiple: false
+                })
+                .modal({
+                    blurring: true
+                })
+                .modal('setting', 'closable', false);
+        });
+        </script>
+        <script type="text/javascript">
+        $('#submit').click(function() {
 
-    <script src='js/abcjs_basic_midi.js'></script>
-    <!--<script src="js/initializedlogpage.js"></script>-->
-    <script src="js/MSOEctr.js"></script>
-    <script src="js/modechange.js"></script>
-    <script type="text/javascript">
-    $('#mannualback,#mannualgo').click(function() {
-        $('#sidebar').sidebar('toggle');
-    });
-    </script>
-    <script type="text/javascript">
-    $('#infohome,#infomodal').click(function() {
-        $('#modaldiv2').modal('setting', 'transition', 'fade down')
-            .modal('show')
-            .modal({
-                allowMultiple: false
-            })
-            .modal({
-                blurring: true
-            })
-            .modal('setting', 'closable', false);
-    });
-    </script>
-    <script type="text/javascript">
-    $('#submit').click(function() {
+            $('#modaldiv2').modal('setting', 'transition', 'fade down')
+                .modal('hide')
+                .modal({
+                    allowMultiple: false
+                })
+                .modal({
+                    blurring: true
+                })　　　　.modal('setting', 'closable', false);
+        });
+        </script>
+        <script type="text/javascript">
+        $(document).ready(function() {
+            $('#modaldiv1').modal('setting', 'transition', 'fade down')
+                .modal('show')
+                .modal({
+                    allowMultiple: false
+                })
+                .modal({
+                    blurring: true
+                })
+                .modal('setting', 'closable', false);
+        });
+        </script>
+        <!--script type="text/javascript">
+        $(document).ready(function() {
+            $('#topbar')
+                .sidebar('setting', 'transition', 'push')
+                .sidebar('show')
+                .sidebar('setting', 'dimPage', false)
+                .sidebar('setting', 'closable', false);
+        });
+        </script-->
+        <script type="text/javascript">
+        $('#cancel').click(function() {
 
-        $('#modaldiv2').modal('setting', 'transition', 'fade down')
-            .modal('hide')
-            .modal({
-                allowMultiple: false
-            })
-            .modal({
-                blurring: true
-            })　　　　.modal('setting', 'closable', false);
-    });
-    </script>
-    <script type="text/javascript">
-    $(document).ready(function() {
-        $('#modaldiv1').modal('setting', 'transition', 'fade down')
-            .modal('show')
-            .modal({
-                allowMultiple: false
-            })
-            .modal({
-                blurring: true
-            })
-            .modal('setting', 'closable', false);
-    });
-    </script>
-    <script type="text/javascript">
-    $(document).ready(function() {
-        $('#topbar')
-            .sidebar('setting', 'transition', 'push')
-            .sidebar('show')
-            .sidebar('setting', 'dimPage', false)
-            .sidebar('setting', 'closable', false);
-    });
-    </script>
-    <script type="text/javascript">
-    $('#cancel').click(function() {
-
-        $('#modaldiv1').modal('setting', 'transition', 'fade down')
-            .modal('show')
-            .modal({
-                allowMultiple: false
-            })
-            .modal({
-                blurring: true
-            })　　　　.modal('setting', 'closable', false);
-    });
-    </script>
+            $('#modaldiv1').modal('setting', 'transition', 'fade down')
+                .modal('show')
+                .modal({
+                    allowMultiple: false
+                })
+                .modal({
+                    blurring: true
+                })　　　　.modal('setting', 'closable', false);
+        });
+        </script>
 </body>
 
 </html>
