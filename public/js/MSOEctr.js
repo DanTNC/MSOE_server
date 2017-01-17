@@ -66,6 +66,7 @@ var MSOE = new function() {
         CrtPos = 0;
     };
     var ForPrint = () => {
+
         console.log(abcstr);
         console.log(clef.length);
         var finalstr = "";
@@ -153,6 +154,7 @@ var MSOE = new function() {
                 }
             }
         });
+        abcjs.renderMidi("midi", SS, {}, { generateDownload: true,generateInline: true}, {}); 
     };
     this.printabc = () => {
         printJS("sheet", "html");
@@ -772,7 +774,6 @@ $("#DDDD").click(function() {
     } else {
         alert("Pause with duration of 2 is illegal.");
     }
-    break;
 });
 
 
@@ -1081,6 +1082,14 @@ var chgtmp = (a) => { MSOE.chgtmp(a) };
 var chgttl = (a) => { MSOE.chgttl(a) };
 
 $("#save").click(function(e) { MSOE.save(e) });
+$("#play").click(function(e) {
+    console.log("aaa");
+    $(".abcjs-midi-reset").click();
+    $(".abcjs-midi-start").click();
+});
+$("#print").click(function(e) {
+    printJS("sheet", "html");
+});
 
 $(document).ready(function() {
     MSOE.urlload();
@@ -1092,5 +1101,5 @@ $(document).ready(function() {
         soundfontUrl: window.ABCJS.midi.soundfountUrl,
         instruments: window.ABCJS.midi.instruments
     });
-    $("#showpages").hide();
+    $("#midi").hide();
 });

@@ -13908,6 +13908,7 @@ if (!window.ABCJS.midi)
 	// The default location for the sound font files. Simply set this to a different value if the files are served in a different place.
 	window.ABCJS.midi.soundfontUrl = "/soundfont/";
 	window.ABCJS.midi.instruments = "acoustic_grand_piano";
+    window.ABCJS.midi.midiJsInitialized = false;
 
 	function hasClass(element, cls) {
 		if (!element)
@@ -13984,14 +13985,16 @@ if (!window.ABCJS.midi)
 
 	function setCurrentMidiTune(timeWarp, data, onSuccess) {
 		if (!midiJsInitialized) {
-			MIDI.setup({
+            midiJsInitialized = true;
+            afterSetup(timeWarp, data, onSuccess);
+			/*MIDI.setup({
 				debug: true,
 				soundfontUrl: window.ABCJS.midi.soundfontUrl,
 				instruments: window.ABCJS.midi.instruments
 			}).then(function() {
 				midiJsInitialized = true;
 				afterSetup(timeWarp, data, onSuccess);
-			});
+			});*/
 		} else {
 			afterSetup(timeWarp, data, onSuccess);
 		}

@@ -57,9 +57,10 @@
     <div class="ui top thin inverted menu" id="topbar">
         <a class="item" id="infohome">Score Info</a>
         <a class="item" id="mannualgo">Mannual</a>
-        <a class="item">Save</a>
-        <a class="item">Play</a>
-        <a class="item">Share</a>
+        <a class="item" id="save">Save</a>
+        <a class="item" id="play">Play</a>
+        <a class="item" id="print">Print</a>
+        <a class="item" id="share">Share</a>
         <div class="right menu">
             <a class="item" onclick="edit_mode()">編輯</a>
             <a class="item" onclick="preview_mode()">預覽</a></div>
@@ -69,13 +70,8 @@
             <div class="rows">
                 <div class="logo"><img src="img/logo.png" class="logo" width=300px></div>
             </div>
-            <div class="rows page">
-                <div id="pg" class="ui orange circular button">第1頁</div>
-                <div id="showpages">
-                    <button class="pagebutton" id="p1" onclick="">1</button>
-                </div>
-            </div>
             <!--row top left-->
+            <div class = "left">
             <div class="one column row">Notes</div>
             <div class="one column row">
                 <button class="circular ui button column"><img src="img/notes-01.png" alt="" class="extra_note ui circular image" id="" /></button>
@@ -124,11 +120,13 @@
                 <input class="one column row input_tempo" onchange="chgtmp(this)" placeholder="4/4" />
             </div>
         </div>
+        </div>
         <!--row top boo -->
         <div class="ten wide column sheet" id="sheet">
             <div class="boo" id="boo"></div>
+            <div class="midi" id="midi"></div>
         </div>
-        <div class="two wide column">
+        <div class="two wide column panel-group">
             <div class="ui sticky" style="width: 272px !important; height: 262.531px !important; left: 43px; padding-right: 5px !important;">
                 <h3 class="ui header">Keyboard</h3>
                 <div class="keyboard">
