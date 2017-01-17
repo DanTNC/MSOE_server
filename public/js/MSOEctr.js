@@ -486,8 +486,11 @@ var MSOE = new function() {
                         strs = msg.sheet.strs;
                         clef = msg.sheet.clef;
 
-                        Edit = msg.status.edit;
-
+						if(msg.status.edit)
+							edit_mode();
+						else
+							preview_mode();
+						
                         console.log(msg.status.msg);
                     } else {
                         console.log(msg.status.msg);
@@ -1083,7 +1086,6 @@ var chgttl = (a) => { MSOE.chgttl(a) };
 
 $("#save").click(function(e) { MSOE.save(e) });
 $("#play").click(function(e) {
-    console.log("aaa");
     $(".abcjs-midi-reset").click();
     $(".abcjs-midi-start").click();
 });
