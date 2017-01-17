@@ -154,7 +154,7 @@ var MSOE = new function() {
                 }
             }
         });
-        abcjs.renderMidi("midi", SS, {}, { generateDownload: true,generateInline: true}, {}); 
+        abcjs.renderMidi("midi", SS, {}, { generateDownload: true, generateInline: true }, {});
     };
     this.printabc = () => {
         printJS("sheet", "html");
@@ -361,10 +361,10 @@ var MSOE = new function() {
             }
         }
         /*
-			  (n-5)          1 (M+1)
-		  N = 2     x 2( 1-(---)    ), n=Dstate%10, M=Math.floor(Dstate/10).
-							 2
-	  	*/
+              (n-5)          1 (M+1)
+          N = 2     x 2( 1-(---)    ), n=Dstate%10, M=Math.floor(Dstate/10).
+                             2
+        */
         //for duration
         ch = ch + "*" + numtostr(Math.pow(2, Dstate % 10 - 4) * (1 - Math.pow(1 / 2, Math.floor(Dstate / 10) + 1)));
         return ch;
