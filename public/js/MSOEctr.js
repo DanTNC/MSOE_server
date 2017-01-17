@@ -1002,7 +1002,7 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
             break;
             // ----------Clef and Voice----------
         case 116: //"t" use browser printer to print the sheet (can save as pdf)
-            MSOE.printabc();
+            //MSOE.printabc();
             break;
             // ----------Print (as pdf)----------
         case 45: //"-" tie two notes
