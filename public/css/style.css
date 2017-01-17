@@ -1,43 +1,61 @@
 *{
   font-family: Calibri;
   font-size: 24px;
-  padding: -15px;
+  padding: 0px;
   margin: 0px;
+  
 }
 
 html, body {
-padding: -15px;
-margin: 5px;
+padding: 0px;
+margin: 0px;
 }
 
+.grid {
+padding:2px;
+
+
+}
 .form {
 font-size:10px;
 margin: 10px;
 padding: 10px;
 padding-top: 10px;
 }
- 
-.top {
-  height: 70%;
-  overflow-y: scroll;
+
+.top{
+height: 12px;
+margin: -5px;
+padding:-5px;
+font-size: 10px;
+color:grey;
+
 }
-  
+
 .bottom {
   height: 30%;
+}
+
+.page{
+padding:5px;
+}
+
+.meter{
+padding:5px;
 }
 
 h2{
 color:white;
 }
 button{
-padding: 0px;
+padding: 2px;
 margin: 0px;
 }
 
 .extra_note{
 height: 30px;
 width: auto;
-padding: 0px;
+padding: 2px;
 margin: 0px;
 }
 
