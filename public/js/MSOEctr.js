@@ -73,7 +73,6 @@ var MSOE = new function() {
             if (i != abcindex) {
                 finalstr += "V: " + (i + 1) + " clef=" + clef[i] + "\n[|" + rmsmb(strs[i], false) + " |]\n";
             } else {
-                var strrr = abcstr.substring(start);
                 finalstr += "V: " + (i + 1) + " clef=" + clef[i] + "\n[|" + rmsmb(abcstr, Edit) + " |]\n";
             }
         }

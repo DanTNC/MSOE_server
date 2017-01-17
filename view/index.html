@@ -64,108 +64,74 @@
             <a class="item" onclick="edit_mode()">編輯</a>
             <a class="item" onclick="preview_mode()">預覽</a></div>
     </div>
-    <!--row top left-->
-    <div class="one column row">Notes</div>
-    <div class="one column row">
-        <button class="circular ui button column"><img src="img/notes-01.png" alt="" class="extra_note ui circular image" id="" /></button>
-        <button class="circular ui button column"><img src="img/notes-02.png" alt="" class="extra_note ui circular image" id="" /></button>
-        <button class="circular ui button column"><img src="img/notes-04.png" alt="" class="extra_note ui circular image" id="" /></button>
-        <button class="circular ui button column"><img src="img/notes-08.png" alt="" class="extra_note ui circular image" id="" /></button>
-    </div>
-    <div class="one column row">
-        <button class="circular ui button column"><img src="img/notes-16.png" alt="" class="extra_note ui circular image" id="" /></button>
-        <button class="circular ui button column"><img src="img/notes-32.png" alt="" class="extra_note ui circular image" id="" /></button>
-        <button class="circular ui button column"><img src="img/note-05.png" alt="" class="extra_note ui circular image" id="" /></button>
-        <button class="circular ui button column"><img src="img/note-06.png" alt="" class="extra_note ui circular image" id="" /></button>
-    </div>
-    <div class="one column row">
-        <button class="circular ui button column"><img src="img/note-07.png" alt="" class="extra_note ui circular image" id="" /></button>
-        <button class="circular ui button column"><img src="img/note-08.png" alt="" class="extra_note ui circular image" id="" /></button>
-        <button class="circular ui button column"><img src="img/note-09.png" alt="" class="extra_note ui circular image" id="" /></button>
-        <button class="circular ui button column"><img src="img/note-10.png" alt="" class="extra_note ui circular image" id="" /></button>
-    </div>
-    <div class="one column row">
-        <button class="circular ui button column"><img src="img/note-11.png" alt="" class="extra_note ui circular image" id="" /></button>
-        <button class="circular ui button column"><img src="img/note-12.png" alt="" class="extra_note ui circular image" id="" /></button>
-        <button class="circular ui button column"><img src="img/note-13.png" alt="" class="extra_note ui circular image" id="" /></button>
-        <button class="circular ui button column"><img src="img/note-14.png" alt="" class="extra_note ui circular image" id="" /></button>
-    </div>
-    <div class="one column row">
-        <button class="circular ui button column"><img src="img/note-15.png" alt="" class="extra_note ui circular image" id="" /></button>
-        <button class="circular ui button column"><img src="img/note-16.png" alt="" class="extra_note ui circular image" id="" /></button>
-        <button class="circular ui button column"><img src="img/note-17.png" alt="" class="extra_note ui circular image" id="" /></button>
-        <button class="circular ui button column"><img src="img/note-18.png" alt="" class="extra_note ui circular image" id="" /></button>
-    </div>
-    <div class="one column row">
-        <button class="circular ui button column"><img src="img/note-19.png" alt="" class="extra_note ui circular image" id="" /></button>
-        <button class="circular ui button column"><img src="img/note-20.png" alt="" class="extra_note ui circular image" id="" /></button>
-        <button class="circular ui button column"><img src="img/note-21.png" alt="" class="extra_note ui circular image" id="" /></button>
-        <button class="circular ui button column"><img src="img/note-22.png" alt="" class="extra_note ui circular image" id="" /></button>
-    </div>
-    <div class="one column row">
-        <button class="circular ui button column"><img src="img/note-23.png" alt="" class="extra_note ui circular image" id="" /></button>
-        <button class="circular ui button column"><img src="img/note-24.png" alt="" class="extra_note ui circular image" id="" /></button>
-        <button class="circular ui button column"><img src="img/note-25.png" alt="" class="extra_note ui circular image" id="" /></button>
-        <button class="circular ui button column"><img src="img/note-26.png" alt="" class="extra_note ui circular image" id="" /></button>
-    </div>
-    <div class="one column row meter">Meter</div>
-    <div class="ui input">
-        <input class="one column row input_tempo" onchange="chgtmp(this)" placeholder="4/4" />
-    </div>
-    </div>
-    <!--row top boo -->
-    <div class="ten wide column sheet" id="sheet">
-        <div class="boo" id="boo"></div>
-    </div>
-    <div class="two wide column">
-        <div class="ui right sidebar inverted vertical menu" id="sidebar">
-            <div class="item">
-                <h2 class="ui header" style="color:white;">游標指令</h2>
-                <p class="mannual">
-                    左 :向左移一格
-                    <br> 右 :向右移一格
-                    <br> 上 :移動到上一行最尾端
-                    <br> 下 :移動到下一行最開始
-                    <br> home :移動到此行最開始
-                    <br> end :移動到此行最尾端
-                    <br>
-                    <br> </p>
+<div class="ui grid">
+        <div class="four wide column">
+            <div class="rows">
+                <div class="logo"><img src="img/logo.png" class="logo" width=300px></div>
             </div>
-            <div class="item">
-                <h2 class="ui header" style="color:white;">編輯指令</h2>
-                <p class="mannual">
-                    shift+Z~M :和弦模式
-                    <br> D :休止符
-                    <br> | :手動加小節線
-                    <br>
-                    <> :節拍(/2 or *2)
-                        <br> shift+
-                        <> :增減附點
-                            <br> ? :升八度 :(從C3到C6)
-                            <br> ' :降八度 :(從C3到C6)
-                            <br> Backspace :刪除
-                            <br> ] :增加升音記號
-                            <br> [ :增加降音記號
-                            <br> S :將連在一起的音符分開
-                            <br> A :將被分開的音符再次連起來
-                            <br>
-                            <br> </p>
+            <div class="rows page">
+                <div id="pg" class="ui orange circular button">第1頁</div>
+                <div id="showpages">
+                    <button class="pagebutton" id="p1" onclick="">1</button>
+                </div>
             </div>
-            <div class="item">
-                <h2 class="ui header" style="color:white;">複製指令</h2>
-                <p class="mannual">shift+F (普通模式下) :開啟複製模式並記錄此點為複製開始點
-                    <br> shift+F (複製模式下) :以目前位置為複製結束點，記錄複製的東西並結束複製模式
-                    <br> F (複製模式下) :取消複製
-                    <br> G:貼上
-                    <br>
-                    <br> </p>
+            <!--row top left-->
+            <div class="one column row">Notes</div>
+            <div class="one column row">
+                <button class="circular ui button column"><img src="img/notes-01.png" alt="" class="extra_note ui circular image" id="" /></button>
+                <button class="circular ui button column"><img src="img/notes-02.png" alt="" class="extra_note ui circular image" id="" /></button>
+                <button class="circular ui button column"><img src="img/notes-04.png" alt="" class="extra_note ui circular image" id="" /></button>
+                <button class="circular ui button column"><img src="img/notes-08.png" alt="" class="extra_note ui circular image" id="" /></button>
+            </div>
+            <div class="one column row">
+                <button class="circular ui button column"><img src="img/notes-16.png" alt="" class="extra_note ui circular image" id="" /></button>
+                <button class="circular ui button column"><img src="img/notes-32.png" alt="" class="extra_note ui circular image" id="" /></button>
+                <button class="circular ui button column"><img src="img/note-05.png" alt="" class="extra_note ui circular image" id="" /></button>
+                <button class="circular ui button column"><img src="img/note-06.png" alt="" class="extra_note ui circular image" id="" /></button>
+            </div>
+            <div class="one column row">
+                <button class="circular ui button column"><img src="img/note-07.png" alt="" class="extra_note ui circular image" id="" /></button>
+                <button class="circular ui button column"><img src="img/note-08.png" alt="" class="extra_note ui circular image" id="" /></button>
+                <button class="circular ui button column"><img src="img/note-09.png" alt="" class="extra_note ui circular image" id="" /></button>
+                <button class="circular ui button column"><img src="img/note-10.png" alt="" class="extra_note ui circular image" id="" /></button>
+            </div>
+            <div class="one column row">
+                <button class="circular ui button column"><img src="img/note-11.png" alt="" class="extra_note ui circular image" id="" /></button>
+                <button class="circular ui button column"><img src="img/note-12.png" alt="" class="extra_note ui circular image" id="" /></button>
+                <button class="circular ui button column"><img src="img/note-13.png" alt="" class="extra_note ui circular image" id="" /></button>
+                <button class="circular ui button column"><img src="img/note-14.png" alt="" class="extra_note ui circular image" id="" /></button>
+            </div>
+            <div class="one column row">
+                <button class="circular ui button column"><img src="img/note-15.png" alt="" class="extra_note ui circular image" id="" /></button>
+                <button class="circular ui button column"><img src="img/note-16.png" alt="" class="extra_note ui circular image" id="" /></button>
+                <button class="circular ui button column"><img src="img/note-17.png" alt="" class="extra_note ui circular image" id="" /></button>
+                <button class="circular ui button column"><img src="img/note-18.png" alt="" class="extra_note ui circular image" id="" /></button>
+            </div>
+            <div class="one column row">
+                <button class="circular ui button column"><img src="img/note-19.png" alt="" class="extra_note ui circular image" id="" /></button>
+                <button class="circular ui button column"><img src="img/note-20.png" alt="" class="extra_note ui circular image" id="" /></button>
+                <button class="circular ui button column"><img src="img/note-21.png" alt="" class="extra_note ui circular image" id="" /></button>
+                <button class="circular ui button column"><img src="img/note-22.png" alt="" class="extra_note ui circular image" id="" /></button>
+            </div>
+            <div class="one column row">
+                <button class="circular ui button column"><img src="img/note-23.png" alt="" class="extra_note ui circular image" id="" /></button>
+                <button class="circular ui button column"><img src="img/note-24.png" alt="" class="extra_note ui circular image" id="" /></button>
+                <button class="circular ui button column"><img src="img/note-25.png" alt="" class="extra_note ui circular image" id="" /></button>
+                <button class="circular ui button column"><img src="img/note-26.png" alt="" class="extra_note ui circular image" id="" /></button>
+            </div>
+            <div class="one column row meter">Meter</div>
+            <div class="ui input">
+                <input class="one column row input_tempo" onchange="chgtmp(this)" placeholder="4/4" />
             </div>
         </div>
-    </div>
-    <!--row bottom>
-        <div class="row bottom">
-            <div class="col-sm-12 col-md-12 col-lg-12 edit_line">
-                <div class="col-sm-7 col-md-7 col-lg-7 keyboard">
+        <!--row top boo -->
+        <div class="ten wide column sheet" id="sheet">
+            <div class="boo" id="boo"></div>
+        </div>
+        <div class="two wide column">
+            <div class="ui sticky" style="width: 272px !important; height: 262.531px !important; left: 43px; padding-right: 5px !important;">
+                <h3 class="ui header">Keyboard</h3>
+                <div class="keyboard">
                     <button id="C" class="white" onclick="btn(this)">Z</button>
                     <button id="CS" class="black"></button>
                     <button id="D" class="white" onclick="btn(this)">X</button>
@@ -180,74 +146,54 @@
                     <button id="B" class="white" onclick="btn(this)">M</button>
                     <button id="CC" class="white" onclick="">,</button>
                 </div>
-                <div class="col-sm-2 col-md-2 col-lg-2">
-                    <img src="img/notes-04.png" alt="" class="edit_note" id="quarter2" />
-                    <img src="img/notes-64.png" alt="" class="edit_note" id="sixty-fourth" />
-                    <img src="img/notes-32.png" alt="" class="edit_note" id="thirty-second" />
-                    <img src="img/notes-16.png" alt="" class="edit_note" id="sixteenth" />
-                    <img src="img/notes-08.png" alt="" class="edit_note" id="eighth" />
-                    <img src="img/notes-04.png" alt="" class="edit_note" id="quarter" />
-                    <img src="img/notes-02.png" alt="" class="edit_note" id="half" />
-                    <img src="img/notes-01.png" alt="" class="edit_note" id="whole" />
-                    <img src="img/notes-2.png" alt="" class="edit_note" id="breve" />
-                    <div class="triangle" id="left_triangle"></div>
-                    <div class="triangle" id="right_triangle"></div>
-                </div>
-                <div class="col-sm-3 col-md-3 col-lg-3">
-                    <div class="octave">Octave: </div>
-                    <div id="octave" class="octave">4</div>
-                    <button id="save" class="save">save</button>
-                    <input class="site" type="text" id="url">
-                </div>
             </div>
         </div>
-        <modal page <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <img src="http://i.imgur.com/T6PN20o.png" class="logo" width="400">
-                        <h3 style="color:black;">Score Info</h3>
-                    </div>
-                    <div class="modal-body">
-                        <form role="form">
-                            <div class="form-group">
-                                <label for="InputUser">Editor</label>
-                                <input type="text" class="form-control" id="InputUser" placeholder="Editor Name">
-                            </div>
-                            <div class="form-group">
-                                <label for="Title">Title</label>
-                                <input type="text" class="form-control" id="InputTitle" placeholder="Sonate 16 in C major" onchange="chgttl(this)">
-                            </div>
-                            <div class="form-group">
-                                <label for="Subtitle">Subtitle</label>
-                                <input type="text" class="form-control" id="InputSubtitle" placeholder="Sonata facile">
-                            </div>
-                            <div class="form-group">
-                                <label for="Artist">Artist</label>
-                                <input type="text" class="form-control" id="InputArtist" placeholder="W. A. Mozart">
-                            </div>
-                            <div class="form-group">
-                                <label for="Album">Album</label>
-                                <input type="text" class="form-control" id="InputAlbum" placeholder="W.A. Mozart: Piano Sonatas - Volume 1">
-                            </div>
-                            <div class="form-group">
-                                <label for="Composer">Composer</label>
-                                <input type="text" class="form-control" id="InputComposer" placeholder="W. A. Mozart">
-                            </div>
-                            <div class="ui animated button" tabindex="0">
-                                <div class="visible content">Next</div>
-                                <div class="hidden content">
-                                    <i class="right arrow icon"></i>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-default btn-default" data-dismiss="modal">Cancel</button>
-                    </div>
+        <div class="two wide column">
+            <div class="ui right sidebar inverted vertical menu" id="sidebar">
+                <div class="item">
+                    <h2 class="ui header" style="color:white;">游標指令</h2>
+                    <p class="mannual">
+                        左 :向左移一格
+                        <br> 右 :向右移一格
+                        <br> 上 :移動到上一行最尾端
+                        <br> 下 :移動到下一行最開始
+                        <br> home :移動到此行最開始
+                        <br> end :移動到此行最尾端
+                        <br>
+                        <br> </p>
                 </div>
-            </div>-->
+                <div class="item">
+                    <h2 class="ui header" style="color:white;">編輯指令</h2>
+                    <p class="mannual">
+                        shift+Z~M :和弦模式
+                        <br> D :休止符
+                        <br> | :手動加小節線
+                        <br>
+                        <> :節拍(/2 or *2)
+                            <br> shift+
+                            <> :增減附點
+                                <br> ? :升八度 :(從C3到C6)
+                                <br> ' :降八度 :(從C3到C6)
+                                <br> Backspace :刪除
+                                <br> ] :增加升音記號
+                                <br> [ :增加降音記號
+                                <br> S :將連在一起的音符分開
+                                <br> A :將被分開的音符再次連起來
+                                <br>
+                                <br> </p>
+                </div>
+                <div class="item">
+                    <h2 class="ui header" style="color:white;">複製指令</h2>
+                    <p class="mannual">shift+F (普通模式下) :開啟複製模式並記錄此點為複製開始點
+                        <br> shift+F (複製模式下) :以目前位置為複製結束點，記錄複製的東西並結束複製模式
+                        <br> F (複製模式下) :取消複製
+                        <br> G:貼上
+                        <br>
+                        <br> </p>
+            </div>
+        </div>
+    </div>
+
     <script src='js/abcjs_basic_midi.js'></script>
     <!--<script src="js/initializedlogpage.js"></script>-->
     <script src="js/MSOEctr.js"></script>
@@ -300,7 +246,7 @@
     $(document).ready(function() {
         $('#topbar')
             .sidebar('setting', 'transition', 'push')
-            .sidebar('show' {})
+            .sidebar('show')
             .sidebar('setting', 'dimPage', false)
             .sidebar('setting', 'closable', false);
     });
