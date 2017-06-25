@@ -66,11 +66,13 @@ router.post('/', function(req, res) {
             }
             else {
                 message.status.msg = "Success load sheet data(visitable)";
+				message.status.edit = false;
                 message.sheet.cmpstr = sheet.cmpstr;
                 message.sheet.ttlstr = sheet.ttlstr;
                 message.sheet.tmpstr = sheet.tmpstr;
                 message.sheet.abcstr = sheet.abcstr;
                 message.sheet.abcindex = sheet.abcindex;
+				message.sheet.Lstr = sheet.Lstr;
                 message.sheet.strs = sheet.strs;
                 message.sheet.clef = sheet.clef;
 

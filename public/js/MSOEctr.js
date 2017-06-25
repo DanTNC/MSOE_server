@@ -17,9 +17,38 @@ var MSOE = new function() {
     var strs = []; //voices
     var clef = []; //clef of voices
     var page = [];
+    this.actions=[];//record the order of actions for the "undo" command
 
     var host = "http://luffy.ee.ncku.edu.tw:7725/";
-    this.edit = true;
+
+    this.undo = ()=>{
+		var Act = this.actions.pop();
+		if(!Act) return;
+		switch(Act.inst){
+			case 0://insert <-> delete
+			/*
+			case 0:// reverse is delete
+                var Delen = true;// delete enable
+                for(var i = 0, len = this.param2.length; i < len; i++){
+                    if(Obj.AbcStr[this.param1+i]!=this.param2[i]){
+                        Delen = false;
+                        console.log("something's wrong with content");
+                        return
+                    }
+                }
+                if(Delen){
+                    Obj.AbcStr = Obj.AbcStr.substring(0,this.param1)+Obj.AbcStr.substring(this.param1+this.param2.length);
+                }
+			*/
+				break;
+			case 1://delete <-> insert
+				abcstr=abcstr.substring(0,Act.param1)+Act.param2+abcstr.substring(Act.param1);
+				CrtPos=Act.param1;
+				break;
+			default:
+				break;
+		}
+	}
 
     clef[0] = "treble"; //default value
     this.AddVoice = () => {
@@ -487,6 +516,12 @@ var MSOE = new function() {
                         clef = msg.sheet.clef;
 
                         Edit = msg.status.edit;
+						if(!Edit){
+							$(".right.menu a:first-child").hide();
+							$("#modaldiv1").modal("hide");
+							$("#modaldiv2").modal("hide");
+							$("input").attr("disabled","disabled")
+						}
 
                         console.log(msg.status.msg);
                     } else {
@@ -725,12 +760,17 @@ var MSOE = new function() {
             if (abcstr[CrtPos - 1] != "\n") { //deleting notes
                 var DelEnd = mvpos(1); //delete end
                 var Latter = "";
+                var Content="";
                 if (DelEnd != CrtPos) { //if not the last note
                     if (abcstr[DelEnd - 1] == "\n") //if on the position before a "\n", keep "\n" in Latter
                         DelEnd--;
                     Latter = abcstr.substring(DelEnd);
-                }
+                    Content=abcstr.substring(CrtPos,DelEnd);
+                }else{
+					Content=abcstr.substring(CrtPos);
+				}
                 abcstr = abcstr.substring(0, CrtPos) + Latter;
+                this.actions.push({inst:1,param1:CrtPos,param2:Content});
                 CrtPos = mvpos(0);
             } else { //deleting "\n"
                 var NxtPos = mvpos(0); //next position
@@ -785,59 +825,15 @@ var checkinput = () => { //if input tags are focused, turn off key events
         return false;
 };
 
-var moveright = () => {
-    var x0 = $('#quarter2').position().left;
-    var x1 = $('#sixty-fourth').position().left;
-    var x2 = $('#thirty-second').position().left;
-    var x3 = $('#sixteenth').position().left;
-    var x4 = $('#eighth').position().left;
-    var x5 = $('#quarter').position().left;
-    var x6 = $('#half').position().left;
-    var x7 = $('#whole').position().left;
-    var x8 = $('#breve').position().left;
-    $('#quarter2').css('left', x1);
-    $('#sixty-fourth').css('left', x2);
-    $('#thirty-second').css('left', x3);
-    $('#sixteenth').css('left', x4);
-    $('#eighth').css('left', x5);
-    $('#quarter').css('left', x6);
-    $('#half').css('left', x7);
-    $('#whole').css('left', x8);
-    $('#breve').css('left', x0);
-}
-
-var moveleft = () => {
-    var x0 = $('#quarter2').position().left;
-    var x1 = $('#sixty-fourth').position().left;
-    var x2 = $('#thirty-second').position().left;
-    var x3 = $('#sixteenth').position().left;
-    var x4 = $('#eighth').position().left;
-    var x5 = $('#quarter').position().left;
-    var x6 = $('#half').position().left;
-    var x7 = $('#whole').position().left;
-    var x8 = $('#breve').position().left;
-    $('#quarter2').css('left', x8);
-    $('#sixty-fourth').css('left', x0);
-    $('#thirty-second').css('left', x1);
-    $('#sixteenth').css('left', x2);
-    $('#eighth').css('left', x3);
-    $('#quarter').css('left', x4);
-    $('#half').css('left', x5);
-    $('#whole').css('left', x6);
-    $('#breve').css('left', x7);
-}
-
 var key = () => { // only keypress can tell if "shift" is pressed at the same time
     if (checkinput()) return;
     if (!Edit) return;
     switch (event.keyCode) {
         case 44: //"<"
             MSOE.ChgDstate(0);
-            moveright();
             break;
         case 46: //">"
             MSOE.ChgDstate(1);
-            moveleft();
             break;
         case 60: //"shift+>"
             MSOE.ChgDstate(2);
@@ -1012,6 +1008,11 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
             MSOE.untie();
             break;
             // ----------Tie and Untie-----------
+        case 26://"ctrl+z" undo
+			MSOE.undo();
+			event_ok = true;
+			break;
+            // ----------Undo--------------------
         default:
     }
     console.log(event.keyCode);
@@ -1080,7 +1081,7 @@ var btn = (a) => { //buttons for notes
 var chgcmp = (a) => { MSOE.chgcmp(a) };
 var chgtmp = (a) => { MSOE.chgtmp(a) };
 var chgttl = (a) => { MSOE.chgttl(a) };
-
+/*
 $("#save").click(function(e) { MSOE.save(e) });
 $("#play").click(function(e) {
     console.log("aaa");
@@ -1088,15 +1089,66 @@ $("#play").click(function(e) {
     $(".abcjs-midi-start").click();
 });
 $("#print").click(function(e) {
-    printJS("sheet", "html");
+    if(!Edit){
+		MSOE.printabc();
+	}
 });
-
+$("#share").click(function(e){
+	$(".download-midi a").click();
+});
+*/
 $(document).ready(function() {
     MSOE.urlload();
+	$('#modaldiv1').modal('setting', 'transition', 'fade down')
+		.modal({
+			allowMultiple: false
+		})
+		.modal({
+			blurring: true
+		})
+		.modal('setting', 'closable', false);
+	if(Edit){
+		$("#modaldiv1").modal("show");
+	}
+	$("input").change(function(){
+		switch(this.name){
+			case "whoiscomposer":
+				chgcmp(this);
+				break;
+			case "whatistempo":
+				chgtmp(this);
+				break;
+			case "whatistitle":
+				chgttl(this);
+				break; 
+		}
+	});
     MSOE.print();
     document.onkeypress = key;
     document.onkeydown = move;
     document.onkeyup = chord;
+	$("#save").click(function(e) { MSOE.save(e) });
+	$("#play").click(function(e) {
+    	console.log("aaa");
+    	$(".abcjs-midi-reset").click();
+    	$(".abcjs-midi-start").click();
+	});
+	$("#print").click(function(e) {
+    	if(!Edit){
+        	MSOE.printabc();
+    	}
+	});
+	$("#share").click(function(e){
+    	$(".download-midi a")[0].click();
+	});
+    if(Edit){
+		$('#print').hide();
+		$('#play').hide();
+		$('#share').hide();
+	}else{
+		$(".left").hide();
+		$(".panel-group").hide();
+	}
     MIDI.setup({
         soundfontUrl: window.ABCJS.midi.soundfountUrl,
         instruments: window.ABCJS.midi.instruments

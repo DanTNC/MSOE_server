@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="img/MSOE_icon.ico" rel="SHORTCUT ICON">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
     <script src="semanticUI/semantic.min.js"></script>
@@ -51,7 +52,6 @@
                 </div>
             </div>
             <div class="ui button" id="submit" tabindex="0"> 提交 Submit </div>
-            <div class="ui button" id="cancel" tabindex="0"> 取消 Cancel </div>
         </form>
     </div>
     <div class="ui top thin inverted menu" id="topbar">
@@ -118,6 +118,10 @@
                 <div class="one column row meter">Meter</div>
                 <div class="ui input">
                     <input class="one column row input_tempo" onchange="chgtmp(this)" placeholder="4/4" />
+                </div>
+                <div class="one column row">
+                    Octave:
+                    <div id="octave">4</div>
                 </div>
             </div>
         </div>
@@ -226,19 +230,6 @@
                 })　　　　.modal('setting', 'closable', false);
         });
         </script>
-        <script type="text/javascript">
-        $(document).ready(function() {
-            $('#modaldiv1').modal('setting', 'transition', 'fade down')
-                .modal('show')
-                .modal({
-                    allowMultiple: false
-                })
-                .modal({
-                    blurring: true
-                })
-                .modal('setting', 'closable', false);
-        });
-        </script>
         <!--script type="text/javascript">
         $(document).ready(function() {
             $('#topbar')
@@ -248,7 +239,7 @@
                 .sidebar('setting', 'closable', false);
         });
         </script-->
-        <script type="text/javascript">
+        <!--script type="text/javascript">
         $('#cancel').click(function() {
 
             $('#modaldiv1').modal('setting', 'transition', 'fade down')
@@ -260,7 +251,7 @@
                     blurring: true
                 })　　　　.modal('setting', 'closable', false);
         });
-        </script>
+        </script-->
 </body>
 
 </html>
