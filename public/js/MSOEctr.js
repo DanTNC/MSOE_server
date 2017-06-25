@@ -1084,7 +1084,6 @@ var chgttl = (a) => { MSOE.chgttl(a) };
 /*
 $("#save").click(function(e) { MSOE.save(e) });
 $("#play").click(function(e) {
-    console.log("aaa");
     $(".abcjs-midi-reset").click();
     $(".abcjs-midi-start").click();
 });

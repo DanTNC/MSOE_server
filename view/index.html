@@ -8,20 +8,27 @@
     <link href="img/MSOE_icon.ico" rel="SHORTCUT ICON">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
-    <script src="semanticUI/semantic.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="semanticUI/semantic.min.css">
-    <link rel="stylesheet" type="text/css" href="semanticUI/components/icon.css">
-    <link rel='stylesheet' href="css/style.css">
+    <script src="../public/semanticUI/semantic.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../public/semanticUI/semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="../public/semanticUI/components/icon.css">
+    <link rel='stylesheet' href="../public/css/style.css">
 </head>
 
 <body>
     <div id="modaldiv1" class="ui modal start">
-        <h1 class="ui center aligned huge header"><img class="ui large circular image" src="img/logo.png"/>
-  <div class="ui center aligned large header">Music Sheet Online Editor<div class="center aligned sub header ">線上樂譜編輯網</div></div>
-    <button class="ui center aligned large button" id="infomodal">START</button></h1>
+        <h1 class="ui center aligned huge header">
+            <img class="ui large circular image" src="img/logo.png"/>
+            <div class="ui center aligned large header">Music Sheet Online Editor
+                <div class="center aligned sub header ">線上樂譜編輯網</div>
+            </div>
+            <button class="ui center aligned large button" id="infomodal">START</button>
+        </h1>
     </div>
     <div id="modaldiv2" class="ui modal fill">
-        <h2 class="ui header"><img src="img/logo.png" class="ui circular image"> 樂譜資訊 Score Info <h3 class="sub header"> 開始編輯！填入樂譜的資訊 </h3></h2>
+        <h2 class="ui header">
+            <img src="img/logo.png" class="ui circular image"> 樂譜資訊 Score Info 
+            <h3 class="sub header"> 開始編輯！填入樂譜的資訊 </h3>
+        </h2>
         <form class="ui form">
             <div class="two fields">
                 <div class="field">
@@ -63,7 +70,8 @@
         <a class="item" id="share">Share</a>
         <div class="right menu">
             <a class="item" onclick="edit_mode()">編輯</a>
-            <a class="item" onclick="preview_mode()">預覽</a></div>
+            <a class="item" onclick="preview_mode()">預覽</a>
+        </div>
     </div>
     <div class="ui grid">
         <div class="four wide column">
@@ -162,7 +170,8 @@
                         <br> home :移動到此行最開始
                         <br> end :移動到此行最尾端
                         <br>
-                        <br> </p>
+                        <br> 
+                    </p>
                 </div>
                 <div class="item">
                     <h2 class="ui header" style="color:white;">編輯指令</h2>
@@ -170,19 +179,18 @@
                         shift+Z~M :和弦模式
                         <br> D :休止符
                         <br> | :手動加小節線
+                        <br> &lt;&gt; :節拍(/2 or *2)
+                        <br> shift+&lt;&gt;:增減附點
+                        <br> ? :升八度 :(從C3到C6)
+                        <br> ' :降八度 :(從C3到C6)
+                        <br> Backspace :刪除
+                        <br> ] :增加升音記號
+                        <br> [ :增加降音記號
+                        <br> S :將連在一起的音符分開
+                        <br> A :將被分開的音符再次連起來
                         <br>
-                        <> :節拍(/2 or *2)
-                            <br> shift+
-                            <> :增減附點
-                                <br> ? :升八度 :(從C3到C6)
-                                <br> ' :降八度 :(從C3到C6)
-                                <br> Backspace :刪除
-                                <br> ] :增加升音記號
-                                <br> [ :增加降音記號
-                                <br> S :將連在一起的音符分開
-                                <br> A :將被分開的音符再次連起來
-                                <br>
-                                <br> </p>
+                        <br> 
+                    </p>
                 </div>
                 <div class="item">
                     <h2 class="ui header" style="color:white;">複製指令</h2>
@@ -191,14 +199,15 @@
                         <br> F (複製模式下) :取消複製
                         <br> G:貼上
                         <br>
-                        <br> </p>
+                        <br> 
+                    </p>
                 </div>
             </div>
         </div>
-        <script src='js/abcjs_basic_midi.js'></script>
+        <script src='../public/js/abcjs_basic_midi.js'></script>
         <!--<script src="js/initializedlogpage.js"></script>-->
-        <script src="js/MSOEctr.js"></script>
-        <script src="js/modechange.js"></script>
+        <script src="../public/js/MSOEctr.js"></script>
+        <script src="../public/js/modechange.js"></script>
         <script type="text/javascript">
         $('#mannualback,#mannualgo').click(function() {
             $('#sidebar').sidebar('toggle');
@@ -238,8 +247,8 @@
                 .sidebar('setting', 'dimPage', false)
                 .sidebar('setting', 'closable', false);
         });
-        </script-->
-        <!--script type="text/javascript">
+        </script>
+        <script type="text/javascript">
         $('#cancel').click(function() {
 
             $('#modaldiv1').modal('setting', 'transition', 'fade down')
@@ -253,5 +262,4 @@
         });
         </script-->
 </body>
-
 </html>
