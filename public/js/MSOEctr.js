@@ -1,5 +1,17 @@
 var MSOE = new function() {
 
+	var Edit = true; //if it'editable
+	var Edit_const = false;
+
+	this.Edit_ = (set) => {
+		if(set !== undefined){
+			if(!Edit_const){
+				Edit = set;
+			}
+		}
+		return Edit;
+	};
+
     var url = "";
     var index = "";
     var key = "";
@@ -525,6 +537,7 @@ var MSOE = new function() {
 							$("#modaldiv1").modal("hide");
 							$("#modaldiv2").modal("hide");
 							$("input").attr("disabled","disabled")
+							Edit_const = true;
 						}else if(key!=""){
 							console.log(key);
 							$("#modaldiv1").modal("hide");
@@ -824,7 +837,6 @@ var MSOE = new function() {
     }
 }
 
-var Edit = true; //if it'editable
 
 $("#DDDD").click(function() {
     if (!MSOE.checkpause()) { //Pause with duration of 8 is illegal
@@ -845,7 +857,7 @@ var checkinput = () => { //if input tags are focused, turn off key events
 
 var key = () => { // only keypress can tell if "shift" is pressed at the same time
     if (checkinput()) return;
-    if (!Edit) return;
+    if (!MSOE.Edit_()) return;
     switch (event.keyCode) {
         case 44: //"<"
             MSOE.ChgDstate(0);
@@ -1039,7 +1051,7 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
 
 var move = () => { // some keys can't be detected in keypress
     if (checkinput()) return; //if inpus tags are focus, turn off key events
-    if (!Edit) return;
+    if (!MSOE.Edit_()) return;
     //not using switch for speed(avoid looking up table)
     if (event.keyCode == 37) { //"left"
         MSOE.outmove(0);
@@ -1070,7 +1082,7 @@ var move = () => { // some keys can't be detected in keypress
 
 var chord = () => { //keyup event for chord mode
     if (checkinput()) return;
-    if (!Edit) return;
+    if (!MSOE.Edit_()) return;
     MSOE.chmodeoff(event.keyCode);
 };
 
@@ -1123,7 +1135,7 @@ $(document).ready(function() {
 			blurring: true
 		})
 		.modal('setting', 'closable', false);
-	if(Edit){
+	if(MSOE.Edit_()){
 		$("#modaldiv1").modal("show");
 	}
     MSOE.urlload();
@@ -1151,14 +1163,14 @@ $(document).ready(function() {
     	$(".abcjs-midi-start").click();
 	});
 	$("#print").click(function(e) {
-    	if(!Edit){
+    	if(!MSOE.Edit_()){
         	MSOE.printabc();
     	}
 	});
 	$("#share").click(function(e){
     	$(".download-midi a")[0].click();
 	});
-    if(Edit){
+    if(MSOE.Edit_()){
 		$('#print').hide();
 		$('#play').hide();
 		$('#share').hide();

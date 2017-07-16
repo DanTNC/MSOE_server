@@ -4,7 +4,7 @@ var edit_mode = () =>{
   $("#print").hide();
   $("#play").hide();
   $("#share").hide();
-  Edit=true;
+  MSOE.Edit_(true);
   MSOE.print();
 }
 var preview_mode = () =>{
@@ -13,7 +13,7 @@ var preview_mode = () =>{
   $("#print").show();
   $("#play").show();
   $("#share").show();
-  Edit=false;
+  MSOE.Edit_(false);
   MSOE.print();
 }
 
