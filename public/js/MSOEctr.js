@@ -113,6 +113,11 @@ var MSOE = new function() {
     var clefmode = false;
     this.ClfMdTgl = () => { //toggle clefmode
         clefmode = !clefmode;
+		if(clefmode){
+			$("<a class='item' id='clef' style='color:#d7983b;'>Clef</a>").insertAfter("#share");
+		}else{
+			$("#clef").remove();
+		}
     };
     this.ClfOrVic = (kc) => {
         if (clefmode) {
@@ -473,7 +478,6 @@ var MSOE = new function() {
             if (push) {
                 history.pushState({ title: "" }, "", host + "?!" + index + "!" + key);
             }
-            document.getElementById("url").setAttribute('value', host + "?!" + index + "!" + key);
         } else {
             console.log("Web browser doesn't support history api");
         }
@@ -521,6 +525,10 @@ var MSOE = new function() {
 							$("#modaldiv1").modal("hide");
 							$("#modaldiv2").modal("hide");
 							$("input").attr("disabled","disabled")
+						}else if(key!=""){
+							console.log(key);
+							$("#modaldiv1").modal("hide");
+							$("#modaldiv2").modal("hide");
 						}
 
                         console.log(msg.status.msg);
@@ -710,9 +718,11 @@ var MSOE = new function() {
         if (CpMd) {
             CpMd = false;
             var CpEdP = CrtPos; //copy end point
+			var Swap = false;
             if (CrtPos < CpStP) { //if the end is on the left of the startpoint, swap their values.
-                CpEdP = CpStP;
+                CpEdP = CpStP+3;
                 CpStP = CrtPos;
+				Swap = true;
             }
             if (CpStP == 0 || abcstr[CpStP - 1] == "\n") { //don't copy the extra "$" of the startpoint of every line;
                 CpStP++;
@@ -729,9 +739,16 @@ var MSOE = new function() {
             } else {
                 CpStr = abcstr.substring(CpStP, CpStrEd);
             }
+			var p = CpStr.indexOf("$[]");
+			if (( p != -1 )&&( Swap )) {
+				CpStr = CpStr.substring(0,p)+CpStr.substring(p+3);
+			}
+			console.log("copy:"+CpStr);
+			$("#copy").remove();
         } else {
             CpMd = true;
             CpStP = CrtPos;
+			$("<a class='item' id='copy' style='color:#49beb5;'>Copy</a>").insertAfter("#share");
         }
     };
     this.copycancel = () => {
@@ -748,6 +765,7 @@ var MSOE = new function() {
             CrtPos = mvpos(1) + CpStr.length;
             CrtPos = mvpos(0);
         }
+		checkbar();
     };
     this.outmove = (md) => {
         CrtPos = mvpos(md);
@@ -796,8 +814,8 @@ var MSOE = new function() {
             } else if (abcstr.substr(mvpos(1), 2) === "$[") {
                 abcstr = abcstr.substring(0, mvpos(1) + 1) + "#" + abcstr.substring(mvpos(1) + 1);
                 CrtPos = mvpos(1);
+            	checkbar();
             }
-            checkbar();
             this.print();
         }
     };
@@ -844,11 +862,11 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
             // ----------Change Dstate-----------
         case 63: //"shift+?" for chord mode
         case 47: //"?"
-            document.getElementById("octave").innerHTML = (MSOE.ChgTstate(0) + 3);
+            document.getElementById("octave").innerHTML = (MSOE.ChgTstate(1) + 3);
             break;
         case 34: //"shift+'" for chord mode
         case 39: //"'" 
-            document.getElementById("octave").innerHTML = (MSOE.ChgTstate(1) + 3);
+            document.getElementById("octave").innerHTML = (MSOE.ChgTstate(0) + 3);
             break;
             // ----------Change Tstate-----------
         case 122: //"Z"
@@ -1097,7 +1115,6 @@ $("#share").click(function(e){
 });
 */
 $(document).ready(function() {
-    MSOE.urlload();
 	$('#modaldiv1').modal('setting', 'transition', 'fade down')
 		.modal({
 			allowMultiple: false
@@ -1109,6 +1126,7 @@ $(document).ready(function() {
 	if(Edit){
 		$("#modaldiv1").modal("show");
 	}
+    MSOE.urlload();
 	$("input").change(function(){
 		switch(this.name){
 			case "whoiscomposer":
