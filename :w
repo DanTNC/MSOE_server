@@ -140,7 +140,7 @@
 					<div class="ui divider" id="3">
 					</div>
 					<div class="row">
-						<div class="ui inverted brown menu mini borderless">
+						<div class="ui inverted brown menu mini">
   							<a class="item">
     							4
   							</a>
@@ -163,20 +163,13 @@
 					<div class="ui divider" id="3">
 					</div>
 					<div class="row">
-						<div class="ui inverted brown menu mini borderless">
+						<div class="ui inverted brown menu mini">
   							<a class="item">
     							4
   							</a>
-  							<div class="ui dropdown item">
-								bass
-							    <i class="dropdown icon"></i>
-									<div class="menu">
-										<div class="header">clef</div>
-										<a class="item" data-value="treble">treble</a>
-										<a class="item">Medium</a>
-										<a class="item">Large</a>
-									</div>
-							</div>
+  							<a class="item">
+    							bass
+  							</a>
   							<a class="item">
     							Bass
   							</a>
@@ -193,7 +186,7 @@
 					<div class="ui divider" id="3">
 					</div>
 					<div class="row">
-						<div class="ui inverted brown menu mini borderless">
+						<div class="ui inverted brown menu mini">
   							<a class="item">
     							4
   							</a>
@@ -302,7 +295,6 @@
         $('#mannualback,#mannualgo').click(function() {
             $('#sidebar').sidebar('toggle');
         });
-		$('.ui.dropdown').dropdown();
         </script>
         <script type="text/javascript">
         $('#infohome,#infomodal').click(function() {

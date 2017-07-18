@@ -1,6 +1,5 @@
 *{
   font-family: Calibri;
-  font-size: 24px;
   padding: 0px;
   margin: 0px;
   
@@ -234,7 +233,7 @@ img.logo{
   width: 17vh;
   margin-left: 28%;
 }
-.ui.raised.segment{
+#voices{
   height:46vh;
 }
 .footer_input, .footer_input.ui.input{
@@ -245,11 +244,14 @@ img.logo{
   bottom: 2vh;
 }
 #meter_in{
-  bottom: 11vh;
+  bottom: 7vh;
 }
 #meter{
-  bottom: 19vh;
+  bottom: 12vh;
 }
 .divider{
   cursor: pointer;
+}
+#meter_in input{
+  width: 20vw;
 }
