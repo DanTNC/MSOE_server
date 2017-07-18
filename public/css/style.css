@@ -7,29 +7,27 @@
 }
 
 html, body {
-padding: 0px;
-margin: 0px;
+  padding: 0px;
+  margin: 0px;
+  overflow: hidden;
 }
 
 .grid {
-padding:2px;
-
-
+  padding:2px;
 }
 .form {
-font-size:10px;
-margin: 10px;
-padding: 10px;
-padding-top: 10px;
+  font-size:10px;
+  margin: 10px;
+  padding: 10px;
+  padding-top: 10px;
 }
 
 .top{
-height: 12px;
-margin: -5px;
-padding:-5px;
-font-size: 10px;
-color:grey;
-
+  height: 12px;
+  margin: -5px;
+  padding:-5px;
+  font-size: 10px;
+  color:grey;
 }
 
 .bottom {
@@ -37,31 +35,31 @@ color:grey;
 }
 
 .page{
-padding:5px;
+  padding:5px;
 }
 
 .meter{
-padding:5px;
+  padding:5px;
 }
 
 h2{
-color:white;
+  color:white;
 }
 button{
-padding: 2px;
-margin: 0px;
+  padding: 2px;
+  margin: 0px;
 }
 
 .extra_note{
-height: 30px;
-width: auto;
-padding: 2px;
-margin: 0px;
+  height: 30px;
+  width: auto;
+  padding: 2px;
+  margin: 0px;
 }
 
 .mannual {
-font-size:8px;
-font color:white;
+  font-size:8px;
+  font color:white;
 }
 .panel-heading {
   font-size:14px;
@@ -205,4 +203,37 @@ font color:white;
 .site{
   width: 50%;
   border: solid 1px;
+}
+.ui.label{
+  font-size: 1.4vw;
+  margin-top: 0.5vw;
+  margin-left: 0.5vw;
+}
+.ui.raised.segment{
+  height: 19vw;
+  margin-top: 1vw;
+}
+.four.wide.column.left_menu{
+  background-color: #1B1C1D;
+  height: 97vh;
+  padding-left: 2vw;
+}
+.meter{
+  color:white;
+}
+button:focus{
+  outline: none;
+}
+#topbar{
+  border-radius: 0;
+  border-bottom-color: #00B5AD;
+  border-bottom-width: thin;
+  height: 3vh;
+}
+img.logo{
+  width: 10vw;
+  margin-left: 28%;
+}
+.ui.raised.segment{
+  height:32vh;
 }

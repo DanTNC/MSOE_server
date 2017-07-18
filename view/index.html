@@ -66,13 +66,13 @@
             <a class="item" onclick="preview_mode()">預覽</a></div>
     </div>
     <div class="ui grid">
-        <div class="four wide column">
+        <div class="four wide column left_menu">
             <div class="rows">
                 <div class="logo"><img src="img/logo.png" class="logo" width=300px></div>
             </div>
             <!--row top left-->
             <div class="left">
-                <div class="one column row">Notes</div>
+                <!--div class="one column row">Notes</div>
                 <div class="one column row">
                     <button class="circular ui button column"><img src="img/notes-01.png" alt="" class="extra_note ui circular image" id="" /></button>
                     <button class="circular ui button column"><img src="img/notes-02.png" alt="" class="extra_note ui circular image" id="" /></button>
@@ -114,14 +114,37 @@
                     <button class="circular ui button column"><img src="img/note-24.png" alt="" class="extra_note ui circular image" id="" /></button>
                     <button class="circular ui button column"><img src="img/note-25.png" alt="" class="extra_note ui circular image" id="" /></button>
                     <button class="circular ui button column"><img src="img/note-26.png" alt="" class="extra_note ui circular image" id="" /></button>
-                </div>
+                </div-->
+				<div class="ui raised segment inverted">
+					<div class="row">
+						<a class="item">
+							<a class="ui red circular label mini">1</a>
+    						<div class="ui label red clef mini">
+								clef
+							</div>
+						</a>
+					</div>
+					<div class="ui divider" id="1">
+					</div>
+					<div class="row">
+						<a class="item">
+							<a class="ui red circular label mini">2</a>
+    						<div class="ui label red clef mini">
+								clef
+							</div>
+						</a>
+					</div>
+				</div>
                 <div class="one column row meter">Meter</div>
-                <div class="ui input">
+                <div class="ui input mini">
                     <input class="one column row input_tempo" onchange="chgtmp(this)" placeholder="4/4" />
                 </div>
                 <div class="one column row">
-                    Octave:
-                    <div id="octave">4</div>
+                    <!--div id="octave">4</div-->
+					<div class="ui label teal">
+				  		Octave:
+						<div class="detail" id="octave">4</div>
+					</div>
                 </div>
             </div>
         </div>

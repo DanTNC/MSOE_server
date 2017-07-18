@@ -539,7 +539,6 @@ var MSOE = new function() {
 							$("input").attr("disabled","disabled")
 							Edit_const = true;
 						}else if(key!=""){
-							console.log(key);
 							$("#modaldiv1").modal("hide");
 							$("#modaldiv2").modal("hide");
 						}
