@@ -231,9 +231,25 @@ button:focus{
   height: 3vh;
 }
 img.logo{
-  width: 10vw;
+  width: 17vh;
   margin-left: 28%;
 }
 .ui.raised.segment{
-  height:32vh;
+  height:46vh;
+}
+.footer_input, .footer_input.ui.input{
+  position:fixed;
+  left: 2vw;
+}
+#octave_{
+  bottom: 2vh;
+}
+#meter_in{
+  bottom: 11vh;
+}
+#meter{
+  bottom: 19vh;
+}
+.divider{
+  cursor: pointer;
 }
