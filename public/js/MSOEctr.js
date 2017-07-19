@@ -62,34 +62,6 @@ var MSOE = new function() {
 		}
 	}
 
-    clef[0] = "treble"; //default value
-    this.AddVoice = () => {
-        var temindex = clef.length;
-        clef[temindex] = "treble";
-        strs[temindex] = "$";
-        SaveNLoad(temindex);
-
-    };
-    this.DelVoice = () => {
-        if (clef.length == 1) return;
-        strs = strs.slice(0, abcindex).concat(strs.slice(abcindex + 1));
-        clef = clef.slice(0, abcindex).concat(clef.slice(abcindex + 1));
-        console.log(strs);
-        console.log(clef);
-        abcindex = 0;
-        abcstr = strs[0];
-        CrtPos = 0;
-    }
-    this.VicChgA = () => {
-        vicchga = abcindex;
-    }
-    this.VicChgB = () => {
-        if (vicchga === undefined) return; //if not pressed "r" before
-        if (strs[vicchga] === undefined || strs[abcindex] === undefined || clef[vicchga] === undefined) return; //clef of current voice definitely exists
-        strs[vicchga] = [strs[abcindex], strs[abcindex] = strs[vicchga]][0]; //swap strs
-        clef[vicchga] = [clef[abcindex], clef[abcindex] = clef[vicchga]][0]; //swap clef
-        abcindex = vicchga;
-    }
     var GetStrOffset = (ix) => { //get the length before the voice for highlight listener (ix: index)
         var sum = 0;
         for (var i = 0; i < ix + 1; i++) {
@@ -120,15 +92,45 @@ var MSOE = new function() {
         }
         return finalstr;
     };
-
+	//-----------------------------------------//for voices
+    clef[0] = "treble"; //default value
+    this.AddVoice = () => {
+        var temindex = clef.length;
+        clef[temindex] = "treble";
+        strs[temindex] = "$";
+        SaveNLoad(temindex);
+		this.printVoc();
+    };
+    this.DelVoice = () => {
+        if (clef.length == 1) return;
+        strs = strs.slice(0, abcindex).concat(strs.slice(abcindex + 1));
+        clef = clef.slice(0, abcindex).concat(clef.slice(abcindex + 1));
+        console.log(strs);
+        console.log(clef);
+        abcindex = 0;
+        abcstr = strs[0];
+        CrtPos = 0;
+		this.printVoc();
+    }
+    this.VicChgA = () => {
+        vicchga = abcindex;
+    }
+    this.VicChgB = () => {
+        if (vicchga === undefined) return; //if not pressed "r" before
+        if (strs[vicchga] === undefined || strs[abcindex] === undefined || clef[vicchga] === undefined) return; //clef of current voice definitely exists
+        strs[vicchga] = [strs[abcindex], strs[abcindex] = strs[vicchga]][0]; //swap strs
+        clef[vicchga] = [clef[abcindex], clef[abcindex] = clef[vicchga]][0]; //swap clef
+        abcindex = vicchga;
+		this.printVoc();
+    }
     //-----------------------------------------//for clef
     var clefmode = false;
     this.ClfMdTgl = () => { //toggle clefmode
         clefmode = !clefmode;
 		if(clefmode){
-			$("<a class='item' id='clef' style='color:#d7983b;'>Clef</a>").insertAfter("#share");
+			$("#clef").css("color","#d7983b");
 		}else{
-			$("#clef").remove();
+			$("#clef").css("color","");
 		}
     };
     this.ClfOrVic = (kc) => {
@@ -148,10 +150,65 @@ var MSOE = new function() {
                     break;
                 default:
             }
+			this.printVoc();
         } else {
             SaveNLoad(kc - 49);
         }
     };
+	var RdClf = (s, e, Md)=> {
+		var Clfs = ["treble", "alto", "tenor", "bass"];
+		var OrClfs = Clfs.slice();
+		var res = "";
+		var color = "";
+		switch (s) {
+			case "treble":
+				res = "treble";
+				color = "olive";
+				break;
+			case "alto middle=C":
+				res = "alto";
+				color = "yellow";
+				break;
+			case "tenor middle=A":
+				res = "tenor";
+				color = "orange";
+				break;
+			case "bass,,":
+				res = "bass";
+				color = "brown";
+				break;
+		}
+		if(Md == 1){
+			return res;
+		}
+		e.find(".ui.inverted.menu").addClass(color);
+		Clfs.splice(Clfs.indexOf(res),1);
+		e.find(".dp_clef").eq(0).html(Clfs[0]).attr("data-value",OrClfs.indexOf(Clfs[0]));
+		e.find(".dp_clef").eq(1).html(Clfs[1]).attr("data-value",OrClfs.indexOf(Clfs[1]));
+		e.find(".dp_clef").eq(2).html(Clfs[2]).attr("data-value",OrClfs.indexOf(Clfs[2]));
+		return res;
+	}
+	//-----------------------------------------//
+	this.regVocLstEvt = () => { //register voice list events
+		$('.ui.dropdown').dropdown();
+		$(".mCSB_container").css("overflow","visible");
+	};
+	this.printVoc = () => { //render voice list
+		$("#voices .mCSB_container").html("");
+		$.each(clef,(index, value) => {
+			if(index != 0){
+				var d = $('<div class="ui divider v_div"></div>');
+				d.attr("data-value",index);
+				$("#voices .mCSB_container").append(d);
+			}
+			var e = $('<div class="row"><div class="ui inverted menu mini borderless"><a class="item v_num"></a><div class="ui dropdown floating item v_clef"><i class="dropdown icon"></i><div class="menu"><a class="item dp_clef"></a><a class="item dp_clef"></a><a class="item dp_clef"></a></div></div><a class="item v_name">Bass</a><div class="right menu"><a class="item v_up"><i class="angle up mini icon"></i></a><a class="item v_down"><i class="angle down mini icon"></i></a></div></div></div>');
+			e.find(".v_num").html(index+1);
+			e.find(".v_clef").prepend(RdClf(value, e, 0));
+			e.find(".v_name").html(RdClf(value, e, 1));
+			$("#voices .mCSB_container").append(e);
+		});
+		this.regVocLstEvt();
+	};
     //-----------------------------------------//
     this.print = () => { //output svg
         var SS = "T: " + ttlstr + "\nM: " + tmpstr + "\nL: " + Lstr + "\nC: " + cmpstr + "\n" + ForPrint();
@@ -724,7 +781,7 @@ var MSOE = new function() {
         }
     };
     var CpMd = false; //copy mode
-    var CpStP = 0; //copy startpoint
+    var CpStP = -1; //copy startpoint
     var CpStr = ""; //copy string
     this.copymode = () => {
         if (CpMd) {
@@ -756,18 +813,28 @@ var MSOE = new function() {
 				CpStr = CpStr.substring(0,p)+CpStr.substring(p+3);
 			}
 			console.log("copy:"+CpStr);
-			$("#copy").remove();
+			CpStP = -1;
+			$("#copy").css("color","");
         } else {
             CpMd = true;
             CpStP = CrtPos;
-			$("<a class='item' id='copy' style='color:#49beb5;'>Copy</a>").insertAfter("#share");
+			$("#copy").css("color","#49beb5");
         }
     };
     this.copycancel = () => {
         if (CpMd) {
             CpMd = false;
+			$("#copy").css("color","");
+			CpStP = -1;
         }
     };
+	this.copyui = () => {
+		if(CrtPos == CpStP){
+			this.copycancel();
+		}else{
+			this.copymode();
+		}
+	}
     this.paste = () => {
         if (mvpos(1) == CrtPos) {
             abcstr = abcstr + CpStr;
@@ -1039,7 +1106,6 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
             // ----------Tie and Untie-----------
         case 26://"ctrl+z" undo
 			MSOE.undo();
-			event_ok = true;
 			break;
             // ----------Undo--------------------
         default:
@@ -1169,6 +1235,16 @@ $(document).ready(function() {
 	$("#share").click(function(e){
     	$(".download-midi a")[0].click();
 	});
+	$("#copy").click(function(){
+		MSOE.copyui();
+	});
+	$("#clef").click(function(){
+		MSOE.ClfMdTql();
+	});
+	$("#paste").click(function(){
+		MSOE.paste();
+		MSOE.print();
+	});
     if(MSOE.Edit_()){
 		$('#print').hide();
 		$('#play').hide();
@@ -1177,6 +1253,7 @@ $(document).ready(function() {
 		$(".left").hide();
 		$(".panel-group").hide();
 	}
+	MSOE.printVoc();
     MIDI.setup({
         soundfontUrl: window.ABCJS.midi.soundfountUrl,
         instruments: window.ABCJS.midi.instruments

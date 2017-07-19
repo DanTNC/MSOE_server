@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="img/MSOE_icon.ico" rel="SHORTCUT ICON">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://malihu.github.io/custom-scrollbar/jquery.mCustomScrollbar.min.css">
+    <script src="https://malihu.github.io/custom-scrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
     <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
     <script src="semanticUI/semantic.min.js"></script>
     <link rel="stylesheet" type="text/css" href="semanticUI/semantic.min.css">
@@ -115,66 +117,21 @@
                     <button class="circular ui button column"><img src="img/note-25.png" alt="" class="extra_note ui circular image" id="" /></button>
                     <button class="circular ui button column"><img src="img/note-26.png" alt="" class="extra_note ui circular image" id="" /></button>
                 </div-->
-				<div class="ui raised segment inverted" id="voices">
-					<div class="row">
+				<div class="ui raised segment inverted mCustomScrollbar" data-mcs-theme="minimal" data-mcs-axis="yx" id="voices">
+					<!--div class="row">
 						<div class="ui inverted brown menu mini borderless">
   							<a class="item">
     							4
   							</a>
-  							<a class="item">
-    							bass
-  							</a>
-  							<a class="item">
-    							Bass
-  							</a>
-							<div class="right menu">
-  								<a class="item">
-    								<i class="angle up mini icon"></i>
-  								</a>
-  								<a class="item">
-    								<i class="angle down mini icon"></i>
-  								</a>
-							</div>
-						</div>
-					</div>
-					<div class="ui divider" id="3">
-					</div>
-					<div class="row">
-						<div class="ui inverted brown menu mini borderless">
-  							<a class="item">
-    							4
-  							</a>
-  							<a class="item">
-    							bass
-  							</a>
-  							<a class="item">
-    							Bass
-  							</a>
-							<div class="right menu">
-  								<a class="item">
-    								<i class="angle up mini icon"></i>
-  								</a>
-  								<a class="item">
-    								<i class="angle down mini icon"></i>
-  								</a>
-							</div>
-						</div>
-					</div>
-					<div class="ui divider" id="3">
-					</div>
-					<div class="row">
-						<div class="ui inverted brown menu mini borderless">
-  							<a class="item">
-    							4
-  							</a>
-  							<div class="ui dropdown item">
+  							<div class="ui floating brown dropdown item">
 								bass
 							    <i class="dropdown icon"></i>
 									<div class="menu">
 										<div class="header">clef</div>
-										<a class="item" data-value="treble">treble</a>
-										<a class="item">Medium</a>
-										<a class="item">Large</a>
+										<div class="divider"></div>
+										<a class="item" data-value="0">treble</a>
+										<a class="item" data-value="1">alto</a>
+										<a class="item" data-value="2">tenor</a>
 									</div>
 							</div>
   							<a class="item">
@@ -191,28 +148,12 @@
 						</div>
 					</div>
 					<div class="ui divider" id="3">
-					</div>
-					<div class="row">
-						<div class="ui inverted brown menu mini borderless">
-  							<a class="item">
-    							4
-  							</a>
-  							<a class="item">
-    							bass
-  							</a>
-  							<a class="item">
-    							Bass
-  							</a>
-							<div class="right menu">
-  								<a class="item">
-    								<i class="angle up mini icon"></i>
-  								</a>
-  								<a class="item">
-    								<i class="angle down mini icon"></i>
-  								</a>
-							</div>
-						</div>
-					</div>
+					</div-->
+				</div>
+				<div class="ui three item inverted menu large borderless">
+					<a class="item" id="copy">Copy</a>
+					<a class="item" id="paste">Paste</a>
+					<a class="item" id="clef">Clef</a>
 				</div>
                 <div class="footer_input one wide column row meter" id="meter">Meter</div>
                 <div class="footer_input one wide column row ui input mini" id="meter_in">
@@ -302,7 +243,6 @@
         $('#mannualback,#mannualgo').click(function() {
             $('#sidebar').sidebar('toggle');
         });
-		$('.ui.dropdown').dropdown();
         </script>
         <script type="text/javascript">
         $('#infohome,#infomodal').click(function() {
