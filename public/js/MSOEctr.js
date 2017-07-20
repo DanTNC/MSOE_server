@@ -28,8 +28,9 @@ var MSOE = new function() {
     var maxoffset = 0; //the maximum of offset
     var strs = []; //voices
     var clef = []; //clef of voices
+	var voicename = []; //name of voices
     var page = [];
-    this.actions=[];//record the order of actions for the "undo" command
+    this.actions = [];//record the order of actions for the "undo" command
 
     var host = "http://luffy.ee.ncku.edu.tw:7725/";
 
@@ -38,20 +39,17 @@ var MSOE = new function() {
 		if(!Act) return;
 		switch(Act.inst){
 			case 0://insert <-> delete
-			/*
-			case 0:// reverse is delete
                 var Delen = true;// delete enable
-                for(var i = 0, len = this.param2.length; i < len; i++){
-                    if(Obj.AbcStr[this.param1+i]!=this.param2[i]){
+                for(var i = 0, len = Act.param2.length; i < len; i++){
+                    if(abcstr[Act.param1+i]!=Act.param2[i]){
                         Delen = false;
                         console.log("something's wrong with content");
-                        return
+                        return;
                     }
                 }
                 if(Delen){
-                    Obj.AbcStr = Obj.AbcStr.substring(0,this.param1)+Obj.AbcStr.substring(this.param1+this.param2.length);
+                    abcstr = abcstr.substring(0,Act.param1)+abcstr.substring(Act.param1+Act.param2.length);
                 }
-			*/
 				break;
 			case 1://delete <-> insert
 				abcstr=abcstr.substring(0,Act.param1)+Act.param2+abcstr.substring(Act.param1);
@@ -111,18 +109,34 @@ var MSOE = new function() {
         abcstr = strs[0];
         CrtPos = 0;
 		this.printVoc();
-    }
+    };
     this.VicChgA = () => {
         vicchga = abcindex;
-    }
+    };
     this.VicChgB = () => {
         if (vicchga === undefined) return; //if not pressed "r" before
         if (strs[vicchga] === undefined || strs[abcindex] === undefined || clef[vicchga] === undefined) return; //clef of current voice definitely exists
         strs[vicchga] = [strs[abcindex], strs[abcindex] = strs[vicchga]][0]; //swap strs
         clef[vicchga] = [clef[abcindex], clef[abcindex] = clef[vicchga]][0]; //swap clef
         abcindex = vicchga;
+		vicchga = undefined;
 		this.printVoc();
-    }
+    };
+	var VicChgB_ = (vicchgb) => {
+        if (vicchga === undefined) return; //if not pressed "r" before
+        if (strs[vicchga] === undefined || strs[vicchgb] === undefined || clef[vicchga] === undefined) return; //clef of current voice definitely exists
+		strs[abcindex] = abcstr;
+        strs[vicchga] = [strs[vicchgb], strs[vicchgb] = strs[vicchga]][0]; //swap strs
+        clef[vicchga] = [clef[vicchgb], clef[vicchgb] = clef[vicchga]][0]; //swap clef
+		abcstr = strs[abcindex];
+		if(abcindex == vicchga){
+			SaveNLoad(vicchgb);
+		}else if(abcindex == vicchgb){
+			SaveNLoad(vicchga);
+		}
+		vicchga = undefined;
+		this.printVoc();
+	};
     //-----------------------------------------//for clef
     var clefmode = false;
     this.ClfMdTgl = () => { //toggle clefmode
@@ -189,9 +203,34 @@ var MSOE = new function() {
 		return res;
 	}
 	//-----------------------------------------//
+	var ChgVocMd = false;
 	this.regVocLstEvt = () => { //register voice list events
-		$('.ui.dropdown').dropdown();
+		$(".ui.dropdown").dropdown();
 		$(".mCSB_container").css("overflow","visible");
+		$(".v_num").click(function(){
+			if(ChgVocMd){
+				VicChgB_(parseInt($(this).html()) - 1);
+			}else{
+				vicchga = parseInt($(this).html()) - 1;
+				$(this).css("background","rgba(0, 0, 0, 0.15)");
+			}
+			ChgVocMd = !ChgVocMd;
+			MSOE.print();
+		});
+		$(".v_up").click(function(){
+			var vic = parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html()) - 1;
+			if(vic == 0) return;
+			vicchga = vic;
+			VicChgB_(vic - 1);
+			MSOE.print();
+		});
+		$(".v_down").click(function(){
+			var vic = parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html()) - 1;
+			if(vic == clef.length - 1) return;
+			vicchga = vic;
+			VicChgB_(vic + 1);
+			MSOE.print();
+		});
 	};
 	this.printVoc = () => { //render voice list
 		$("#voices .mCSB_container").html("");
@@ -201,12 +240,15 @@ var MSOE = new function() {
 				d.attr("data-value",index);
 				$("#voices .mCSB_container").append(d);
 			}
-			var e = $('<div class="row"><div class="ui inverted menu mini borderless"><a class="item v_num"></a><div class="ui dropdown floating item v_clef"><i class="dropdown icon"></i><div class="menu"><a class="item dp_clef"></a><a class="item dp_clef"></a><a class="item dp_clef"></a></div></div><a class="item v_name">Bass</a><div class="right menu"><a class="item v_up"><i class="angle up mini icon"></i></a><a class="item v_down"><i class="angle down mini icon"></i></a></div></div></div>');
+			var e = $('<div class="row"><div class="ui inverted menu small borderless"><a class="item v_num"></a><div class="ui dropdown floating item v_clef"><i class="dropdown icon"></i><div class="menu"><a class="item dp_clef"></a><a class="item dp_clef"></a><a class="item dp_clef"></a></div></div><a class="item v_name">Bass</a><div class="right menu"><a class="item v_up"><i class="angle up mini icon"></i></a><a class="item v_down"><i class="angle down mini icon"></i></a></div></div></div>');
 			e.find(".v_num").html(index+1);
 			e.find(".v_clef").prepend(RdClf(value, e, 0));
 			e.find(".v_name").html(RdClf(value, e, 1));
 			$("#voices .mCSB_container").append(e);
 		});
+		var DOM = $("<div class='ui inverted segment'></div>");
+		DOM.css("height",$(".ui.dropdown .menu").height()+"px");
+		$("#voices .mCSB_container").append(DOM)
 		this.regVocLstEvt();
 	};
     //-----------------------------------------//
@@ -1176,21 +1218,7 @@ var btn = (a) => { //buttons for notes
 var chgcmp = (a) => { MSOE.chgcmp(a) };
 var chgtmp = (a) => { MSOE.chgtmp(a) };
 var chgttl = (a) => { MSOE.chgttl(a) };
-/*
-$("#save").click(function(e) { MSOE.save(e) });
-$("#play").click(function(e) {
-    $(".abcjs-midi-reset").click();
-    $(".abcjs-midi-start").click();
-});
-$("#print").click(function(e) {
-    if(!Edit){
-		MSOE.printabc();
-	}
-});
-$("#share").click(function(e){
-	$(".download-midi a").click();
-});
-*/
+
 $(document).ready(function() {
 	$('#modaldiv1').modal('setting', 'transition', 'fade down')
 		.modal({
@@ -1223,7 +1251,6 @@ $(document).ready(function() {
     document.onkeyup = chord;
 	$("#save").click(function(e) { MSOE.save(e) });
 	$("#play").click(function(e) {
-    	console.log("aaa");
     	$(".abcjs-midi-reset").click();
     	$(".abcjs-midi-start").click();
 	});
@@ -1239,7 +1266,7 @@ $(document).ready(function() {
 		MSOE.copyui();
 	});
 	$("#clef").click(function(){
-		MSOE.ClfMdTql();
+		MSOE.ClfMdTgl();
 	});
 	$("#paste").click(function(){
 		MSOE.paste();
