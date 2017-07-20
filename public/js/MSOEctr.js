@@ -63,7 +63,7 @@ var MSOE = new function() {
     var GetStrOffset = (ix) => { //get the length before the voice for highlight listener (ix: index)
         var sum = 0;
         for (var i = 0; i < ix + 1; i++) {
-            sum += 12 + (Math.floor(Math.log10(i + 1)) + 1) + clef[i].length;
+            sum += 20 + (Math.floor(Math.log10(i + 1)) + 1) + clef[i].length + (voicename[i] || RdClf(clef[i], undefined, 1)).length;
             if (i != ix) sum += rmsmb(strs[i], false).length + 4;
         }
         maxoffset = rmsmb(abcstr, true).length + 4;
@@ -77,25 +77,31 @@ var MSOE = new function() {
         CrtPos = 0;
     };
     var ForPrint = () => {
-
         console.log(abcstr);
         console.log(clef.length);
         var finalstr = "";
         for (var i = 0; i < clef.length; i++) {
             if (i != abcindex) {
-                finalstr += "V: " + (i + 1) + " clef=" + clef[i] + "\n[|" + rmsmb(strs[i], false) + " |]\n";
+                finalstr += "V: " + (i + 1) + " clef=" + clef[i] + " name=\"" + (voicename[i] || RdClf(clef[i], undefined, 1)) + "\"\n[|" + rmsmb(strs[i], false) + " |]\n";
             } else {
-                finalstr += "V: " + (i + 1) + " clef=" + clef[i] + "\n[|" + rmsmb(abcstr, Edit) + " |]\n";
+                finalstr += "V: " + (i + 1) + " clef=" + clef[i] + " name=\"" + (voicename[i] || RdClf(clef[i], undefined, 1)) + "\"\n[|" + rmsmb(abcstr, Edit) + " |]\n";
             }
         }
         return finalstr;
     };
 	//-----------------------------------------//for voices
     clef[0] = "treble"; //default value
+	voicename[0] = undefined; //default value
+	var InsVocBef = false;
+	this.insvocbef = (v) => {
+		InsVocBef = v;
+		console.log(v);
+	};
     this.AddVoice = () => {
         var temindex = clef.length;
         clef[temindex] = "treble";
         strs[temindex] = "$";
+		voicename[temindex] = undefined;
         SaveNLoad(temindex);
 		this.printVoc();
     };
@@ -103,10 +109,9 @@ var MSOE = new function() {
         if (clef.length == 1) return;
         strs = strs.slice(0, abcindex).concat(strs.slice(abcindex + 1));
         clef = clef.slice(0, abcindex).concat(clef.slice(abcindex + 1));
-        console.log(strs);
-        console.log(clef);
-        abcindex = 0;
-        abcstr = strs[0];
+		voicename = voicename.slice(0, abcindex).concat(voicename.slice(abcindex + 1));
+		if(abcindex != 0) abcindex--;
+		abcstr = strs[abcindex];
         CrtPos = 0;
 		this.printVoc();
     };
@@ -147,20 +152,21 @@ var MSOE = new function() {
 			$("#clef").css("color","");
 		}
     };
-    this.ClfOrVic = (kc) => {
-        if (clefmode) {
+    this.ClfOrVic = (kc, ui, ind) => {
+		var clfind = (ui === true)?ind:abcindex;
+        if (clefmode || ui) {
             switch (kc) {
                 case 49:
-                    clef[abcindex] = "treble";
+                    clef[clfind] = "treble";
                     break;
                 case 50:
-                    clef[abcindex] = "alto middle=C";
+                    clef[clfind] = "alto middle=C";
                     break;
                 case 51:
-                    clef[abcindex] = "tenor middle=A";
+                    clef[clfind] = "tenor middle=A";
                     break;
                 case 52:
-                    clef[abcindex] = "bass,,";
+                    clef[clfind] = "bass,,";
                     break;
                 default:
             }
@@ -231,6 +237,11 @@ var MSOE = new function() {
 			VicChgB_(vic + 1);
 			MSOE.print();
 		});
+		$(".dp_clef").click(function(){
+			var vic = parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html()) - 1;
+			MSOE.ClfOrVic(parseInt($(this).attr("data-value")) + 49, true, vic);
+			MSOE.print();
+		});
 	};
 	this.printVoc = () => { //render voice list
 		$("#voices .mCSB_container").html("");
@@ -240,10 +251,10 @@ var MSOE = new function() {
 				d.attr("data-value",index);
 				$("#voices .mCSB_container").append(d);
 			}
-			var e = $('<div class="row"><div class="ui inverted menu small borderless"><a class="item v_num"></a><div class="ui dropdown floating item v_clef"><i class="dropdown icon"></i><div class="menu"><a class="item dp_clef"></a><a class="item dp_clef"></a><a class="item dp_clef"></a></div></div><a class="item v_name">Bass</a><div class="right menu"><a class="item v_up"><i class="angle up mini icon"></i></a><a class="item v_down"><i class="angle down mini icon"></i></a></div></div></div>');
+			var e = $('<div class="row"><div class="ui inverted menu small borderless"><a class="item v_num"></a><div class="ui dropdown floating item v_clef"><div class="menu"><a class="item dp_clef"></a><a class="item dp_clef"></a><a class="item dp_clef"></a></div></div><a class="item v_name">Bass</a><div class="right menu"><a class="item v_up"><i class="angle up mini icon"></i></a><a class="item v_down"><i class="angle down mini icon"></i></a></div></div></div>');
 			e.find(".v_num").html(index+1);
 			e.find(".v_clef").prepend(RdClf(value, e, 0));
-			e.find(".v_name").html(RdClf(value, e, 1));
+			e.find(".v_name").html(voicename[index] || RdClf(value, e, 1));
 			$("#voices .mCSB_container").append(e);
 		});
 		var DOM = $("<div class='ui inverted segment'></div>");
@@ -1184,6 +1195,9 @@ var move = () => { // some keys can't be detected in keypress
     if (event.keyCode == 16) { //"shift" for chord mode on
         MSOE.chmodeon();
     }
+	if (event.keyCode == 17) { //"ctrl" for add voice before
+		MSOE.insvocbef(true);
+	}
     MSOE.print();
 };
 
@@ -1191,6 +1205,9 @@ var chord = () => { //keyup event for chord mode
     if (checkinput()) return;
     if (!MSOE.Edit_()) return;
     MSOE.chmodeoff(event.keyCode);
+	if (event.keyCode == 17) { //"ctrl" for add voice before
+		MSOE.insvocbef(false);
+	}
 };
 
 var highlight = (a) => {
