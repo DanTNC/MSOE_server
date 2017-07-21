@@ -31,6 +31,7 @@ var MSOE = new function() {
 	var voicename = []; //name of voices
     var page = [];
     this.actions = [];//record the order of actions for the "undo" command
+    this.re_actions = [];//record the order of undone actions for the "redo" command
 
     var host = "http://luffy.ee.ncku.edu.tw:7725/";
 
@@ -38,7 +39,7 @@ var MSOE = new function() {
 		var Act = this.actions.pop();
 		if(!Act) return;
 		switch(Act.inst){
-			case 0://insert <-> delete
+			case 0://insert <-> delete param: [insertPos, insertStr]
                 var Delen = true;// delete enable
                 for(var i = 0, len = Act.param2.length; i < len; i++){
                     if(abcstr[Act.param1+i]!=Act.param2[i]){
@@ -49,16 +50,29 @@ var MSOE = new function() {
                 }
                 if(Delen){
                     abcstr = abcstr.substring(0,Act.param1)+abcstr.substring(Act.param1+Act.param2.length);
+					CrtPos = Act.param1;
+					CrtPos = mvpos(0);
                 }
 				break;
-			case 1://delete <-> insert
+			case 1://delete <-> insert param: [deletePos, deleteStr]
 				abcstr=abcstr.substring(0,Act.param1)+Act.param2+abcstr.substring(Act.param1);
-				CrtPos=Act.param1;
+				if(Act.param2 != "\n$"){
+					CrtPos=Act.param1;
+				}else{
+					CrtPos=Act.param1 + 1;
+				}
+				break;
+			case 2://assemble <-> disassemble direct(0: ->, 1: <-) param: [A_DPos, direct]
+				break;
+			case 3://# <-> b direct(0: ->, 1: <-) param: [accidentialPos, direct]
+				break;
+			case 4://tie <-> untie direct(0: ->, 1: <-) param: [T_UPos, direct]
 				break;
 			default:
 				break;
 		}
-	}
+		this.re_actions.push(Act);
+	};
 
     var GetStrOffset = (ix) => { //get the length before the voice for highlight listener (ix: index)
         var sum = 0;
@@ -95,14 +109,26 @@ var MSOE = new function() {
 	var InsVocBef = false;
 	this.insvocbef = (v) => {
 		InsVocBef = v;
-		console.log(v);
+	};
+	this.ChgVicName = (vn) => {
+		voicename[abcindex] = vn;
+		this.printVoc();
+	};
+	this.ClrVicName = () => {
+		voicename[abcindex]	= undefined;
+		this.printVoc();
 	};
     this.AddVoice = () => {
-        var temindex = clef.length;
-        clef[temindex] = "treble";
-        strs[temindex] = "$";
-		voicename[temindex] = undefined;
-        SaveNLoad(temindex);
+		var insind = (InsVocBef)?abcindex:(abcindex+1);
+		clef.splice(insind, 0, "treble");
+		strs.splice(insind, 0, "$");
+		voicename.splice(insind, 0, undefined);
+		if(!InsVocBef){
+			SaveNLoad(insind);
+		}else{
+			strs[abcindex+1] = abcstr;
+			abcstr = strs[abcindex];
+		}
 		this.printVoc();
     };
     this.DelVoice = () => {
@@ -123,6 +149,7 @@ var MSOE = new function() {
         if (strs[vicchga] === undefined || strs[abcindex] === undefined || clef[vicchga] === undefined) return; //clef of current voice definitely exists
         strs[vicchga] = [strs[abcindex], strs[abcindex] = strs[vicchga]][0]; //swap strs
         clef[vicchga] = [clef[abcindex], clef[abcindex] = clef[vicchga]][0]; //swap clef
+        voicename[vicchga] = [voicename[abcindex], voicename[abcindex] = voicename[vicchga]][0]; //swap clef
         abcindex = vicchga;
 		vicchga = undefined;
 		this.printVoc();
@@ -133,6 +160,7 @@ var MSOE = new function() {
 		strs[abcindex] = abcstr;
         strs[vicchga] = [strs[vicchgb], strs[vicchgb] = strs[vicchga]][0]; //swap strs
         clef[vicchga] = [clef[vicchgb], clef[vicchgb] = clef[vicchga]][0]; //swap clef
+        voicename[vicchga] = [voicename[vicchgb], voicename[vicchgb] = voicename[vicchga]][0]; //swap clef
 		abcstr = strs[abcindex];
 		if(abcindex == vicchga){
 			SaveNLoad(vicchgb);
@@ -242,6 +270,10 @@ var MSOE = new function() {
 			MSOE.ClfOrVic(parseInt($(this).attr("data-value")) + 49, true, vic);
 			MSOE.print();
 		});
+		$(".v_name").click(function(){
+			SaveNLoad(parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html()) - 1);
+			MSOE.print();
+		});
 	};
 	this.printVoc = () => { //render voice list
 		$("#voices .mCSB_container").html("");
@@ -251,7 +283,7 @@ var MSOE = new function() {
 				d.attr("data-value",index);
 				$("#voices .mCSB_container").append(d);
 			}
-			var e = $('<div class="row"><div class="ui inverted menu small borderless"><a class="item v_num"></a><div class="ui dropdown floating item v_clef"><div class="menu"><a class="item dp_clef"></a><a class="item dp_clef"></a><a class="item dp_clef"></a></div></div><a class="item v_name">Bass</a><div class="right menu"><a class="item v_up"><i class="angle up mini icon"></i></a><a class="item v_down"><i class="angle down mini icon"></i></a></div></div></div>');
+			var e = $('<div class="row"><div class="ui inverted menu small borderless"><a class="item v_num"></a><div class="ui dropdown floating item v_clef"><div class="dp_menu menu"><a class="item dp_clef"></a><a class="item dp_clef"></a><a class="item dp_clef"></a></div></div><a class="item v_name">Bass</a><div class="right menu"><a class="item v_up"><i class="angle up mini icon"></i></a><a class="item v_down"><i class="angle down mini icon"></i></a></div></div></div>');
 			e.find(".v_num").html(index+1);
 			e.find(".v_clef").prepend(RdClf(value, e, 0));
 			e.find(".v_name").html(voicename[index] || RdClf(value, e, 1));
@@ -532,10 +564,12 @@ var MSOE = new function() {
                 InsBef--;
             abcstr = abcstr.substring(0, InsBef) + (md != 1 ? "$" : "") + str + abcstr.substring(InsBef);
         } else {
+			InsBef = abcstr.length;
             abcstr = abcstr + (md != 1 ? "$" : "") + str; //append
         }
         CrtPos = (md != 1) ? mvpos(1) : CrtPos;
-        console.log(abcstr);
+        if(str != "$[]")
+			this.actions.push({inst: 0, param1: InsBef, param2: (md != 1 ? "$" : "") + str});
     };
     var insertch = (str) => { //insert for chord
         for (var i = mvpos(1) + 2; i < abcstr.length; i++) {
@@ -603,11 +637,6 @@ var MSOE = new function() {
         } else {
             console.log("Web browser doesn't support history api");
         }
-    };
-    this.printall = () => {
-        console.log(url);
-        console.log(index);
-        console.log(key);
     };
     this.urlload = () => {
         url = location.href.split("?")[1] || "";
@@ -920,12 +949,13 @@ var MSOE = new function() {
 					Content=abcstr.substring(CrtPos);
 				}
                 abcstr = abcstr.substring(0, CrtPos) + Latter;
-                this.actions.push({inst:1,param1:CrtPos,param2:Content});
+                this.actions.push({inst: 1, param1: CrtPos, param2: Content});
                 CrtPos = mvpos(0);
             } else { //deleting "\n"
                 var NxtPos = mvpos(0); //next position
                 if (abcstr[CrtPos - 1] == "\n") {
                     abcstr = abcstr.substring(0, CrtPos - 1) + abcstr.substring(CrtPos + 1);
+                	this.actions.push({inst: 1, param1: CrtPos - 1, param2: "\n$"});
                     CrtPos = NxtPos;
                 }
             }
@@ -945,7 +975,9 @@ var MSOE = new function() {
                 abcstr = abcstr.substring(0, mvpos(1)) + abcstr.substring(mvpos(1) + 3);
             } else if (abcstr.substr(mvpos(1), 2) === "$[") {
                 abcstr = abcstr.substring(0, mvpos(1) + 1) + "#" + abcstr.substring(mvpos(1) + 1);
+				var pos = mvpos(1);
                 CrtPos = mvpos(1);
+				this.actions.push({inst: 0, param1: pos, param2: abcstr.substring(pos, ((CrtPos == mvpos(1))?abcstr.length:mvpos(1)))});
             	checkbar();
             }
             this.print();
@@ -975,6 +1007,7 @@ var checkinput = () => { //if input tags are focused, turn off key events
 };
 
 var key = () => { // only keypress can tell if "shift" is pressed at the same time
+	if ($("#voicename").is(":focus") && (event.keyCode == 13)) $("#check").click();
     if (checkinput()) return;
     if (!MSOE.Edit_()) return;
     switch (event.keyCode) {
@@ -1146,10 +1179,6 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
             MSOE.VicChgB();
             break;
             // ----------Clef and Voice----------
-        case 116: //"t" use browser printer to print the sheet (can save as pdf)
-            //MSOE.printabc();
-            break;
-            // ----------Print (as pdf)----------
         case 45: //"-" tie two notes
             MSOE.tie();
             break;
@@ -1287,6 +1316,23 @@ $(document).ready(function() {
 	});
 	$("#paste").click(function(){
 		MSOE.paste();
+		MSOE.print();
+	});
+	$("#plus").click(function(){
+		MSOE.AddVoice();
+		MSOE.print();
+	});
+	$("#minus").click(function(){
+		MSOE.DelVoice();
+		MSOE.print();
+	});
+	$("#check").click(function(){
+		MSOE.ChgVicName($("#voicename").val());
+		$("#voicename").val("");
+		MSOE.print();
+	});
+	$("#remove").click(function(){
+		MSOE.ClrVicName();
 		MSOE.print();
 	});
     if(MSOE.Edit_()){
