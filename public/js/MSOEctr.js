@@ -1,3 +1,9 @@
+var Error = (e) => {
+	$("#error p").html(e);
+	$("#error").show();
+	setTimeout(()=>{$("#error").fadeOut()}, 2000);
+};
+
 var MSOE = new function() {
 
 	var Edit = true; //if it'editable
@@ -111,6 +117,10 @@ var MSOE = new function() {
 		InsVocBef = v;
 	};
 	this.ChgVicName = (vn) => {
+		if(vn.indexOf("\"") != -1){
+			Error("A voicename can't contain \".");
+			return;
+		}
 		voicename[abcindex] = vn;
 		this.printVoc();
 	};
@@ -1081,7 +1091,7 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
             if (!MSOE.checkpause()) { //Pause with duration of 8 is illegal
                 MSOE.outinsert("z", 1, 0, 1);
             } else {
-                alert("Pause with duration of 2 is illegal.");
+				Error("Pause with duration of 2 is illegal.");
             }
             break;
             // ----------Insert Pause-----------
@@ -1349,4 +1359,5 @@ $(document).ready(function() {
         instruments: window.ABCJS.midi.instruments
     });
     $("#midi").hide();
+	$("#error").hide();
 });

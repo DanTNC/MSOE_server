@@ -75,9 +75,15 @@ button{
   background-repeat: repeat;
   background-size: 1500px;
 }
+.keyboard {
+  height: 22vh;
+}
 .keyboard button {
   position: absolute;
   border: solid 1px;
+}
+#error {
+  width: 14.5vw;
 }
 .white{
   background-color: white;
