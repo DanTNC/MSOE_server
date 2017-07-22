@@ -77,7 +77,7 @@ var MSOE = new function() {
     var GetStrOffset = (ix) => { //get the length before the voice for highlight listener (ix: index)
         var sum = 0;
         for (var i = 0; i < ix + 1; i++) {
-            sum += 20 + (Math.floor(Math.log10(i + 1)) + 1) + clef[i].length + (voicename[i] || RdClf(clef[i], undefined, 1)).length;
+            sum += 20 + (Math.floor(Math.log10(i + 1)) + 1) + clef[i].length + ((voicename[i] === undefined)?RdClf(clef[i], undefined, 1):voicename[i]).length;
             if (i != ix) sum += rmsmb(strs[i], false).length + 4;
         }
         maxoffset = rmsmb(abcstr, true).length + 4;
@@ -96,9 +96,9 @@ var MSOE = new function() {
         var finalstr = "";
         for (var i = 0; i < clef.length; i++) {
             if (i != abcindex) {
-                finalstr += "V: " + (i + 1) + " clef=" + clef[i] + " name=\"" + (voicename[i] || RdClf(clef[i], undefined, 1)) + "\"\n[|" + rmsmb(strs[i], false) + " |]\n";
+                finalstr += "V: " + (i + 1) + " clef=" + clef[i] + " name=\"" + ((voicename[i] === undefined)?RdClf(clef[i], undefined, 1):voicename[i]) + "\"\n[|" + rmsmb(strs[i], false) + " |]\n";
             } else {
-                finalstr += "V: " + (i + 1) + " clef=" + clef[i] + " name=\"" + (voicename[i] || RdClf(clef[i], undefined, 1)) + "\"\n[|" + rmsmb(abcstr, Edit) + " |]\n";
+                finalstr += "V: " + (i + 1) + " clef=" + clef[i] + " name=\"" + ((voicename[i] === undefined)?RdClf(clef[i], undefined, 1):voicename[i]) + "\"\n[|" + rmsmb(abcstr, Edit) + " |]\n";
             }
         }
         return finalstr;
@@ -286,7 +286,7 @@ var MSOE = new function() {
 			var e = $('<div class="row"><div class="ui inverted menu small borderless"><a class="item v_num"></a><div class="ui dropdown floating item v_clef"><div class="dp_menu menu"><a class="item dp_clef"></a><a class="item dp_clef"></a><a class="item dp_clef"></a></div></div><a class="item v_name">Bass</a><div class="right menu"><a class="item v_up"><i class="angle up mini icon"></i></a><a class="item v_down"><i class="angle down mini icon"></i></a></div></div></div>');
 			e.find(".v_num").html(index+1);
 			e.find(".v_clef").prepend(RdClf(value, e, 0));
-			e.find(".v_name").html(voicename[index] || RdClf(value, e, 1));
+			e.find(".v_name").html((voicename[index] === undefined)?RdClf(value, e, 1):voicename[index]);
 			$("#voices .mCSB_container").append(e);
 		});
 		var DOM = $("<div class='ui inverted segment'></div>");
