@@ -41,9 +41,7 @@ var MSOE = new function() {
 
     var host = "http://luffy.ee.ncku.edu.tw:7725/";
 
-    this.undo = ()=>{
-		var Act = this.actions.pop();
-		if(!Act) return;
+	var doAct = (Act) => {
 		switch(Act.inst){
 			case 0://insert <-> delete param: [insertPos, insertStr]
                 var Delen = true;// delete enable
@@ -77,6 +75,12 @@ var MSOE = new function() {
 			default:
 				break;
 		}
+	};
+
+    this.undo = ()=>{
+		var Act = this.actions.pop();
+		if(!Act) return;
+		doAct(Act);
 		this.re_actions.push(Act);
 	};
 
@@ -156,6 +160,7 @@ var MSOE = new function() {
     };
     this.VicChgB = () => {
         if (vicchga === undefined) return; //if not pressed "r" before
+		if (ChgVocMd) return; //if vicchga is set by ui
         if (strs[vicchga] === undefined || strs[abcindex] === undefined || clef[vicchga] === undefined) return; //clef of current voice definitely exists
         strs[vicchga] = [strs[abcindex], strs[abcindex] = strs[vicchga]][0]; //swap strs
         clef[vicchga] = [clef[abcindex], clef[abcindex] = clef[vicchga]][0]; //swap clef
@@ -273,6 +278,36 @@ var MSOE = new function() {
 			if(vic == clef.length - 1) return;
 			vicchga = vic;
 			VicChgB_(vic + 1);
+			MSOE.print();
+		});
+		$(".v_div").click(function(){
+			if(!ChgVocMd || vicchga === undefined) return; //if other voice not clicked before
+			var vic = parseInt($(this).attr("data-value"));
+			if([vic, vic-1].includes(vicchga)){ //voices around divider can't be changed
+				ChgVocMd = false;
+				MSOE.printVoc();
+				return;
+			}
+			strs[abcindex] = abcstr;
+			clef.splice(vic, 0, clef[vicchga]);
+			strs.splice(vic, 0, strs[vicchga]);
+			voicename.splice(vic, 0, voicename[vicchga]);
+			var tmpvica = vicchga
+			if(vicchga > vic) vicchga++;
+        	strs = strs.slice(0, vicchga).concat(strs.slice(vicchga + 1));
+        	clef = clef.slice(0, vicchga).concat(clef.slice(vicchga + 1));
+			voicename = voicename.slice(0, vicchga).concat(voicename.slice(vicchga + 1));
+			abcstr = strs[abcindex];
+			if(abcindex == tmpvica){
+				SaveNLoad(vic);
+			}else if(abcindex >= vic){
+				SaveNLoad(abcindex+1);
+			}else{
+				SaveNLoad(abcindex-1);
+			}
+			vicchga = undefined;
+			ChgVocMd = false;
+			MSOE.printVoc();
 			MSOE.print();
 		});
 		$(".dp_clef").click(function(){
