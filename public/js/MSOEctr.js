@@ -683,7 +683,7 @@ var MSOE = new function() {
             console.log("Web browser doesn't support history api");
         }
     };
-    this.urlload = () => {
+    this.urlload = (func) => {
         url = location.href.split("?")[1] || "";
         index = url.split("!")[1] || "";
         key = url.split("!")[2] || "";
@@ -732,6 +732,7 @@ var MSOE = new function() {
                         console.log(msg.status.msg);
                         window.location.replace(host);
                     }
+					func();
                 },
                 error: function() {
                     console.log("Ajax error when POST /load");
@@ -1322,7 +1323,18 @@ $(document).ready(function() {
 	if(MSOE.Edit_()){
 		$("#modaldiv1").modal("show");
 	}
-    MSOE.urlload();
+    MSOE.urlload(function(){
+		MSOE.print();
+		MSOE.printVoc();
+    	if(MSOE.Edit_()){
+			$('#print').hide();
+			$('#play').hide();
+			$('#share').hide();
+		}else{
+			$(".left").hide();
+			$(".panel-group").hide();
+		}
+	});
 	$("input").change(function(){
 		switch(this.name){
 			case "whoiscomposer":
@@ -1336,7 +1348,6 @@ $(document).ready(function() {
 				break; 
 		}
 	});
-    MSOE.print();
     document.onkeypress = key;
     document.onkeydown = move;
     document.onkeyup = chord;
@@ -1380,15 +1391,6 @@ $(document).ready(function() {
 		MSOE.ClrVicName();
 		MSOE.print();
 	});
-    if(MSOE.Edit_()){
-		$('#print').hide();
-		$('#play').hide();
-		$('#share').hide();
-	}else{
-		$(".left").hide();
-		$(".panel-group").hide();
-	}
-	MSOE.printVoc();
     MIDI.setup({
         soundfontUrl: window.ABCJS.midi.soundfountUrl,
         instruments: window.ABCJS.midi.instruments
