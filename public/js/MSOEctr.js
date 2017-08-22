@@ -60,10 +60,17 @@ var MSOE = new function() {
 				break;
 			case 1://delete <-> insert param: [deletePos, deleteStr]
 				abcstr=abcstr.substring(0,Act.param1)+Act.param2+abcstr.substring(Act.param1);
+				if(Act.X !== undefined){//special Pos Ctrl Pram
+					CrtPos = Act.X;
+					if(abcstr[Act.X]!="$"){
+						CrtPos = mvpos(0);
+					}
+					break;
+				}
 				if(Act.param2 != "\n$"){
-					CrtPos=Act.param1;
+					CrtPos = Act.param1;
 				}else{
-					CrtPos=Act.param1 + 1;
+					CrtPos = Act.param1 + 1;
 				}
 				break;
 			case 2://assemble <-> disassemble direct(0: ->, 1: <-) param: [A_DPos, direct]
@@ -949,6 +956,40 @@ var MSOE = new function() {
 			$("#copy").css("color","#49beb5");
         }
     };
+	this.cutmode = () => {
+		if(CpMd) {
+			CpMd = false;
+            var CpEdP = CrtPos; //cut end point
+			var Swap = false;
+            if (CrtPos < CpStP) { //if the end is on the left of the startpoint, swap their values.
+                CpEdP = CpStP+3;
+                CpStP = CrtPos;
+				Swap = true;
+            }
+            if (CpStP == 0 || abcstr[CpStP - 1] == "\n") { //don't cut the extra "$" of the startpoint of every line;
+                CpStP++;
+            }
+            var CpStrEd = CpEdP; //cut string end point
+            for (var i = CpEdP + 1; i <= abcstr.length; i++) {
+                if (abcstr[i] == "$") {
+                    CpStrEd = i;
+                    break;
+                }
+            }
+            if (CpStrEd == CpEdP) {
+                CpStr = abcstr.substring(CpStP);
+				abcstr = abcstr.substring(0,CpStP);
+				this.actions.push({inst: 1, param1: CpStP, param2: CpStr, X: abcstr.length-1});
+            } else {
+                CpStr = abcstr.substring(CpStP, CpStrEd);
+				abcstr = abcstr.substring(0,CpStP) + abcstr.substring(CpStrEd);
+				this.actions.push({inst: 1, param1: CpStP, param2: CpStr, X: CpStrEd});
+            }
+			console.log("cut:"+CpStr);
+			CpStP = -1;
+			$("#copy").css("color","");
+		}
+	};
     this.copycancel = () => {
         if (CpMd) {
             CpMd = false;
@@ -967,8 +1008,11 @@ var MSOE = new function() {
         if (mvpos(1) == CrtPos) {
             abcstr = abcstr + CpStr;
             CrtPos = abcstr.length - 1;
+			CrtPos = mvpos(0);
+			this.actions.push({inst: 0, param1: abcstr.length, param2: CpStr});
         } else {
             abcstr = abcstr.substring(0, mvpos(1)) + CpStr + abcstr.substring(mvpos(1));
+			this.actions.push({inst: 0, param1: mvpos(1), param2: CpStr});
             CrtPos = mvpos(1) + CpStr.length;
             CrtPos = mvpos(0);
         }
@@ -1183,6 +1227,9 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
             // ----------New Line---------------
         case 70: //"shift+f" turn on and off copy mode
             MSOE.copymode();
+            break;
+        case 104: //"h" turn off copy mode(cut)
+            MSOE.cutmode();
             break;
         case 102: //"f" cancel copy mode(when it's on)
             MSOE.copycancel();

@@ -197,7 +197,8 @@
                 <div class="item">
                     <h2 class="ui header" style="color:white;">編輯指令</h2>
                     <p class="mannual">
-                        shift+Z~M :和弦模式
+						Z~M :輸入音符
+                        <br> shift+Z~M :和弦模式
                         <br> D :休止符
                         <br> | :手動加小節線
                         <br> &lt&gt :節拍(/2 or *2)
@@ -209,25 +210,33 @@
                         <br> [ :增加降音記號
                         <br> S :將連在一起的音符分開
                         <br> A :將被分開的音符再次連起來
-                        <br>
+						<br> Enter :換行
+                        <br> - :與前一個音連音
+						<br> + :與前一個音解除連音
+						<br> ctrl+Z :復原
                         <br> </p>
                 </div>
                 <div class="item">
                     <h2 class="ui header" style="color:white;">複製指令</h2>
-                    <p class="mannual">shift+F (普通模式下) :開啟複製模式並記錄此點為複製開始點
-                        <br> shift+F (複製模式下) :以目前位置為複製結束點，記錄複製的東西並結束複製模式
-                        <br> F (複製模式下) :取消複製
-                        <br> G:貼上
+                    <p class="mannual">
+						shift+F (普通模式下) :開啟複製/剪下模式並記錄此點為複製/剪下開始點
+                        <br> shift+F (複製/剪下模式下) :以目前位置為複製結束點，記錄複製的東西並結束複製/剪下模式
+                        <br> H (複製/剪下模式下) :以目前位置為剪下結束點，記錄剪下的東西並結束複製/剪下模式
+                        <br> F (複製/剪下模式下) :取消複製/剪下
+                        <br> G :貼上
                         <br>
                         <br> </p>
                 </div>
                 <div class="item">
-                    <h2 class="ui header" style="color:white;">複製指令</h2>
-                    <p class="mannual">shift+F (普通模式下) :開啟複製模式並記錄此點為複製開始點
-                        <br> shift+F (複製模式下) :以目前位置為複製結束點，記錄複製的東西並結束複製模式
-                        <br> F (複製模式下) :取消複製
-                        <br> G:貼上
-                        <br>
+                    <h2 class="ui header" style="color:white;">聲部指令</h2>
+                    <p class="mannual">
+						W :新增一個聲部
+                        <br> shift+W :刪除目前聲部 (只剩一個聲部時無法使用)
+                        <br> R :紀錄此聲部為聲部A
+                        <br> shift+R :將此聲部與聲部A交換位置
+                        <br> Q :進入譜號設定模式
+						<br> 1~6 (普通模式下) :切換游標到聲部1~6
+						<br> 1~4 (譜號設定模式下) :設定譜號為 (treble alto tenor bass)
                         <br> </p>
                 </div>
             </div>
