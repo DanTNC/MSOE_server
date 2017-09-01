@@ -39,7 +39,7 @@ var MSOE = new function() {
     this.actions = [];//record the order of actions for the "undo" command
     this.re_actions = [];//record the order of undone actions for the "redo" command
 
-    var host = "http://luffy.ee.ncku.edu.tw:7725/";
+    var host = "http://msoe-fad11204.c9users.io:8080/";
 
 	var doAct = (Act) => {
 		switch(Act.inst){
@@ -739,7 +739,6 @@ var MSOE = new function() {
                         console.log(msg.status.msg);
                         window.location.replace(host);
                     }
-					func();
                 },
                 error: function() {
                     console.log("Ajax error when POST /load");
@@ -750,9 +749,9 @@ var MSOE = new function() {
             index = "";
             key = "";
             console.log("Error url, redirect to main page");
-            redirect = false;
             window.location.replace(host);
         }
+        func();
     }
     this.outinsert = (ch, Toabcnote, md, Checkbar) => {
         var legalchars = ["A", "B", "C", "D", "E", "F", "G", "z", " ", "|", "_", "^"];

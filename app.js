@@ -8,8 +8,6 @@ var index = require('./routes/index');
 var load = require('./routes/load');
 var save = require('./routes/save');
 
-var app = express();
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
@@ -22,9 +20,9 @@ app.use('/save', save);
 
 app.use(express.static(path.resolve(__dirname, 'public')));
 
-var port = 7725
+var port = 8080;
 
 app.listen(port, function () {
-  console.log('Example app listening on port '+port);
+  console.log('Example app listening on http://msoe-fad11204.c9users.io:'+port);
 });
 

@@ -5,6 +5,6 @@ var fs = require('fs');
 var data = fs.readFileSync(path.resolve(__dirname, "mongo.json"), 'utf-8');
 var account = JSON.parse(data);
 
-mongoose.connect('mongodb://'+account.id+':'+account.pwd+'@localhost/'+account.db);
+mongoose.connect('mongodb://'+account.id+':'+account.pwd+'@luffy.ee.ncku.edu.tw/'+account.db);
 
 module.exports = mongoose;
