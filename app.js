@@ -20,7 +20,7 @@ app.use('/save', save);
 
 app.use(express.static(path.resolve(__dirname, 'public')));
 
-var port = 8080;
+var port = process.env.PORT || 8080;
 
 app.listen(port, function () {
   console.log('Example app listening on http://msoe-fad11204.c9users.io:'+port);

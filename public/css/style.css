@@ -58,7 +58,7 @@ button{
 
 .mannual {
   font-size:8px;
-  font color:white;
+  color:white;
 }
 .panel-heading {
   font-size:14px;
@@ -76,7 +76,7 @@ button{
   background-size: 1500px;
 }
 .keyboard {
-  height: 22vh;
+  height: 25vh;
 }
 .keyboard button {
   position: absolute;
@@ -87,16 +87,16 @@ button{
 }
 .white{
   background-color: white;
-  height: 200px;
+  height: 25vh;
   width: 12%;
   font-size: 25px;
   color: #222222;
   z-index: 1;
-  padding-top: 150px;
+  padding-top: 18vh;
 }
 .black{
   background-color: black;
-  height: 130px;
+  height: 17vh;
   width: 8%;
   z-index: 2;
 }
@@ -234,6 +234,7 @@ button:focus{
   border-bottom-color: #00B5AD;
   border-bottom-width: thin;
   height: 3vh;
+  margin-top: 0;
 }
 img.logo{
   width: 17vh;
@@ -260,4 +261,11 @@ img.logo{
 }
 #meter_in input{
   width: 20vw;
+}
+
+.ui.popup {
+  border: none;
+  height: auto;
+  background-color: sienna;
+  color: white;
 }

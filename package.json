@@ -1,11 +1,14 @@
 {
   "name": "msoe",
-  "version": "1.0.0",
-  "description": "",
+  "version": "2.0.0",
+  "description": "Music Sheet Online Editor",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js"
+  },
+  "engines": {
+    "node": "6.11.2"
   },
   "author": "",
   "license": "ISC",

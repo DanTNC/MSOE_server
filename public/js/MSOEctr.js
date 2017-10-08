@@ -1,3 +1,5 @@
+/* global $, history, location, printJS, MIDI */
+
 var Error = (e) => {
 	$("#error p").html(e);
 	$("#error").show();
@@ -42,6 +44,7 @@ var MSOE = new function() {
     var host = "http://msoe-fad11204.c9users.io:8080/";
 
 	var doAct = (Act) => {
+	    console.log("undo :", Act.inst, Act.param1, Act.param2);
 		switch(Act.inst){
 			case 0://insert <-> delete param: [insertPos, insertStr]
                 var Delen = true;// delete enable
@@ -69,6 +72,7 @@ var MSOE = new function() {
 				}
 				if(Act.param2 != "\n$"){
 					CrtPos = Act.param1;
+					console.log("CrtPos", CrtPos);
 				}else{
 					CrtPos = Act.param1 + 1;
 				}
@@ -108,8 +112,6 @@ var MSOE = new function() {
         CrtPos = 0;
     };
     var ForPrint = () => {
-        console.log(abcstr);
-        console.log(clef.length);
         var finalstr = "";
         for (var i = 0; i < clef.length; i++) {
             if (i != abcindex) {
@@ -125,7 +127,11 @@ var MSOE = new function() {
 	voicename[0] = undefined; //default value
 	var InsVocBef = false;
 	this.insvocbef = (v) => {
-		InsVocBef = v;
+	    if (v === undefined){
+	        return InsVocBef;   
+	    }else{
+		    InsVocBef = v;
+	    }
 	};
 	this.ChgVicName = (vn) => {
 		if(vn.indexOf("\"") != -1){
@@ -140,6 +146,7 @@ var MSOE = new function() {
 		this.printVoc();
 	};
     this.AddVoice = () => {
+        if(strs.length == 0) strs[0] = abcstr;
 		var insind = (InsVocBef)?abcindex:(abcindex+1);
 		clef.splice(insind, 0, "treble");
 		strs.splice(insind, 0, "$");
@@ -261,7 +268,7 @@ var MSOE = new function() {
 	//-----------------------------------------//
 	var ChgVocMd = false;
 	this.regVocLstEvt = () => { //register voice list events
-		$(".ui.dropdown").dropdown();
+		$(".ui.dropdown").dropdown({"silent":true});
 		$(".mCSB_container").css("overflow","visible");
 		$(".v_num").click(function(){
 			if(ChgVocMd){
@@ -326,6 +333,7 @@ var MSOE = new function() {
 			SaveNLoad(parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html()) - 1);
 			MSOE.print();
 		});
+		if(help_) this.help_voice();
 	};
 	this.printVoc = () => { //render voice list
 		$("#voices .mCSB_container").html("");
@@ -335,7 +343,7 @@ var MSOE = new function() {
 				d.attr("data-value",index);
 				$("#voices .mCSB_container").append(d);
 			}
-			var e = $('<div class="row"><div class="ui inverted menu small borderless"><a class="item v_num"></a><div class="ui dropdown floating item v_clef"><div class="dp_menu menu"><a class="item dp_clef"></a><a class="item dp_clef"></a><a class="item dp_clef"></a></div></div><a class="item v_name">Bass</a><div class="right menu"><a class="item v_up"><i class="angle up mini icon"></i></a><a class="item v_down"><i class="angle down mini icon"></i></a></div></div></div>');
+			var e = $('<div class="row"><div class="ui inverted menu small borderless"><a class="item v_num help"></a><div class="ui dropdown floating item v_clef help"><div class="dp_menu menu"><a class="item dp_clef"></a><a class="item dp_clef"></a><a class="item dp_clef"></a></div></div><a class="item v_name help">Bass</a><div class="right menu"><a class="item v_up help"><i class="angle up mini icon"></i></a><a class="item v_down help"><i class="angle down mini icon"></i></a></div></div></div>');
 			e.find(".v_num").html(index+1);
 			e.find(".v_clef").prepend(RdClf(value, e, 0));
 			e.find(".v_name").html((voicename[index] === undefined)?RdClf(value, e, 1):voicename[index]);
@@ -580,7 +588,7 @@ var MSOE = new function() {
                 temnum = 7 + inc;
                 break;
         }
-        console.log(48 + (Tstate) * 12 + temnum);
+        console.log("miditone : ", 48 + (Tstate) * 12 + temnum);
         MIDI.noteOn(0, 48 + (Tstate) * 12 + temnum, 127, 0);
         MIDI.noteOff(0, 48 + (Tstate) * 12 + temnum, 0.75);
         return 48 + (Tstate) * 12 + temnum;
@@ -647,7 +655,7 @@ var MSOE = new function() {
             push = true;
 
         if (history.pushState) {
-            e.preventDefault();
+            if(e !== undefined) e.preventDefault();
             $.ajax({
                 url: "/save",
                 method: "POST",
@@ -696,7 +704,6 @@ var MSOE = new function() {
         key = url.split("!")[2] || "";
 
         var pointer = this;
-        console.log(abcstr);
         if (index !== "") { //call ajax to load sheet data
             $.ajax({
                 url: "/load",
@@ -709,7 +716,7 @@ var MSOE = new function() {
                 success: function(msg) {
                     console.log(msg);
                     if (msg.status.error) {
-                        return console.log(msg.status.msg);
+                        console.log(msg.status.msg);
                         window.location.replace(host);
                     }
                     if (msg.status.success) {
@@ -724,24 +731,26 @@ var MSOE = new function() {
 
                         Edit = msg.status.edit;
 						if(!Edit){
-							$(".right.menu a:first-child").hide();
+							$(".right.menu a").hide();
 							$("#modaldiv1").modal("hide");
 							$("#modaldiv2").modal("hide");
 							$("input").attr("disabled","disabled")
 							Edit_const = true;
+							history.pushState({ title: "" }, "", host + "?!" + index);
 						}else if(key!=""){
 							$("#modaldiv1").modal("hide");
 							$("#modaldiv2").modal("hide");
 						}
-
                         console.log(msg.status.msg);
                     } else {
                         console.log(msg.status.msg);
                         window.location.replace(host);
                     }
+                    func();
                 },
                 error: function() {
                     console.log("Ajax error when POST /load");
+                    func();
                 }
             });
         } else if (location.href !== host) { // redirect to main page
@@ -750,8 +759,10 @@ var MSOE = new function() {
             key = "";
             console.log("Error url, redirect to main page");
             window.location.replace(host);
+            func();
+        } else {
+            func(true);
         }
-        func();
     }
     this.outinsert = (ch, Toabcnote, md, Checkbar) => {
         var legalchars = ["A", "B", "C", "D", "E", "F", "G", "z", " ", "|", "_", "^"];
@@ -919,6 +930,7 @@ var MSOE = new function() {
     var CpStr = ""; //copy string
     this.copymode = () => {
         if (CpMd) {
+            $("#cut").addClass("disabled").css("color","");
             CpMd = false;
             var CpEdP = CrtPos; //copy end point
 			var Swap = false;
@@ -946,10 +958,12 @@ var MSOE = new function() {
 			if (( p != -1 )&&( Swap )) {
 				CpStr = CpStr.substring(0,p)+CpStr.substring(p+3);
 			}
-			console.log("copy:"+CpStr);
+			console.log("copy : "+CpStr);
 			CpStP = -1;
 			$("#copy").css("color","");
+			$("#paste").removeClass("disabled");
         } else {
+            $("#cut").removeClass("disabled").css("color","#49beb5");
             CpMd = true;
             CpStP = CrtPos;
 			$("#copy").css("color","#49beb5");
@@ -957,6 +971,7 @@ var MSOE = new function() {
     };
 	this.cutmode = () => {
 		if(CpMd) {
+		    $("#cut").addClass("disabled").css("color","");
 			CpMd = false;
             var CpEdP = CrtPos; //cut end point
 			var Swap = false;
@@ -977,27 +992,29 @@ var MSOE = new function() {
             }
             if (CpStrEd == CpEdP) {
                 CpStr = abcstr.substring(CpStP);
+                this.actions.push({inst: 1, param1: CpStP, param2: CpStr, X: abcstr.length-1});
 				abcstr = abcstr.substring(0,CpStP);
-				this.actions.push({inst: 1, param1: CpStP, param2: CpStr, X: abcstr.length-1});
             } else {
                 CpStr = abcstr.substring(CpStP, CpStrEd);
+                this.actions.push({inst: 1, param1: CpStP, param2: CpStr, X: CpStrEd});
 				abcstr = abcstr.substring(0,CpStP) + abcstr.substring(CpStrEd);
-				this.actions.push({inst: 1, param1: CpStP, param2: CpStr, X: CpStrEd});
             }
-			console.log("cut:"+CpStr);
+			console.log("cut : "+CpStr);
 			CpStP = -1;
 			$("#copy").css("color","");
+			$("#paste").removeClass("disabled");
 		}
 	};
     this.copycancel = () => {
         if (CpMd) {
+            $("#cut").addClass("disabled").css("color","");
             CpMd = false;
 			$("#copy").css("color","");
 			CpStP = -1;
         }
     };
 	this.copyui = () => {
-		if(CrtPos == CpStP){
+		if(InsVocBef){
 			this.copycancel();
 		}else{
 			this.copymode();
@@ -1005,13 +1022,13 @@ var MSOE = new function() {
 	}
     this.paste = () => {
         if (mvpos(1) == CrtPos) {
+            this.actions.push({inst: 0, param1: abcstr.length, param2: CpStr});
             abcstr = abcstr + CpStr;
             CrtPos = abcstr.length - 1;
 			CrtPos = mvpos(0);
-			this.actions.push({inst: 0, param1: abcstr.length, param2: CpStr});
         } else {
+            this.actions.push({inst: 0, param1: mvpos(1), param2: CpStr});
             abcstr = abcstr.substring(0, mvpos(1)) + CpStr + abcstr.substring(mvpos(1));
-			this.actions.push({inst: 0, param1: mvpos(1), param2: CpStr});
             CrtPos = mvpos(1) + CpStr.length;
             CrtPos = mvpos(0);
         }
@@ -1074,6 +1091,57 @@ var MSOE = new function() {
     };
     this.checkpause = () => {
         return (Math.pow(2, Dstate % 10 - 5) * eval(Lstr) >= 2);
+    }
+    
+    var help_ = false;
+    var help_content = {
+        "#infohome":"Edit sheet info",
+        "#mannualgo":"Show mannual",
+        "#save":"Save sheet",
+        "#play":"Play music",
+        "#print":"Print sheet",
+        "#share":"Download midi file of this music",
+        "#edit":"Enter edit mode",
+        "#preview":"Enter preview mode",
+        "#copy":"(shift+F)Set copy cursor/Copy notes by clicking again",
+        "#cut":"(H)Cut notes when copy is active",
+        "#paste":"(G)Paste previous copied or cut notes",
+        "#clef":"(Q)Set clef of current voice by using key 1 to 4",
+        "#plus":"Add new voice after current voice(before current voice by holding (ctrl))",
+        "#minus":"Delete current voice",
+        "#check":"Replace current voicename with the text on the left",
+        "#remove":"Replace current voicename with default value",
+        ".v_num:eq(0)":"Select this voice/Switch position with selected voice",
+        ".v_clef:eq(0)":"Change the clef of this voice",
+        ".v_name:eq(0)":"Move cursor to this voice",
+        ".v_div:eq(0)":"Move selected voice here",
+        ".v_up:eq(0)":"Switch place with upper voice",
+        ".v_down:eq(0)":"Switch place with lower voice"
+    };
+    var help_right = ["#paste", "#clef", "#check", "#remove", ".v_up:eq(0)", ".v_down:eq(0)", "#edit", "#preview"];
+    this.help_voice = () => {
+        $.each(help_content, (key, value)=>{
+            $(key).popup({
+                content: value,
+                on: "hover",
+                position: (key==".v_div:eq(0)")?"bottom center":((help_right.includes(key))?"bottom right":"bottom left"),
+                variation: "basic mini",
+                delay: {
+                    show:30
+                }
+            });
+        });
+    };
+    this.help = () => {
+        if(help_){
+            help_ = false;
+            $("#help").css("color","rgba(255, 255, 255, 0.9)");
+            $(".help").popup("destroy");
+        }else{
+            help_ = true;
+            $("#help").css("color","orange");
+            this.help_voice();
+        }
     }
 }
 
@@ -1282,9 +1350,13 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
 			MSOE.undo();
 			break;
             // ----------Undo--------------------
+        case 83://"shift+s" save
+    	    MSOE.save();
+    	    break;
+    	    // ----------Save--------------------
         default:
     }
-    console.log(event.keyCode);
+    console.log("keycode : "+event.keyCode);
     MSOE.print();
 };
 
@@ -1358,28 +1430,29 @@ var chgtmp = (a) => { MSOE.chgtmp(a) };
 var chgttl = (a) => { MSOE.chgttl(a) };
 
 $(document).ready(function() {
-	$('#modaldiv1').modal('setting', 'transition', 'fade down')
-		.modal({
-			allowMultiple: false
-		})
-		.modal({
-			blurring: true
-		})
-		.modal('setting', 'closable', false);
-	if(MSOE.Edit_()){
-		$("#modaldiv1").modal("show");
-	}
-    MSOE.urlload(function(){
+    MSOE.urlload(function(m){
 		MSOE.print();
-		MSOE.printVoc();
+	    MSOE.printVoc();
     	if(MSOE.Edit_()){
 			$('#print').hide();
 			$('#play').hide();
 			$('#share').hide();
+			$("#edit").hide();
 		}else{
 			$(".left").hide();
 			$(".panel-group").hide();
 		}
+		$('#modaldiv1')
+    		.modal({
+    			allowMultiple: false
+    		})
+    		.modal({
+    			blurring: true
+    		})
+    		.modal('setting', 'closable', false);
+    	if(m){
+    		$("#modaldiv1").modal('setting', 'transition', 'vertical flip').modal("show");
+    	}
 	});
 	$("input").change(function(){
 		switch(this.name){
@@ -1397,7 +1470,8 @@ $(document).ready(function() {
     document.onkeypress = key;
     document.onkeydown = move;
     document.onkeyup = chord;
-	$("#save").click(function(e) { MSOE.save(e) });
+    // $(window).on("beforeunload",function(e){ return "Do you wanna leave without saving?"; });
+	$("#save").click(function(e) { MSOE.save(e); });
 	$("#play").click(function(e) {
     	$(".abcjs-midi-reset").click();
     	$(".abcjs-midi-start").click();
@@ -1410,8 +1484,15 @@ $(document).ready(function() {
 	$("#share").click(function(e){
     	$(".download-midi a")[0].click();
 	});
+	$("#help").click(function(e){
+	    MSOE.help();
+	});
 	$("#copy").click(function(){
 		MSOE.copyui();
+	});
+	$("#cut").click(function(){
+	    MSOE.cutmode();
+	    MSOE.print();
 	});
 	$("#clef").click(function(){
 		MSOE.ClfMdTgl();
