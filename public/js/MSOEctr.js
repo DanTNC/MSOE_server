@@ -41,8 +41,8 @@ var MSOE = new function() {
     this.actions = [];//record the order of actions for the "undo" command
     this.re_actions = [];//record the order of undone actions for the "redo" command
 
-    //var host = "http://msoe-fad11204.c9users.io:8080/";
-    var host = "https://evening-earth-76370.herokuapp.com/";
+    var host = "http://msoe-fad11204.c9users.io:8080/";
+    //var host = "https://evening-earth-76370.herokuapp.com/";
 
 	var doAct = (Act) => {
 	    console.log("undo :", Act.inst, Act.param1, Act.param2);
@@ -356,6 +356,19 @@ var MSOE = new function() {
 		this.regVocLstEvt();
 	};
     //-----------------------------------------//
+    var night = false;
+    this.night_mode = () => {
+        night = !night;
+        if(night){
+            $("#sheet").css("background-color","#090909");
+            $("path, tspan").attr("fill","white");
+            $("#night").text("Default");
+        }else{
+            $("#sheet").css("background-color","");
+            $("path, tspan").attr("fill","#000000");
+            $("#night").text("Night");
+        }
+    }
     this.print = () => { //output svg
         var SS = "T: " + ttlstr + "\nM: " + tmpstr + "\nL: " + Lstr + "\nC: " + cmpstr + "\n" + ForPrint();
         abcjs.renderAbc('boo', SS, {}, {
@@ -404,6 +417,7 @@ var MSOE = new function() {
             }
         });
         abcjs.renderMidi("midi", SS, {}, { generateDownload: true, generateInline: true }, {});
+        $("path, tspan").attr("fill",(night?"white":"#000000"));
     };
     this.printabc = () => {
         printJS("sheet", "html");
@@ -1104,6 +1118,7 @@ var MSOE = new function() {
         "#share":"Download midi file of this music",
         "#edit":"Enter edit mode",
         "#preview":"Enter preview mode",
+        "#night":"Toggle night mode",
         "#copy":"(shift+F)Set copy cursor/Copy notes by clicking again",
         "#cut":"(H)Cut notes when copy is active",
         "#paste":"(G)Paste previous copied or cut notes",
@@ -1119,7 +1134,7 @@ var MSOE = new function() {
         ".v_up:eq(0)":"Switch place with upper voice",
         ".v_down:eq(0)":"Switch place with lower voice"
     };
-    var help_right = ["#paste", "#clef", "#check", "#remove", ".v_up:eq(0)", ".v_down:eq(0)", "#edit", "#preview"];
+    var help_right = ["#paste", "#clef", "#check", "#remove", ".v_up:eq(0)", ".v_down:eq(0)", "#edit", "#preview", "#night"];
     this.help_voice = () => {
         $.each(help_content, (key, value)=>{
             $(key).popup({

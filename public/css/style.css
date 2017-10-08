@@ -75,12 +75,16 @@ button{
   background-repeat: repeat;
   background-size: 1500px;
 }
+.right_menu div h3.ui.header{
+  color: white;
+  font-size: 1.3vw;
+}
 .keyboard {
   height: 25vh;
 }
 .keyboard button {
   position: absolute;
-  border: solid 1px;
+  border: solid 0.1vw black;
 }
 #error {
   width: 14.5vw;
@@ -93,12 +97,14 @@ button{
   color: #222222;
   z-index: 1;
   padding-top: 18vh;
+  margin-left: 1vw;
 }
 .black{
   background-color: black;
   height: 17vh;
   width: 8%;
   z-index: 2;
+  margin-left: 1vw;
 }
 #C{
   left: 0%;
@@ -222,6 +228,10 @@ button{
   background-color: #1B1C1D;
   height: 97vh;
   padding-left: 2vw;
+}
+.three.wide.column.right_menu{
+  background-color: #1B1C1D;
+  height: 97vh;
 }
 .meter{
   color:white;
