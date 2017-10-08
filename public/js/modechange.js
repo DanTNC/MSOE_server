@@ -24,4 +24,3 @@ var preview_mode = () =>{
   MSOE.Edit_(false);
   MSOE.print();
 }
-
