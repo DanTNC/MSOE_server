@@ -41,7 +41,8 @@ var MSOE = new function() {
     this.actions = [];//record the order of actions for the "undo" command
     this.re_actions = [];//record the order of undone actions for the "redo" command
 
-    var host = "http://msoe-fad11204.c9users.io:8080/";
+    //var host = "http://msoe-fad11204.c9users.io:8080/";
+    var host = "https://evening-earth-76370.herokuapp.com/";
 
 	var doAct = (Act) => {
 	    console.log("undo :", Act.inst, Act.param1, Act.param2);
