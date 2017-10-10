@@ -4,6 +4,7 @@ var edit_mode = () =>{
   });
   $(".left").show();
   $(".panel-group").show();
+  $(".panel-group-preview").hide();
   $("#print").hide();
   $("#play").hide();
   $("#share").hide();
@@ -16,6 +17,7 @@ var preview_mode = () =>{
   $("#infohome").addClass("disabled").off("click");
   $(".left").hide();
   $(".panel-group").hide();
+  $(".panel-group-preview").show();
   $("#print").show();
   $("#play").show();
   $("#share").show();
