@@ -672,39 +672,31 @@ var MSOE = new function() {
 
         if (history.pushState) {
             if(e !== undefined) e.preventDefault();
-            $.ajax({
-                url: "/save",
-                method: "POST",
-                async: false,
-                data: {
-                    insert: push,
-                    index: index,
-                    key: key,
-                    cmpstr: cmpstr,
-                    ttlstr: ttlstr,
-                    tmpstr: tmpstr,
-                    abcstr: abcstr,
-                    abcindex: abcindex,
-                    Lstr: Lstr,
-                    strs: strs,
-                    clef: clef
-                },
-                success: function(msg) {
-                    console.log(msg);
-                    if (msg.status.error) {
-                        return console.log(msg.status.msg);
-                    }
-                    if (msg.status.success) {
-                        index = msg.url.index;
-                        key = msg.url.key;
-
-                        console.log(msg.status.msg);
-                    } else {
-                        console.log(msg.status.msg);
-                    }
-                },
-                error: function() {
-                    console.log("Ajax error when POST /save");
+            var data = {
+                insert: push,
+                index: index,
+                key: key,
+                cmpstr: cmpstr,
+                ttlstr: ttlstr,
+                tmpstr: tmpstr,
+                abcstr: abcstr,
+                abcindex: abcindex,
+                Lstr: Lstr,
+                strs: strs,
+                clef: clef
+            };
+            server_save(data, function(msg) {
+                console.log(msg);
+                if (msg.status.error) {
+                    return console.log(msg.status.msg);
+                }
+                if (msg.status.success) {
+                    index = msg.url.index;
+                    key = msg.url.key;
+    
+                    console.log(msg.status.msg);
+                } else {
+                    console.log(msg.status.msg);
                 }
             });
             if (push) {
@@ -721,54 +713,42 @@ var MSOE = new function() {
 
         var pointer = this;
         if (index !== "") { //call ajax to load sheet data
-            $.ajax({
-                url: "/load",
-                method: "POST",
-                async: false,
-                data: {
-                    index: index,
-                    key: key,
-                },
-                success: function(msg) {
-                    console.log(msg);
-                    if (msg.status.error) {
-                        console.log(msg.status.msg);
-                        window.location.replace(host);
-                    }
-                    if (msg.status.success) {
-                        cmpstr = msg.sheet.cmpstr;
-                        ttlstr = msg.sheet.ttlstr;
-                        tmpstr = msg.sheet.tmpstr;
-                        abcstr = msg.sheet.abcstr;
-                        abcindex = msg.sheet.abcindex;
-                        Lstr = msg.sheet.Lstr;
-                        strs = msg.sheet.strs;
-                        clef = msg.sheet.clef;
-
-                        Edit = msg.status.edit;
-						if(!Edit){
-							$(".right.menu a").hide();
-							$("#modaldiv1").modal("hide");
-							$("#modaldiv2").modal("hide");
-							$("input").attr("disabled","disabled")
-							Edit_const = true;
-							history.pushState({ title: "" }, "", host + "?!" + index);
-						}else if(key!=""){
-							$("#modaldiv1").modal("hide");
-							$("#modaldiv2").modal("hide");
-						}
-                        console.log(msg.status.msg);
-                    } else {
-                        console.log(msg.status.msg);
-                        window.location.replace(host);
-                    }
-                    func();
-                },
-                error: function() {
-                    console.log("Ajax error when POST /load");
-                    func();
+            server_load(func, function(msg) {
+                console.log(msg);
+                if (msg.status.error) {
+                    console.log(msg.status.msg);
+                    window.location.replace(host);
                 }
-            });
+                if (msg.status.success) {
+                    cmpstr = msg.sheet.cmpstr;
+                    ttlstr = msg.sheet.ttlstr;
+                    tmpstr = msg.sheet.tmpstr;
+                    abcstr = msg.sheet.abcstr;
+                    abcindex = msg.sheet.abcindex;
+                    Lstr = msg.sheet.Lstr;
+                    strs = msg.sheet.strs;
+                    clef = msg.sheet.clef;
+
+                    Edit = msg.status.edit;
+					if(!Edit){
+						$(".right.menu a").hide();
+						$("#modaldiv1").modal("hide");
+						$("#modaldiv2").modal("hide");
+						$("input").attr("disabled","disabled")
+						Edit_const = true;
+						history.pushState({ title: "" }, "", host + "?!" + index);
+					}else if(key!=""){
+						$("#modaldiv1").modal("hide");
+						$("#modaldiv2").modal("hide");
+					}
+                    console.log(msg.status.msg);
+                } else {
+                    console.log(msg.status.msg);
+                    window.location.replace(host);
+                }
+                func();
+            },
+            index, key);
         } else if (location.href !== host) { // redirect to main page
             url = "";
             index = "";
