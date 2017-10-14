@@ -4,6 +4,7 @@ var bodyParser = require('body-parser');
 var helmet = require('helmet');
 var app = express();
 var http = require('http').Server(app)
+var io = require('socket.io')(http);
 
 var index = require('./routes/index');
 var load = require('./routes/load');
@@ -27,3 +28,12 @@ http.listen(port, function () {
   console.log('Example app listening on http://msoe-fad11204.c9users.io:'+port);
 });
 
+io.on("connection", function(socket){
+  console.log('connected');
+  socket.on('disconnect', function(){
+    console.log('user disconnected');
+  });
+  socket.on('modify',function(data){
+    console.log(data);
+  });
+});

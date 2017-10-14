@@ -1,5 +1,4 @@
 /* global $, history, location, printJS, MIDI, MSOE */
-
 $("#DDDD").click(function() {
     if (!MSOE.checkpause()) { //Pause with duration of 8 is illegal
         MSOE.outinsert("z", 1, 0, 1);
