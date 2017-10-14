@@ -3,6 +3,7 @@ var path = require('path');
 var bodyParser = require('body-parser');
 var helmet = require('helmet');
 var app = express();
+var http = require('http').Server(app)
 
 var index = require('./routes/index');
 var load = require('./routes/load');
@@ -22,7 +23,7 @@ app.use(express.static(path.resolve(__dirname, 'public')));
 
 var port = process.env.PORT || 8080;
 
-app.listen(port, function () {
+http.listen(port, function () {
   console.log('Example app listening on http://msoe-fad11204.c9users.io:'+port);
 });
 
