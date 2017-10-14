@@ -38,12 +38,15 @@ var MSOE = new function() {
     var clef = []; //clef of voices
 	var voicename = []; //name of voices
     var page = [];
-    this.actions = [];//record the order of actions for the "undo" command
-    this.re_actions = [];//record the order of undone actions for the "redo" command
+    var actions = [];//record the order of actions for the "undo" command
+    var re_actions = [];//record the order of undone actions for the "redo" command
 
-    //var host = "http://msoe-fad11204.c9users.io:8080/";
-    //var host = "https://evening-earth-76370.herokuapp.com/";
-    var host = window.location.origin + window.location.pathname;
+    var act = (A) => {
+        actions.push(A);
+        sheetchange(A);
+    };
+    
+    const host = window.location.origin + window.location.pathname;
 
 	var doAct = (Act) => {
 	    console.log("undo :", Act.inst, Act.param1, Act.param2);
@@ -91,10 +94,15 @@ var MSOE = new function() {
 	};
 
     this.undo = ()=>{
-		var Act = this.actions.pop();
+		var Act = actions.pop();
 		if(!Act) return;
 		doAct(Act);
-		this.re_actions.push(Act);
+		re_actions.push(Act);
+	};
+	
+	this.redo = (Act)=>{
+	    console.log(Act);
+	    //TODO: implement it;
 	};
 
     var GetStrOffset = (ix) => { //get the length before the voice for highlight listener (ix: index)
@@ -645,7 +653,7 @@ var MSOE = new function() {
         }
         CrtPos = (md != 1) ? mvpos(1) : CrtPos;
         if(str != "$[]")
-			this.actions.push({inst: 0, param1: InsBef, param2: (md != 1 ? "$" : "") + str});
+			act({inst: 0, param1: InsBef, param2: (md != 1 ? "$" : "") + str});
     };
     var insertch = (str) => { //insert for chord
         for (var i = mvpos(1) + 2; i < abcstr.length; i++) {
@@ -988,11 +996,11 @@ var MSOE = new function() {
             }
             if (CpStrEd == CpEdP) {
                 CpStr = abcstr.substring(CpStP);
-                this.actions.push({inst: 1, param1: CpStP, param2: CpStr, X: abcstr.length-1});
+                act({inst: 1, param1: CpStP, param2: CpStr, X: abcstr.length-1});
 				abcstr = abcstr.substring(0,CpStP);
             } else {
                 CpStr = abcstr.substring(CpStP, CpStrEd);
-                this.actions.push({inst: 1, param1: CpStP, param2: CpStr, X: CpStrEd});
+                act({inst: 1, param1: CpStP, param2: CpStr, X: CpStrEd});
 				abcstr = abcstr.substring(0,CpStP) + abcstr.substring(CpStrEd);
             }
 			console.log("cut : "+CpStr);
@@ -1018,12 +1026,12 @@ var MSOE = new function() {
 	}
     this.paste = () => {
         if (mvpos(1) == CrtPos) {
-            this.actions.push({inst: 0, param1: abcstr.length, param2: CpStr});
+            act({inst: 0, param1: abcstr.length, param2: CpStr});
             abcstr = abcstr + CpStr;
             CrtPos = abcstr.length - 1;
 			CrtPos = mvpos(0);
         } else {
-            this.actions.push({inst: 0, param1: mvpos(1), param2: CpStr});
+            act({inst: 0, param1: mvpos(1), param2: CpStr});
             abcstr = abcstr.substring(0, mvpos(1)) + CpStr + abcstr.substring(mvpos(1));
             CrtPos = mvpos(1) + CpStr.length;
             CrtPos = mvpos(0);
@@ -1051,13 +1059,13 @@ var MSOE = new function() {
 					Content=abcstr.substring(CrtPos);
 				}
                 abcstr = abcstr.substring(0, CrtPos) + Latter;
-                this.actions.push({inst: 1, param1: CrtPos, param2: Content});
+                act({inst: 1, param1: CrtPos, param2: Content});
                 CrtPos = mvpos(0);
             } else { //deleting "\n"
                 var NxtPos = mvpos(0); //next position
                 if (abcstr[CrtPos - 1] == "\n") {
                     abcstr = abcstr.substring(0, CrtPos - 1) + abcstr.substring(CrtPos + 1);
-                	this.actions.push({inst: 1, param1: CrtPos - 1, param2: "\n$"});
+                	act({inst: 1, param1: CrtPos - 1, param2: "\n$"});
                     CrtPos = NxtPos;
                 }
             }
@@ -1079,7 +1087,7 @@ var MSOE = new function() {
                 abcstr = abcstr.substring(0, mvpos(1) + 1) + "#" + abcstr.substring(mvpos(1) + 1);
 				var pos = mvpos(1);
                 CrtPos = mvpos(1);
-				this.actions.push({inst: 0, param1: pos, param2: abcstr.substring(pos, ((CrtPos == mvpos(1))?abcstr.length:mvpos(1)))});
+				act({inst: 0, param1: pos, param2: abcstr.substring(pos, ((CrtPos == mvpos(1))?abcstr.length:mvpos(1)))});
             	checkbar();
             }
             this.print();

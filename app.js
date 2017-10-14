@@ -29,11 +29,14 @@ http.listen(port, function () {
 });
 
 io.on("connection", function(socket){
+  var actions = [];
   console.log('connected');
   socket.on('disconnect', function(){
     console.log('user disconnected');
   });
   socket.on('modify',function(data){
-    console.log(data);
+    io.emit('real_time', data);
+    actions.push(data);
+    console.log(actions);
   });
 });
