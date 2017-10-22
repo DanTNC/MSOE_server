@@ -40,10 +40,26 @@ var MSOE = new function() {
     var page = [];
     var actions = [];//record the order of actions for the "undo" command
     var re_actions = [];//record the order of undone actions for the "redo" command
+    
+    this.sync = (A)=>{
+        re_actions = [];
+        switch(A.inst){
+            case 0:
+                A.inst = 1;
+                break;
+            case 1:
+                A.inst = 0;
+                break;
+        }
+        doAct(A);
+        actions.push(A);
+        this.print();
+    };
 
     var act = (A) => {
+        re_actions = [];
         actions.push(A);
-        sheetchange(A);
+        sheetchange(A, index);
     };
     
     const host = window.location.origin + window.location.pathname;
@@ -64,6 +80,7 @@ var MSOE = new function() {
                     abcstr = abcstr.substring(0,Act.param1)+abcstr.substring(Act.param1+Act.param2.length);
 					CrtPos = Act.param1;
 					CrtPos = mvpos(0);
+					Act.inst = 1;
                 }
 				break;
 			case 1://delete <-> insert param: [deletePos, deleteStr]
@@ -73,13 +90,16 @@ var MSOE = new function() {
 					if(abcstr[Act.X]!="$"){
 						CrtPos = mvpos(0);
 					}
+					Act.inst = 0;
 					break;
 				}
 				if(Act.param2 != "\n$"){
 					CrtPos = Act.param1;
 					console.log("CrtPos", CrtPos);
+					Act.inst = 0;
 				}else{
 					CrtPos = Act.param1 + 1;
+					Act.inst = 0;
 				}
 				break;
 			case 2://assemble <-> disassemble direct(0: ->, 1: <-) param: [A_DPos, direct]
@@ -93,16 +113,18 @@ var MSOE = new function() {
 		}
 	};
 
-    this.undo = ()=>{
+    this.undo = ()=>{//TODO: sync this
 		var Act = actions.pop();
 		if(!Act) return;
 		doAct(Act);
 		re_actions.push(Act);
 	};
 	
-	this.redo = (Act)=>{
-	    console.log(Act);
-	    //TODO: implement it;
+	this.redo = ()=>{//TODO: sync this
+	    var Act = re_actions.pop();
+	    if(!Act) return;
+	    doAct(Act);
+	    actions.push(Act);
 	};
 
     var GetStrOffset = (ix) => { //get the length before the voice for highlight listener (ix: index)
@@ -701,7 +723,7 @@ var MSOE = new function() {
                 if (msg.status.success) {
                     index = msg.url.index;
                     key = msg.url.key;
-    
+                    suscribe(index);
                     console.log(msg.status.msg);
                 } else {
                     console.log(msg.status.msg);
@@ -749,6 +771,7 @@ var MSOE = new function() {
 						$("#modaldiv1").modal("hide");
 						$("#modaldiv2").modal("hide");
 					}
+                    suscribe(index);
                     console.log(msg.status.msg);
                 } else {
                     console.log(msg.status.msg);
