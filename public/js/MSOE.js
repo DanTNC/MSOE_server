@@ -378,7 +378,7 @@ var MSOE = new function() {
 			var e = $('<div class="row"><div class="ui inverted menu small borderless"><a class="item v_num help"></a><div class="ui dropdown floating item v_clef help"><div class="dp_menu menu"><a class="item dp_clef"></a><a class="item dp_clef"></a><a class="item dp_clef"></a></div></div><a class="item v_name help">Bass</a><div class="right menu"><a class="item v_up help"><i class="angle up mini icon"></i></a><a class="item v_down help"><i class="angle down mini icon"></i></a></div></div></div>');
 			e.find(".v_num").html(index+1);
 			e.find(".v_clef").prepend(RdClf(value, e, 0));
-			e.find(".v_name").html((voicename[index] === undefined)?RdClf(value, e, 1):voicename[index]);
+			e.find(".v_name").text((voicename[index] === undefined)?RdClf(value, e, 1):voicename[index]);
 			$("#voices .mCSB_container").append(e);
 		});
 		var DOM = $("<div class='ui inverted segment'></div>");
