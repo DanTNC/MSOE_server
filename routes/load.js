@@ -17,9 +17,7 @@ router.post('/', function(req, res) {
             msg: "",
         },
         sheet: {
-            cmpstr: "",
-            ttlstr: "",
-            tmpstr: "",
+            infostrs: {},
             abcstr: "",
             abcindex: 0,
             Lstr: "",
@@ -50,9 +48,7 @@ router.post('/', function(req, res) {
             if(req.body.key === sheet.key) {
                 message.status.edit = true;
                 message.status.msg = "Success load sheet data(editable)";
-                message.sheet.cmpstr = sheet.cmpstr;
-                message.sheet.ttlstr = sheet.ttlstr;
-                message.sheet.tmpstr = sheet.tmpstr;
+                message.sheet.infostrs = sheet.infostrs;
                 message.sheet.abcstr = sheet.abcstr;
                 message.sheet.abcindex = sheet.abcindex;
                 message.sheet.Lstr = sheet.Lstr;
@@ -67,9 +63,7 @@ router.post('/', function(req, res) {
             else {
                 message.status.msg = "Success load sheet data(visitable)";
 				message.status.edit = false;
-                message.sheet.cmpstr = sheet.cmpstr;
-                message.sheet.ttlstr = sheet.ttlstr;
-                message.sheet.tmpstr = sheet.tmpstr;
+                message.sheet.infostrs = sheet.infostrs;
                 message.sheet.abcstr = sheet.abcstr;
                 message.sheet.abcindex = sheet.abcindex;
 				message.sheet.Lstr = sheet.Lstr;

@@ -3,9 +3,15 @@ var mongoose = require('./dbconnect');
 var SheetSchema = new mongoose.Schema({
     index: String,
     key: String,
-    cmpstr: String,
-    ttlstr: String,
-    tmpstr: String,
+    infostrs: {
+        edtstr: String,
+        cmpstr: String,
+        ttlstr: String,
+        stlstr: String,
+        albstr: String,
+        artstr: String,
+        tmpstr: String
+    },
     abcstr: String,
     abcindex: Number,
     Lstr: String,

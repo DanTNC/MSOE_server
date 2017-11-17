@@ -29,7 +29,6 @@ var MSOE = new function() {
     var Dstate = 5; //Mn, n=0~8. n=5 for N=1, n+1=>N*2, n-1=>N/2. 1n=N*(1+1/2), 2n=N*(1+1/2+1/4)... and so on
     var CrtPos = 0; //current position
     var abcjs = window.ABCJS;
-    var ttlstr = ""; //title string
     //-----------------------------------------//for voices
     var abcindex = 0; //index for abcstrings
     var vicchga; //Ath voice for VicChg;
@@ -401,7 +400,7 @@ var MSOE = new function() {
         }
     }
     this.print = () => { //output svg
-        var SS = "T: " + ttlstr + "\nM: " + tmpstr + "\nL: " + Lstr + "\nC: " + cmpstr + "\n" + ForPrint();
+        var SS = "T: " + infostrs["ttlstr"] + "\nM: " + infostrs["tmpstr"] + "\nL: " + Lstr + "\nC: " + infostrs["cmpstr"] + "\n" + ForPrint();
         abcjs.renderAbc('boo', SS, {}, {
             add_classes: true,
             editable: true,
@@ -416,7 +415,7 @@ var MSOE = new function() {
                         }
                     }
                     console.log(NumBefCrt);
-                    var offset = abcElem.startChar - 15 - ttlstr.length - tmpstr.length - Lstr.length - cmpstr.length - GetStrOffset(abcindex);
+                    var offset = abcElem.startChar - 15 - infostrs["ttlstr"].length - infostrs["tmpstr"].length - Lstr.length - infostrs["cmpstr"].length - GetStrOffset(abcindex);
                     console.log(offset);
                     if ((offset < 0) || (offset > maxoffset)) return;
                     if (offset > NumBefCrt + 10 + String(numtostr(Math.pow(2, Dstate % 10 - 4) * (1 - Math.pow(1 / 2, Math.floor(Dstate / 10) + 1)))).length) { //if after the cursor, - the string length of cursor
@@ -448,37 +447,52 @@ var MSOE = new function() {
             }
         });
         abcjs.renderMidi("midi", SS, {}, { generateDownload: true, generateInline: true }, {});
-        $("path, tspan").attr("fill",(night?"white":"#000000"));
+        $("path, tspan").attr("fill", (night?"white":"#000000"));
     };
     this.printabc = () => {
         printJS("sheet", "html");
     };
-    this.chgttl = (a) => { //update title
-        if (!Edit) return;
-        ttlstr = a.value;
-        this.print();
+    var infostrs = {
+        "edtstr":"",
+        "cmpstr":"",
+        "ttlstr":"",
+        "stlstr":"",
+        "albstr":"",
+        "artstr":"",
+        "tmpstr":"",
     };
-    var tmpstr = ""; //tempo string
     var Lstr = "1/4";
-    this.chgtmp = (a) => { //update tempo
+    this.chginfo = (a) => {
         if (!Edit) return;
-        if (a.value.length == 2) a.value = a.value[0] + "/" + a.value[1]; //if user is lazy and inputs, for example, 44 for 4/4, add "/" for the lazy guy
-        tmpstr = a.value;
-        for (var i = 0; i < tmpstr.length; i++) {
-            if (tmpstr[i] == "/") {
-                Lstr = "1/" + tmpstr.substring(i + 1);
-                break;
+        if(a.name != "whatistempo"){ //update infos
+            infostrs[infoinputs[a.name]] = a.value;
+        }else{ //update tempo
+            if (a.value.length == 2) a.value = a.value[0] + "/" + a.value[1]; //if user is lazy and inputs, for example, 44 for 4/4, add "/" for the lazy guy
+            infostrs["tmpstr"] = a.value;
+            for (var i = 0; i < infostrs["tmpstr"].length; i++) {
+                if (infostrs["tmpstr"][i] == "/") {
+                    Lstr = "1/" + infostrs["tmpstr"].substring(i + 1);
+                    break;
+                }
             }
+            if (a.value == "") Lstr = "1/4";
         }
-        if (a.value == "") Lstr = "1/4";
-        this.print();
-    };
-    var cmpstr = "";
-    this.chgcmp = (a) => {
-        if (!Edit) return;
-        cmpstr = a.value;
         this.print();
     }
+    var infoinputs = {
+        "whoiseditor":"edtstr",
+        "whoiscomposer":"cmpstr",
+        "whatistitle":"ttlstr",
+        "whatissubtitle":"stlstr",
+        "whichalbum":"albstr",
+        "whoisartist":"artstr",
+        "whatistempo":"tmpstr",
+    };
+    var updateinfo = ()=>{
+        for (var key in infoinputs){
+            $("input[name=" + key + "]").val(infostrs[infoinputs[key]]);
+        }
+    };
     var tonum = (str) => {
         var Dnmntr = 0; //denominator
         var Nmrtr = 0; //numerator
@@ -497,13 +511,13 @@ var MSOE = new function() {
         var ChFm = mvpos(1); //check from
         var MaxD; //the max duration between bars
 
-        for (var i = 0; i < tmpstr.length; i++) {
-            if (tmpstr[i] == "/") {
-                MaxD = parseInt(tmpstr.substring(0, i));
+        for (var i = 0; i < infostrs["tmpstr"].length; i++) {
+            if (infostrs["tmpstr"][i] == "/") {
+                MaxD = parseInt(infostrs["tmpstr"].substring(0, i));
                 break;
             }
         }
-        if (tmpstr == "") MaxD = 4;
+        if (infostrs["tmpstr"] == "") MaxD = 4;
 
         if (abcstr[CrtPos + 1] === "|") return;
         if (ChFm == CrtPos) {
@@ -706,9 +720,7 @@ var MSOE = new function() {
                 insert: push,
                 index: index,
                 key: key,
-                cmpstr: cmpstr,
-                ttlstr: ttlstr,
-                tmpstr: tmpstr,
+                infostrs: infostrs,
                 abcstr: abcstr,
                 abcindex: abcindex,
                 Lstr: Lstr,
@@ -750,9 +762,7 @@ var MSOE = new function() {
                     window.location.replace(host);
                 }
                 if (msg.status.success) {
-                    cmpstr = msg.sheet.cmpstr;
-                    ttlstr = msg.sheet.ttlstr;
-                    tmpstr = msg.sheet.tmpstr;
+                    infostrs = msg.sheet.infostrs;
                     abcstr = msg.sheet.abcstr;
                     abcindex = msg.sheet.abcindex;
                     Lstr = msg.sheet.Lstr;
@@ -771,6 +781,7 @@ var MSOE = new function() {
 						$("#modaldiv1").modal("hide");
 						$("#modaldiv2").modal("hide");
 					}
+					updateinfo();
                     suscribe(index);
                     console.log(msg.status.msg);
                 } else {

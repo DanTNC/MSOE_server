@@ -56,9 +56,7 @@ router.post('/', function(req, res) {
             var SheetData = new Sheet({
                index: index,
                key: key,
-               cmpstr: req.body.cmpstr,
-               ttlstr: req.body.ttlstr,
-               tmpstr: req.body.tmpstr,
+               infostrs: req.body.infostrs,
                abcstr: req.body.abcstr,
                abcindex: req.body.abcindex,
                Lstr: req.body.Lstr,
@@ -123,9 +121,7 @@ router.post('/', function(req, res) {
             var SheetData = {
                 index: req.body.index,
                 key: req.body.key,
-                cmpstr: req.body.cmpstr,
-                ttlstr: req.body.ttlstr,
-                tmpstr: req.body.tmpstr,
+                infostrs: req.body.infostrs,
                 abcstr: req.body.abcstr,
                 abcindex: req.body.abcindex,
                 Lstr: req.body.Lstr,

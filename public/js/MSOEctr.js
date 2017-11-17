@@ -17,7 +17,7 @@ var checkinput = () => { //if input tags are focused, turn off key events
 };
 
 var key = () => { // only keypress can tell if "shift" is pressed at the same time
-	if ($("#voicename").is(":focus") && (event.keyCode == 13)) $("#check").click();
+    if ($("#voicename").is(":focus") && (event.keyCode == 13)) $("#check").click();
     if (checkinput()) return;
     if (!MSOE.Edit_()) return;
     switch (event.keyCode) {
@@ -91,7 +91,7 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
             if (!MSOE.checkpause()) { //Pause with duration of 8 is illegal
                 MSOE.outinsert("z", 1, 0, 1);
             } else {
-				Error("Pause with duration of 2 is illegal.");
+                Error("Pause with duration of 2 is illegal.");
             }
             break;
             // ----------Insert Pause-----------
@@ -200,13 +200,13 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
             break;
             // ----------Tie and Untie-----------
         case 26://"ctrl+z" undo
-			MSOE.undo();
-			break;
+            MSOE.undo();
+            break;
             // ----------Undo--------------------
         case 83://"shift+s" save
-    	    MSOE.save();
-    	    break;
-    	    // ----------Save--------------------
+            MSOE.save();
+            break;
+            // ----------Save--------------------
         default:
     }
     console.log("keycode : "+event.keyCode);
@@ -241,9 +241,9 @@ var move = () => { // some keys can't be detected in keypress
     if (event.keyCode == 16) { //"shift" for chord mode on
         MSOE.chmodeon();
     }
-	if (event.keyCode == 17) { //"ctrl" for add voice before
-		MSOE.insvocbef(true);
-	}
+    if (event.keyCode == 17) { //"ctrl" for add voice before
+        MSOE.insvocbef(true);
+    }
     MSOE.print();
 };
 
@@ -251,9 +251,9 @@ var chord = () => { //keyup event for chord mode
     if (checkinput()) return;
     if (!MSOE.Edit_()) return;
     MSOE.chmodeoff(event.keyCode);
-	if (event.keyCode == 17) { //"ctrl" for add voice before
-		MSOE.insvocbef(false);
-	}
+    if (event.keyCode == 17) { //"ctrl" for add voice before
+        MSOE.insvocbef(false);
+    }
 };
 
 var highlight = (a) => {
@@ -278,103 +278,88 @@ var btn = (a) => { //buttons for notes
     highlight(a);
 };
 
-var chgcmp = (a) => { MSOE.chgcmp(a) };
-var chgtmp = (a) => { MSOE.chgtmp(a) };
-var chgttl = (a) => { MSOE.chgttl(a) };
-
 $(document).ready(function() {
     MSOE.urlload(function(m){
-		MSOE.print();
-	    MSOE.printVoc();
-    	if(MSOE.Edit_()){
-			$('#print').hide();
-			$('#play').hide();
-			$('#share').hide();
-			$("#edit").hide();
-		}else{
-			$(".left").hide();
-			$(".panel-group").hide();
-		}
-		$('#modaldiv1')
-    		.modal({
-    			allowMultiple: false
-    		})
-    		.modal({
-    			blurring: true
-    		})
-    		.modal('setting', 'closable', false);
-    	if(m){
-    		$("#modaldiv1").modal('setting', 'transition', 'vertical flip').modal("show");
-    	}
-	});
-	$("input").change(function(){
-		switch(this.name){
-			case "whoiscomposer":
-				chgcmp(this);
-				break;
-			case "whatistempo":
-				chgtmp(this);
-				break;
-			case "whatistitle":
-				chgttl(this);
-				break; 
-		}
-	});
+        MSOE.print();
+        MSOE.printVoc();
+        if(MSOE.Edit_()){
+            $('#print').hide();
+            $('#play').hide();
+            $('#share').hide();
+            $("#edit").hide();
+        }else{
+            $(".left").hide();
+            $(".panel-group").hide();
+        }
+        $('#modaldiv1')
+            .modal({
+                allowMultiple: false
+            })
+            .modal({
+                blurring: true
+            })
+            .modal('setting', 'closable', false);
+        if(m){
+            $("#modaldiv1").modal('setting', 'transition', 'vertical flip').modal("show");
+        }
+    });
+    $("input").change(function(){
+        MSOE.chginfo(this);
+    });
     document.onkeypress = key;
     document.onkeydown = move;
     document.onkeyup = chord;
-    // $(window).on("beforeunload",function(e){ return "Do you wanna leave without saving?"; });
-	$("#save").click(function(e) { MSOE.save(e); });
-	$("#play").click(function(e) {
-    	$(".abcjs-midi-reset").click();
-    	$(".abcjs-midi-start").click();
-	});
-	$("#print").click(function(e) {
-    	if(!MSOE.Edit_()){
-        	MSOE.printabc();
-    	}
-	});
-	$("#share").click(function(e){
-    	$(".download-midi a")[0].click();
-	});
-	$("#help").click(function(e){
-	    MSOE.help();
-	});
-	$("#copy").click(function(){
-		MSOE.copyui();
-	});
-	$("#cut").click(function(){
-	    MSOE.cutmode();
-	    MSOE.print();
-	});
-	$("#clef").click(function(){
-		MSOE.ClfMdTgl();
-	});
-	$("#paste").click(function(){
-		MSOE.paste();
-		MSOE.print();
-	});
-	$("#plus").click(function(){
-		MSOE.AddVoice();
-		MSOE.print();
-	});
-	$("#minus").click(function(){
-		MSOE.DelVoice();
-		MSOE.print();
-	});
-	$("#check").click(function(){
-		MSOE.ChgVicName($("#voicename").val());
-		$("#voicename").val("");
-		MSOE.print();
-	});
-	$("#remove").click(function(){
-		MSOE.ClrVicName();
-		MSOE.print();
-	});
+    $("#save").click(function(e) { MSOE.save(e); });
+    $("#play").click(function(e) {
+        $(".abcjs-midi-reset").click();
+        $(".abcjs-midi-start").click();
+    });
+    $("#print").click(function(e) {
+        if(!MSOE.Edit_()){
+            MSOE.printabc();
+        }
+    });
+    $("#share").click(function(e){
+        $(".download-midi a")[0].click();
+    });
+    $("#help").click(function(e){
+        MSOE.help();
+    });
+    $("#copy").click(function(){
+        MSOE.copyui();
+    });
+    $("#cut").click(function(){
+        MSOE.cutmode();
+        MSOE.print();
+    });
+    $("#clef").click(function(){
+        MSOE.ClfMdTgl();
+    });
+    $("#paste").click(function(){
+        MSOE.paste();
+        MSOE.print();
+    });
+    $("#plus").click(function(){
+        MSOE.AddVoice();
+        MSOE.print();
+    });
+    $("#minus").click(function(){
+        MSOE.DelVoice();
+        MSOE.print();
+    });
+    $("#check").click(function(){
+        MSOE.ChgVicName($("#voicename").val());
+        $("#voicename").val("");
+        MSOE.print();
+    });
+    $("#remove").click(function(){
+        MSOE.ClrVicName();
+        MSOE.print();
+    });
     MIDI.setup({
         soundfontUrl: window.ABCJS.midi.soundfountUrl,
         instruments: window.ABCJS.midi.instruments
     });
     $("#midi").hide();
-	$("#error").hide();
+    $("#error").hide();
 });
