@@ -38,6 +38,7 @@ io.on("connection", function(socket){
   });
   socket.on('sync', function(index){
     sheet_data[index] = sheet_data[index] || [];
+    socket.emit("update", sheet_data[index]);
     socket_count[index] = (socket_count[index] || 0) + 1;
     socket.join(index, function(){
       let rooms = Object.keys(socket.rooms);
