@@ -132,7 +132,7 @@ var MSOE = new function() {
             sum += 20 + (Math.floor(Math.log10(i + 1)) + 1) + clef[i].length + ((voicename[i] === undefined)?RdClf(clef[i], undefined, 1):voicename[i]).length;
             if (i != ix) sum += rmsmb(strs[i], false).length + 4;
         }
-        maxoffset = rmsmb(abcstr, true).length + 4;
+        maxoffset = rmsmb(abcstr, true).length + 1;
         return sum;
     };
     var SaveNLoad = (j) => { //save and load (j: jump to)
@@ -417,7 +417,10 @@ var MSOE = new function() {
                     console.log(NumBefCrt);
                     var offset = abcElem.startChar - 15 - infostrs["ttlstr"].length - infostrs["tmpstr"].length - Lstr.length - infostrs["cmpstr"].length - GetStrOffset(abcindex);
                     console.log(offset);
-                    if ((offset < 0) || (offset > maxoffset)) return;
+                    if ((offset < 0) || (offset > maxoffset) || (isNaN(offset))){
+                        this.print();
+                        return;
+                    }
                     if (offset > NumBefCrt + 10 + String(numtostr(Math.pow(2, Dstate % 10 - 4) * (1 - Math.pow(1 / 2, Math.floor(Dstate / 10) + 1)))).length) { //if after the cursor, - the string length of cursor
                         offset -= (10 + String(numtostr(Math.pow(2, Dstate % 10 - 4) * (1 - Math.pow(1 / 2, Math.floor(Dstate / 10) + 1)))).length);
                     } else if (offset == NumBefCrt + 1) {

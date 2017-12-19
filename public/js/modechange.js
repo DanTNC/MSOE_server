@@ -5,9 +5,6 @@ var edit_mode = () =>{
   $(".left").show();
   $(".panel-group").show();
   $(".panel-group-preview").hide();
-  // $("#print").hide();
-  // $("#play").hide();
-  // $("#share").hide();
   $(".pre-but").hide();
   $(".edit-but").show();
   $("#edit").hide();
@@ -20,9 +17,6 @@ var preview_mode = () =>{
   $(".left").hide();
   $(".panel-group").hide();
   $(".panel-group-preview").show();
-  // $("#print").show();
-  // $("#play").show();
-  // $("#share").show();
   $(".pre-but").show();
   $(".edit-but").hide();
   $("#edit").show();

@@ -274,11 +274,11 @@ $(document).ready(function() {
         MSOE.print();
         MSOE.printVoc();
         if(MSOE.Edit_()){
-            $('#print').hide();
-            $('#play').hide();
-            $('#share').hide();
             $("#edit").hide();
+            $(".pre-but").hide();
         }else{
+            $("#night").show();
+            $(".edit-but").hide();
             $(".left").hide();
             $(".panel-group").hide();
         }
