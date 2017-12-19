@@ -63,11 +63,11 @@
     <div class="ui top thin inverted menu" id="topbar">
         <a class="item help" id="infohome">Score Info</a>
         <a class="item help" id="mannualgo">Mannual</a>
-        <a class="item help" id="save">Save</a>
-        <a class="item help" id="play">Play</a>
-        <a class="item help" id="print">Print</a>
-        <a class="item help" id="share">Share</a>
         <a class="item" id="help">Help</a>
+        <a class="item help edit-but" id="save">Save</a>
+        <a class="item help pre-but" id="play">Play</a>
+        <a class="item help pre-but" id="print">Print</a>
+        <a class="item help pre-but" id="share">Share</a>
         <script type="text/javascript">
             $("#help").popup({
                 content: "Popup info for UI",
@@ -166,6 +166,12 @@
             </div>
         </div>
         <div class="three wide column panel-group-preview right_menu">
+            <div class="one wide column row" id="bpm">
+                BPM
+            </div>
+            <div class="ui input mini" id="bpm_input">
+                <input type="text" placeholder="180" name="whatisbpm"/>
+            </div>
         </div>
         <div class="two wide column" data-mcs-theme="minimal" data-mcs-axis="y">
             <div class="ui right sidebar inverted vertical menu mCustomScrollbar"  data-mcs-theme="minimal" data-mcs-axis="y" id="sidebar">

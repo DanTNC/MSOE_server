@@ -279,3 +279,14 @@ img.logo{
   background-color: sienna;
   color: white;
 }
+
+#bpm {
+  color: white;
+  padding-top: 1vw;
+  padding-bottom: 1vw;
+  padding-left: 0.5vw;
+}
+
+#bpm_input {
+  width: 16vw;
+}

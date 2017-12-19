@@ -1,13 +1,4 @@
 /* global $, history, location, printJS, MIDI, MSOE */
-$("#DDDD").click(function() {
-    if (!MSOE.checkpause()) { //Pause with duration of 8 is illegal
-        MSOE.outinsert("z", 1, 0, 1);
-    } else {
-        alert("Pause with duration of 2 is illegal.");
-    }
-});
-
-
 var checkinput = () => { //if input tags are focused, turn off key events
     let myArray = Array.from(document.getElementsByTagName("input"));
     if (myArray.includes(document.activeElement))
@@ -311,6 +302,7 @@ $(document).ready(function() {
     document.onkeyup = chord;
     $("#save").click(function(e) { MSOE.save(e); });
     $("#play").click(function(e) {
+        MIDI.volume = 3;
         $(".abcjs-midi-reset").click();
         $(".abcjs-midi-start").click();
     });

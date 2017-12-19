@@ -446,7 +446,7 @@ var MSOE = new function() {
                 }
             }
         });
-        abcjs.renderMidi("midi", SS, {}, { generateDownload: true, generateInline: true }, {});
+        abcjs.renderMidi("midi", SS, {}, { generateDownload: true, generateInline: true, qpm: Number(infostrs["bpmstr"]) }, {});
         $("path, tspan").attr("fill", (night?"white":"#000000"));
     };
     this.printabc = () => {
@@ -460,22 +460,25 @@ var MSOE = new function() {
         "albstr":"",
         "artstr":"",
         "tmpstr":"",
+        "bpmstr":""
     };
     var Lstr = "1/4";
     this.chginfo = (a) => {
-        if (!Edit) return;
-        if(a.name != "whatistempo"){ //update infos
-            infostrs[infoinputs[a.name]] = a.value;
-        }else{ //update tempo
-            if (a.value.length == 2) a.value = a.value[0] + "/" + a.value[1]; //if user is lazy and inputs, for example, 44 for 4/4, add "/" for the lazy guy
-            infostrs["tmpstr"] = a.value;
-            for (var i = 0; i < infostrs["tmpstr"].length; i++) {
-                if (infostrs["tmpstr"][i] == "/") {
-                    Lstr = "1/" + infostrs["tmpstr"].substring(i + 1);
-                    break;
+        if (!Edit && a.name!="whatisbpm") return;
+        switch (a.name) {
+            case "whatistempo": //update tempo
+                if (a.value.length == 2) a.value = a.value[0] + "/" + a.value[1]; //if user is lazy and inputs, for example, 44 for 4/4, add "/" for the lazy guy
+                infostrs["tmpstr"] = a.value;
+                for (var i = 0; i < infostrs["tmpstr"].length; i++) {
+                    if (infostrs["tmpstr"][i] == "/") {
+                        Lstr = "1/" + infostrs["tmpstr"].substring(i + 1);
+                        break;
+                    }
                 }
-            }
-            if (a.value == "") Lstr = "1/4";
+                if (a.value == "") Lstr = "1/4";
+                break;
+            default: //update infos
+                infostrs[infoinputs[a.name]] = a.value;
         }
         this.print();
     }
@@ -487,6 +490,7 @@ var MSOE = new function() {
         "whichalbum":"albstr",
         "whoisartist":"artstr",
         "whatistempo":"tmpstr",
+        "whatisbpm":"bpmstr"
     };
     var updateinfo = ()=>{
         for (var key in infoinputs){
@@ -710,6 +714,7 @@ var MSOE = new function() {
         return str.replace(/[*]|[$]|[#]/g, "");
     };
     this.save = function(e) {
+        if(!Edit) return;
         var push = false;
         if (index === "" && key === "")
             push = true;

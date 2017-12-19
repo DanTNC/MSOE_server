@@ -7,7 +7,7 @@ var suscribe = (index)=>{
 };
 
 socket.on("real_time", (Act)=>{
-    MSOE.sync(Act);
+    //MSOE.sync(Act); taken out for now, actived after actions completed
 });
 
 //TODO: check key to prevent unauthorized user from editing

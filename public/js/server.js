@@ -7,8 +7,7 @@ server_load = (func, sucfunc, index, key) => {
             index: index,
             key: key,
         },
-        success: sucfunc
-        ,
+        success: sucfunc,
         error: function() {
             console.log("Ajax error when POST /load");
             func();

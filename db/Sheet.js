@@ -10,7 +10,8 @@ var SheetSchema = new mongoose.Schema({
         stlstr: String,
         albstr: String,
         artstr: String,
-        tmpstr: String
+        tmpstr: String,
+        bpmstr: String
     },
     abcstr: String,
     abcindex: Number,
