@@ -449,7 +449,12 @@ var MSOE = new function() {
                 }
             }
         });
-        abcjs.renderMidi("midi", SS, {}, { generateDownload: true, generateInline: true, qpm: Number(infostrs["bpmstr"]) }, {});
+        abcjs.renderMidi("midi", SS, {}, { generateDownload: true, generateInline: true, qpm: Number(infostrs["bpmstr"]), listener: (midiElem, midiEvent)=>{
+            MIDI.volume = 3;
+            if(midiEvent.progress == 1){
+                $("#play").text("Play");
+            }
+        }}, {});
         $("path, tspan").attr("fill", (night?"white":"#000000"));
     };
     this.printabc = () => {

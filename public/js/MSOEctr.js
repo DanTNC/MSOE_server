@@ -305,6 +305,7 @@ $(document).ready(function() {
         MIDI.volume = 3;
         $(".abcjs-midi-reset").click();
         $(".abcjs-midi-start").click();
+        $("#play").text("Stop");
     });
     $("#print").click(function(e) {
         if(!MSOE.Edit_()){
