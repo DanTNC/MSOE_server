@@ -290,3 +290,7 @@ img.logo{
 #bpm_input {
   width: 16vw;
 }
+
+.cursor { 
+  border-left: 1px solid black;
+}

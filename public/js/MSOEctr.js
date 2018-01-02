@@ -302,10 +302,20 @@ $(document).ready(function() {
     document.onkeyup = chord;
     $("#save").click(function(e) { MSOE.save(e); });
     $("#play").click(function(e) {
-        MIDI.volume = 3;
-        $(".abcjs-midi-reset").click();
-        $(".abcjs-midi-start").click();
-        $("#play").text("Stop");
+        if(MSOE.playing == false){
+            MSOE.playing = true;
+            MIDI.volume = 3;
+            $(".abcjs-midi-reset").click();
+            $(".abcjs-midi-start").click();
+            $("#play").text("Stop");
+            ABCJS.startAnimation(document.getElementById("boo"), MSOE.tune(), {showCursor: true, bpm: 8});
+        }else{
+            MSOE.playing = false;
+            $(".abcjs-midi-reset").click();
+            $(".abcjs-midi-start").click();
+            $("#play").text("Play");
+            ABCJS.stopAnimation();
+        }
     });
     $("#print").click(function(e) {
         if(!MSOE.Edit_()){

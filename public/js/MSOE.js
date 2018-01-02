@@ -398,10 +398,15 @@ var MSOE = new function() {
             $("path, tspan").attr("fill","#000000");
             $("#night").text("Night");
         }
-    }
+    };
+    var tune_ = null;
+    this.tune = () => {
+        return tune_[0];
+    };
+    this.playing = false;
     this.print = () => { //output svg
         var SS = "T: " + infostrs["ttlstr"] + "\nM: " + infostrs["tmpstr"] + "\nL: " + Lstr + "\nC: " + infostrs["cmpstr"] + "\n" + ForPrint();
-        abcjs.renderAbc('boo', SS, {}, {
+        tune_ = abcjs.renderAbc('boo', SS, {}, {
             add_classes: true,
             editable: true,
             listener: {
@@ -449,12 +454,22 @@ var MSOE = new function() {
                 }
             }
         });
-        abcjs.renderMidi("midi", SS, {}, { generateDownload: true, generateInline: true, qpm: Number(infostrs["bpmstr"]), listener: (midiElem, midiEvent)=>{
-            MIDI.volume = 3;
-            if(midiEvent.progress == 1){
-                $("#play").text("Play");
+        let qpm_ = Number(infostrs["bpmstr"]);
+        abcjs.renderMidi("midi", SS, {}, { generateDownload: true, generateInline: true, qpm: qpm_, listener: (midiElem, midiEvent)=>{
+                MIDI.volume = 3;
+                if(midiEvent.progress == 1){
+                    $("#play").text("Play");
+                    this.playing = false;
+                }
+            },
+            animate: {
+                listener: (svgElems)=>{
+                    console.log(svgElems);
+                },
+                target: tune_[0],
+                qpm: qpm_
             }
-        }}, {});
+        }, {});
         $("path, tspan").attr("fill", (night?"white":"#000000"));
     };
     this.printabc = () => {
