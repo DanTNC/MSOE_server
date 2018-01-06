@@ -404,8 +404,22 @@ var MSOE = new function() {
         return tune_[0];
     };
     this.playing = false;
+    var infostrs = {
+        "edtstr":"",
+        "cmpstr":"",
+        "ttlstr":"",
+        "stlstr":"",
+        "albstr":"",
+        "artstr":"",
+        "tmpstr":"",
+        "bpmstr":""
+    };
+    this.bpm = ()=>{
+        return (infostrs["bpmstr"] == "")?180:Number(infostrs["bpmstr"]);
+    };
     this.print = () => { //output svg
-        var SS = "T: " + infostrs["ttlstr"] + "\nM: " + infostrs["tmpstr"] + "\nL: " + Lstr + "\nC: " + infostrs["cmpstr"] + "\n" + ForPrint();
+        var bpmstr = (infostrs["bpmstr"] == "")?"180":infostrs["bpmstr"];
+        var SS = "T: " + infostrs["ttlstr"] + "\nM: " + infostrs["tmpstr"] + "\nL: " + Lstr + "\nC: " + infostrs["cmpstr"] + "\nQ: " + bpmstr + "\n" + ForPrint();
         tune_ = abcjs.renderAbc('boo', SS, {}, {
             add_classes: true,
             editable: true,
@@ -420,7 +434,7 @@ var MSOE = new function() {
                         }
                     }
                     console.log(NumBefCrt);
-                    var offset = abcElem.startChar - 15 - infostrs["ttlstr"].length - infostrs["tmpstr"].length - Lstr.length - infostrs["cmpstr"].length - GetStrOffset(abcindex);
+                    var offset = abcElem.startChar - 19 - infostrs["ttlstr"].length - infostrs["tmpstr"].length - Lstr.length - infostrs["cmpstr"].length - bpmstr.length - GetStrOffset(abcindex);
                     console.log(offset);
                     if ((offset < 0) || (offset > maxoffset) || (isNaN(offset))){
                         this.print();
@@ -474,16 +488,6 @@ var MSOE = new function() {
     };
     this.printabc = () => {
         printJS("sheet", "html");
-    };
-    var infostrs = {
-        "edtstr":"",
-        "cmpstr":"",
-        "ttlstr":"",
-        "stlstr":"",
-        "albstr":"",
-        "artstr":"",
-        "tmpstr":"",
-        "bpmstr":""
     };
     var Lstr = "1/4";
     this.chginfo = (a) => {

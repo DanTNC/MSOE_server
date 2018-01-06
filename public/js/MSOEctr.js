@@ -308,7 +308,7 @@ $(document).ready(function() {
             $(".abcjs-midi-reset").click();
             $(".abcjs-midi-start").click();
             $("#play").text("Stop");
-            ABCJS.startAnimation(document.getElementById("boo"), MSOE.tune(), {showCursor: true, bpm: 8});
+            ABCJS.startAnimation(document.getElementById("boo"), MSOE.tune(), {showCursor: true, bpm: MSOE.bpm()});
         }else{
             MSOE.playing = false;
             $(".abcjs-midi-reset").click();
