@@ -1,4 +1,82 @@
 /* global $, history, location, printJS, MIDI, MSOE */
+var UIhandler = new function(){
+    var help_ = false; //if help mode is on
+    var help_content = { //<UI button selector>:<help message> pairs
+        "#infohome":"Edit sheet info",
+        "#mannualgo":"Show mannual",
+        "#save":"Save sheet",
+        "#play":"Play music",
+        "#print":"Print sheet",
+        "#share":"Download midi file of this music",
+        "#edit":"Enter edit mode",
+        "#preview":"Enter preview mode",
+        "#night":"Toggle night mode",
+        "#copy":"(shift+F)Set copy cursor/Copy notes by clicking again",
+        "#cut":"(H)Cut notes when copy is active",
+        "#paste":"(G)Paste previous copied or cut notes",
+        "#clef":"(Q)Set clef of current voice by using key 1 to 4",
+        "#plus":"Add new voice after current voice(before current voice by holding (ctrl))",
+        "#minus":"Delete current voice",
+        "#check":"Replace current voicename with the text on the left",
+        "#remove":"Replace current voicename with default value",
+        ".v_num:eq(0)":"Select this voice/Switch position with selected voice",
+        ".v_clef:eq(0)":"Change the clef of this voice",
+        ".v_name:eq(0)":"Move cursor to this voice",
+        ".v_div:eq(0)":"Move selected voice here",
+        ".v_up:eq(0)":"Switch place with upper voice",
+        ".v_down:eq(0)":"Switch place with lower voice"
+    };
+    var help_right = ["#paste", "#clef", "#check", "#remove", ".v_up:eq(0)", ".v_down:eq(0)", "#edit", "#preview", "#night"];
+    //elements whose popups should expand to the right
+    this.help_voice = () => { //set help popups for voice list
+        if(!help_) return;
+        $.each(help_content, (key, value)=>{
+            $(key).popup({
+                content: value,
+                on: "hover",
+                position: (key==".v_div:eq(0)")?"bottom center":((help_right.includes(key))?"bottom right":"bottom left"),
+                variation: "basic mini",
+                delay: {
+                    show:30
+                }
+            });
+        });
+    };
+    this.help = () => { //toggle help mode
+        if(help_){
+            help_ = false;
+            $("#help").css("color","rgba(255, 255, 255, 0.9)");
+            $(".help").popup("destroy");
+        }else{
+            help_ = true;
+            $("#help").css("color","orange");
+            this.help_voice();
+        }
+    };
+    
+    
+    this.night = false;
+    this.night_mode = () => { //toggle night mode
+        this.night = !this.night;
+        if(this.night){
+            $("#sheet").css("background-color","#090909");
+            $("path, tspan").attr("fill","white");
+            $("#night").text("Default");
+        }else{
+            $("#sheet").css("background-color","");
+            $("path, tspan").attr("fill","#000000");
+            $("#night").text("Night");
+        }
+    };
+    
+    
+    this.printabc = () => { //print the sheet as PDF
+        printJS("sheet", "html");
+    };
+};
+
+MSOE.UIhandler(UIhandler); //register UIhandler
+
 var checkinput = () => { //if input tags are focused, turn off key events
     let myArray = Array.from(document.getElementsByTagName("input"));
     if (myArray.includes(document.activeElement))
@@ -319,14 +397,14 @@ $(document).ready(function() {
     });
     $("#print").click(function(e) {
         if(!MSOE.Edit_()){
-            MSOE.printabc();
+            UIhandler.printabc();
         }
     });
     $("#share").click(function(e){
         $(".download-midi a")[0].click();
     });
     $("#help").click(function(e){
-        MSOE.help();
+        UIhandler.help();
     });
     $("#copy").click(function(){
         MSOE.copyui();
