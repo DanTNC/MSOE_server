@@ -11,7 +11,7 @@ var MSOE = new function() {
 	var Edit = true; //if it'editable
 	var Edit_const = false;
 
-	this.Edit_ = (set) => {
+	this.Edit_ = (set) => { //setter and getter of Edit(limited by Edit_const)
 		if(set !== undefined){
 			if(!Edit_const){
 				Edit = set;
@@ -23,6 +23,7 @@ var MSOE = new function() {
     var url = "";
     var index = "";
     var key = "";
+    //-----------------------------------------//for urlload and save
 
     var abcstr = "$"; //abcstring
     var Tstate = 1; //0:A, 1:A  2:a  3:a'
@@ -30,6 +31,7 @@ var MSOE = new function() {
     var CrtPos = 0; //current position
     var abcjs = window.ABCJS;
     //-----------------------------------------//for voices
+    
     var abcindex = 0; //index for abcstrings
     var vicchga; //Ath voice for VicChg;
     var maxoffset = 0; //the maximum of offset
@@ -37,34 +39,36 @@ var MSOE = new function() {
     var clef = []; //clef of voices
 	var voicename = []; //name of voices
     var page = [];
-    var actions = [];//record the order of actions for the "undo" command
-    var re_actions = [];//record the order of undone actions for the "redo" command
+    var actions = []; //record the order of actions for the "undo" command
+    var re_actions = []; //record the order of undone actions for the "redo" command
     
-    this.sync = (A)=>{
+    const host = window.location.origin + window.location.pathname; //host url
+    
+    this.sync = (A)=>{ //callback for syncronization when mutiple edittors are editing the same sheet
         re_actions = [];
-        switch(A.inst){
+        switch(A.inst){ //reverse actions(description stored for redo before)
             case 0:
                 A.inst = 1;
                 break;
             case 1:
                 A.inst = 0;
                 break;
+            case 6:
+                //do nothing
+                break;
+            case 7:
+            case 8:
+                A.param2 = [A.X, A.X = A.param2][0];//swap A.X and A.param2
+                break;
+            default:
+                A.param2 = (A.param2 == 0)? 1: 0;
         }
         doAct(A);
         actions.push(A);
         this.print();
     };
 
-    var act = (A) => {
-        re_actions = [];
-        actions.push(A);
-        sheetchange(A, index);
-    };
-    
-    const host = window.location.origin + window.location.pathname;
-
-	var doAct = (Act) => {
-	    console.log("undo :", Act.inst, Act.param1, Act.param2);
+	var doAct = (Act) => { //edit the sheet according to the description in Act(TODO: interface for editing)
 		switch(Act.inst){
 			case 0://insert <-> delete param: [insertPos, insertStr]
                 var Delen = true;// delete enable
@@ -82,9 +86,9 @@ var MSOE = new function() {
 					Act.inst = 1;
                 }
 				break;
-			case 1://delete <-> insert param: [deletePos, deleteStr]
+			case 1://delete <-> insert param: [deletePos, deleteStr] X: initPos
 				abcstr=abcstr.substring(0,Act.param1)+Act.param2+abcstr.substring(Act.param1);
-				if(Act.X !== undefined){//special Pos Ctrl Pram
+				if(Act.X !== undefined){//special position control parameter
 					CrtPos = Act.X;
 					if(abcstr[Act.X]!="$"){
 						CrtPos = mvpos(0);
@@ -101,30 +105,49 @@ var MSOE = new function() {
 					Act.inst = 0;
 				}
 				break;
-			case 2://assemble <-> disassemble direct(0: ->, 1: <-) param: [A_DPos, direct]
+			//-----------------direct(0: ->, 1: <-)-----------------//
+			case 2://assemble <-> disassemble param: [A_DPos, direct]
 				break;
-			case 3://# <-> b direct(0: ->, 1: <-) param: [accidentialPos, direct]
+			case 3://# <-> b param: [accidentialPos, direct]
 				break;
-			case 4://tie <-> untie direct(0: ->, 1: <-) param: [T_UPos, direct]
+			case 4://tie <-> untie param: [T_UPos, direct]
 				break;
+			case 5://addVoice <-> delVoice param: [A_DIndex, direct] (index for addBefore)
+			    break;
+			case 6://switchVoice param: [voiceA, voiceB] (don't need to reverse)
+			    break;
+			case 7://voicename param: [index, newName] X: oldName
+			case 8://infostr param: [infoIndex, newVal] X: oldVal
+			case 9://default <-> night param: ["placeholder", direct]
 			default:
 				break;
 		}
 	};
 
-    this.undo = ()=>{//TODO: sync this
+    this.undo = ()=>{ //TODO: sync this
 		var Act = actions.pop();
 		if(!Act) return;
+	    console.log("undo :", Act.inst, Act.param1, Act.param2);
 		doAct(Act);
 		re_actions.push(Act);
 	};
 	
-	this.redo = ()=>{//TODO: sync this
+	this.redo = ()=>{ //TODO: sync this
 	    var Act = re_actions.pop();
 	    if(!Act) return;
+	    console.log("redo :", Act.inst, Act.param1, Act.param2);
 	    doAct(Act);
 	    actions.push(Act);
 	};
+
+    var act = (Act) => { //record action and emit sheet change message for syncronization(TODO: edit interface)
+        if(!Act) return;
+        console.log("do :", Act.inst, Act.param1, Act.param2);
+        re_actions = [];
+        //doAct(Act);
+        actions.push(Act);
+        sheetchange(Act, index);
+    };
 
     var GetStrOffset = (ix) => { //get the length before the voice for highlight listener (ix: index)
         var sum = 0;
@@ -142,7 +165,7 @@ var MSOE = new function() {
         abcindex = j;
         CrtPos = 0;
     };
-    var ForPrint = () => {
+    var ForPrint = () => { //construct the string for ABCJS rendering
         var finalstr = "";
         for (var i = 0; i < clef.length; i++) {
             if (i != abcindex) {
@@ -156,15 +179,15 @@ var MSOE = new function() {
 	//-----------------------------------------//for voices
     clef[0] = "treble"; //default value
 	voicename[0] = undefined; //default value
-	var InsVocBef = false;
-	this.insvocbef = (v) => {
+	var InsVocBef = false; //insert before or after certain voice
+	this.insvocbef = (v) => { //setter and getter for InsVocBef
 	    if (v === undefined){
 	        return InsVocBef;   
 	    }else{
 		    InsVocBef = v;
 	    }
 	};
-	this.ChgVicName = (vn) => {
+	this.ChgVicName = (vn) => { //change voice name
 		if(vn.indexOf("\"") != -1){
 			Error("A voicename can't contain \".");
 			return;
@@ -172,11 +195,11 @@ var MSOE = new function() {
 		voicename[abcindex] = vn;
 		this.printVoc();
 	};
-	this.ClrVicName = () => {
+	this.ClrVicName = () => { //clear voice name
 		voicename[abcindex]	= undefined;
 		this.printVoc();
 	};
-    this.AddVoice = () => {
+    this.AddVoice = () => { //add voice
         if(strs.length == 0) strs[0] = abcstr;
 		var insind = (InsVocBef)?abcindex:(abcindex+1);
 		clef.splice(insind, 0, "treble");
@@ -190,7 +213,7 @@ var MSOE = new function() {
 		}
 		this.printVoc();
     };
-    this.DelVoice = () => {
+    this.DelVoice = () => { //delete voice
         if (clef.length == 1) return;
         strs = strs.slice(0, abcindex).concat(strs.slice(abcindex + 1));
         clef = clef.slice(0, abcindex).concat(clef.slice(abcindex + 1));
@@ -200,10 +223,10 @@ var MSOE = new function() {
         CrtPos = 0;
 		this.printVoc();
     };
-    this.VicChgA = () => {
+    this.VicChgA = () => { //set voice A for switching
         vicchga = abcindex;
     };
-    this.VicChgB = () => {
+    this.VicChgB = () => { //set current voice as voice B for switching
         if (vicchga === undefined) return; //if not pressed "r" before
 		if (ChgVocMd) return; //if vicchga is set by ui
         if (strs[vicchga] === undefined || strs[abcindex] === undefined || clef[vicchga] === undefined) return; //clef of current voice definitely exists
@@ -214,7 +237,7 @@ var MSOE = new function() {
 		vicchga = undefined;
 		this.printVoc();
     };
-	var VicChgB_ = (vicchgb) => {
+	var VicChgB_ = (vicchgb) => { //set vicchgb as voice B for switching
         if (vicchga === undefined) return; //if not pressed "r" before
         if (strs[vicchga] === undefined || strs[vicchgb] === undefined || clef[vicchga] === undefined) return; //clef of current voice definitely exists
 		strs[abcindex] = abcstr;
@@ -240,8 +263,8 @@ var MSOE = new function() {
 			$("#clef").css("color","");
 		}
     };
-    this.ClfOrVic = (kc, ui, ind) => {
-		var clfind = (ui === true)?ind:abcindex;
+    this.ClfOrVic = (kc, ui, ind) => { //switch clef or voice (clefmode?clef:voice) kc: keycode, ui: UI?, ind: index
+		var clfind = (ui === true)?ind:abcindex; //UI sets certain index while keyboard sets current index
         if (clefmode || ui) {
             switch (kc) {
                 case 49:
@@ -263,7 +286,7 @@ var MSOE = new function() {
             SaveNLoad(kc - 49);
         }
     };
-	var RdClf = (s, e, Md)=> {
+	var RdClf = (s, e, Md)=> { //reduced name for clefs and modify UI due to this change s: full clef string, e: voice UI element, Md: mode(0: modify UI, 1: just return)
 		var Clfs = ["treble", "alto", "tenor", "bass"];
 		var OrClfs = Clfs.slice();
 		var res = "";
@@ -297,7 +320,7 @@ var MSOE = new function() {
 		return res;
 	}
 	//-----------------------------------------//
-	var ChgVocMd = false;
+	var ChgVocMd = false; //if voice A for voice switching is set
 	this.regVocLstEvt = () => { //register voice list events
 		$(".ui.dropdown").dropdown({"silent":true});
 		$(".mCSB_container").css("overflow","visible");
@@ -387,7 +410,7 @@ var MSOE = new function() {
 	};
     //-----------------------------------------//
     var night = false;
-    this.night_mode = () => {
+    this.night_mode = () => { //toggle night mode
         night = !night;
         if(night){
             $("#sheet").css("background-color","#090909");
@@ -400,10 +423,10 @@ var MSOE = new function() {
         }
     };
     var tune_ = null;
-    this.tune = () => {
+    this.tune = () => { //return tuneObj
         return tune_[0];
     };
-    this.playing = false;
+    this.playing = false; //if the music is playing
     var infostrs = {
         "edtstr":"",
         "cmpstr":"",
@@ -414,7 +437,7 @@ var MSOE = new function() {
         "tmpstr":"",
         "bpmstr":""
     };
-    this.bpm = ()=>{
+    this.bpm = ()=>{ //return bpm of the sheet
         return (infostrs["bpmstr"] == "")?180:Number(infostrs["bpmstr"]);
     };
     this.print = () => { //output svg
@@ -486,11 +509,11 @@ var MSOE = new function() {
         }, {});
         $("path, tspan").attr("fill", (night?"white":"#000000"));
     };
-    this.printabc = () => {
+    this.printabc = () => { //print the sheet as PDF
         printJS("sheet", "html");
     };
     var Lstr = "1/4";
-    this.chginfo = (a) => {
+    this.chginfo = (a) => { //change info strings
         if (!Edit && a.name!="whatisbpm") return;
         switch (a.name) {
             case "whatistempo": //update tempo
@@ -519,12 +542,12 @@ var MSOE = new function() {
         "whatistempo":"tmpstr",
         "whatisbpm":"bpmstr"
     };
-    var updateinfo = ()=>{
+    var updateinfo = ()=>{ //update the UI inputs according to infostrs
         for (var key in infoinputs){
             $("input[name=" + key + "]").val(infostrs[infoinputs[key]]);
         }
     };
-    var tonum = (str) => {
+    var tonum = (str) => { //transform string representation of fraction to number
         var Dnmntr = 0; //denominator
         var Nmrtr = 0; //numerator
         for (var i = 0; i < str.length; i++) {
@@ -584,7 +607,7 @@ var MSOE = new function() {
             insert("|", 0);
         }
     };
-    var mvpos = (md) => {
+    var mvpos = (md) => { //move cursor position
         if (md == 0) { //0: move to the right note (not change if on the first note)
             for (var i = CrtPos - 1; i >= 0; i--) {
                 if (abcstr[i] == "$") {
@@ -652,7 +675,7 @@ var MSOE = new function() {
         }
         return num;
     };
-    this.miditone = (ch, inc) => {
+    this.miditone = (ch, inc) => { //calculate the miditone of a note ch: character of the note, inc: inccident
         var temnum;
         var code = ch.charCodeAt(0);
         if (code >= 97) code -= 32;
@@ -740,7 +763,7 @@ var MSOE = new function() {
         console.log("after rmsmb:" + str);
         return str.replace(/[*]|[$]|[#]/g, "");
     };
-    this.save = function(e) {
+    this.save = function(e) { //save sheet in database
         if(!Edit) return;
         var push = false;
         if (index === "" && key === "")
@@ -780,7 +803,7 @@ var MSOE = new function() {
             console.log("Web browser doesn't support history api");
         }
     };
-    this.urlload = (func) => {
+    this.urlload = (func) => { //load sheet from database using info in url
         url = location.href.split("?")[1] || "";
         index = url.split("!")[1] || "";
         key = url.split("!")[2] || "";
@@ -834,7 +857,7 @@ var MSOE = new function() {
             func(true);
         }
     }
-    this.outinsert = (ch, Toabcnote, md, Checkbar) => {
+    this.outinsert = (ch, Toabcnote, md, Checkbar) => { //insert from outside the object
         var legalchars = ["A", "B", "C", "D", "E", "F", "G", "z", " ", "|", "_", "^"];
         if (!legalchars.includes(ch)) return;
         if (Toabcnote == 1) {
@@ -844,12 +867,12 @@ var MSOE = new function() {
         }
         if (Checkbar == 1) checkbar();
     };
-    this.outinsertch = (ch) => {
+    this.outinsertch = (ch) => { //insert from outside the object in chord mode
         var legalchars = ["A", "B", "C", "D", "E", "F", "G"];
         if (!legalchars.includes(ch)) return;
         insertch(toabcnote(ch));
     };
-    this.ChgDstate = (md) => {
+    this.ChgDstate = (md) => { //change duration state
         switch (md) {
             case 0:
                 Dstate = (Dstate % 10 == 0) ? 8 : Dstate - 1;
@@ -867,40 +890,40 @@ var MSOE = new function() {
             default:
         }
     };
-    this.ChgTstate = (md) => {
+    this.ChgTstate = (md) => { //change octave state
         if (md == 0) Tstate = (Tstate == 3) ? 0 : Tstate + 1;
         else if (md == 1) Tstate = (Tstate == 0) ? 3 : Tstate - 1;
         return Tstate;
     };
-    this.separate = () => {
+    this.separate = () => { //separate two linked notes
         if (CrtPos == 0 || abcstr[CrtPos - 1] == "\n" || CrtPos == 1 || abcstr[CrtPos - 1] == "$") return;
         if (abcstr[CrtPos - 1] != " ") {
             abcstr = abcstr.substring(0, CrtPos) + " " + abcstr.substring(CrtPos);
             CrtPos++;
         }
     };
-    this.assemble = () => {
+    this.assemble = () => { //assemble two notes
         if (CrtPos == 0 || abcstr[CrtPos - 1] == "\n" || CrtPos == 1 || abcstr[CrtPos - 1] == "$") return;
         if (abcstr[CrtPos - 1] == " ") {
             abcstr = abcstr.substring(0, CrtPos - 1) + abcstr.substring(CrtPos);
             CrtPos--;
         }
     };
-    this.tie = () => {
+    this.tie = () => { //tie two joint notes TODO: tie not joint notes
         if (CrtPos == 0 || abcstr[CrtPos - 1] == "\n" || CrtPos == 1 || abcstr[CrtPos - 1] == "$") return;
         if (abcstr[CrtPos - 1] != "-") {
             abcstr = abcstr.substring(0, CrtPos) + "-" + abcstr.substring(CrtPos);
             CrtPos++;
         }
     };
-    this.untie = () => {
+    this.untie = () => { //untie tied notes
         if (CrtPos == 0 || abcstr[CrtPos - 1] == "\n" || CrtPos == 1 || abcstr[CrtPos - 1] == "$") return;
         if (abcstr[CrtPos - 1] == "-") {
             abcstr = abcstr.substring(0, CrtPos - 1) + abcstr.substring(CrtPos);
             CrtPos--;
         }
     };
-    this.accidental = (md) => {
+    this.accidental = (md) => { //add or delete accidental (# or b)
         if (md == 0) {
             if (CrtPos != 0 && abcstr[CrtPos - 1] != "\n" && abcstr[CrtPos + 1] != "|" && abcstr[CrtPos + 1] != "#") {
                 if (abcstr[CrtPos + 2] != "^") { //only allow 2 #s
@@ -989,7 +1012,7 @@ var MSOE = new function() {
             }
         }
     };
-    this.newline = () => {
+    this.newline = () => { //add "\n"
         if (CrtPos != 0 && abcstr[CrtPos - 1] != "\n") { //ABCJS doesn't allow 2 "\n"s in series
             insert("\n$", 1);
             CrtPos = mvpos(1);
@@ -998,7 +1021,7 @@ var MSOE = new function() {
     var CpMd = false; //copy mode
     var CpStP = -1; //copy startpoint
     var CpStr = ""; //copy string
-    this.copymode = () => {
+    this.copymode = () => { //toggle copy mode and do copy
         if (CpMd) {
             $("#cut").addClass("disabled").css("color","");
             CpMd = false;
@@ -1039,7 +1062,7 @@ var MSOE = new function() {
 			$("#copy").css("color","#49beb5");
         }
     };
-	this.cutmode = () => {
+	this.cutmode = () => { //cut
 		if(CpMd) {
 		    $("#cut").addClass("disabled").css("color","");
 			CpMd = false;
@@ -1075,7 +1098,7 @@ var MSOE = new function() {
 			$("#paste").removeClass("disabled");
 		}
 	};
-    this.copycancel = () => {
+    this.copycancel = () => { //cancel copy when copy mode is on
         if (CpMd) {
             $("#cut").addClass("disabled").css("color","");
             CpMd = false;
@@ -1083,14 +1106,14 @@ var MSOE = new function() {
 			CpStP = -1;
         }
     };
-	this.copyui = () => {
+	this.copyui = () => { //copy UI button handler
 		if(InsVocBef){
 			this.copycancel();
 		}else{
 			this.copymode();
 		}
 	}
-    this.paste = () => {
+    this.paste = () => { //paste copied or cutten string
         if (mvpos(1) == CrtPos) {
             act({inst: 0, param1: abcstr.length, param2: CpStr});
             abcstr = abcstr + CpStr;
@@ -1104,13 +1127,13 @@ var MSOE = new function() {
         }
 		checkbar();
     };
-    this.outmove = (md) => {
+    this.outmove = (md) => { //mvpos from outside the object (move cursor)
         CrtPos = mvpos(md);
     };
-    this.outmove2 = (md) => {
+    this.outmove2 = (md) => { //mvpos from outside the object (for "home" and "end")
         mvpos(md);
     };
-    this.del = () => {
+    this.del = () => { //delete note
         if (CrtPos != 0) { //if not the start of abcstring
             if (abcstr[CrtPos - 1] != "\n") { //deleting notes
                 var DelEnd = mvpos(1); //delete end
@@ -1139,13 +1162,13 @@ var MSOE = new function() {
         console.log(CrtPos);
         console.log(abcstr);
     };
-    this.chmodeon = () => {
+    this.chmodeon = () => { //chord mode on
         var InsBef = mvpos(1); //insert before
         if ((InsBef == CrtPos) || (abcstr[InsBef + 1] != "[")) {
             insert("$[]", 1);
         }
     };
-    this.chmodeoff = (k) => {
+    this.chmodeoff = (k) => { //chord mode off
         if (k == 16) { //"shift" for chord mode off
             if (abcstr.substr(mvpos(1), 3) === "$[]") { //if no notes are inserted
                 abcstr = abcstr.substring(0, mvpos(1)) + abcstr.substring(mvpos(1) + 3);
@@ -1159,12 +1182,12 @@ var MSOE = new function() {
             this.print();
         }
     };
-    this.checkpause = () => {
+    this.checkpause = () => { //check if the pause is legal
         return (Math.pow(2, Dstate % 10 - 5) * eval(Lstr) >= 2);
     }
     
-    var help_ = false;
-    var help_content = {
+    var help_ = false; //if help mode is on
+    var help_content = { //<UI button selector>:<help message> pairs
         "#infohome":"Edit sheet info",
         "#mannualgo":"Show mannual",
         "#save":"Save sheet",
@@ -1190,7 +1213,8 @@ var MSOE = new function() {
         ".v_down:eq(0)":"Switch place with lower voice"
     };
     var help_right = ["#paste", "#clef", "#check", "#remove", ".v_up:eq(0)", ".v_down:eq(0)", "#edit", "#preview", "#night"];
-    this.help_voice = () => {
+    //elements whose popups should expand to the right
+    this.help_voice = () => { //set help popups for voice list 
         $.each(help_content, (key, value)=>{
             $(key).popup({
                 content: value,
@@ -1203,7 +1227,7 @@ var MSOE = new function() {
             });
         });
     };
-    this.help = () => {
+    this.help = () => { //toggle help mode
         if(help_){
             help_ = false;
             $("#help").css("color","rgba(255, 255, 255, 0.9)");
