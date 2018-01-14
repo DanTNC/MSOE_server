@@ -9,6 +9,7 @@ var Error = (e) => {
 
 //dependencies:
 //  socketio.js: sheetchange(data, index), suscribe(index)
+//  server.js: serverload(func, sucfunc, index, key), serversave(data, func)
 //
 var MSOE = new function() {
 
@@ -1179,7 +1180,7 @@ var MSOE = new function() {
         return (Math.pow(2, Dstate % 10 - 5) * eval(Lstr) >= 2);
     }
     
-    var UIhandler;
+    var UIhandler;//UI handler from outside the object (would become critical argument of constructor in API version)
     this.UIhandler = (UI) => {
         UIhandler = UI;
     };

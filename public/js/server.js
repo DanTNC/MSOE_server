@@ -1,3 +1,9 @@
+/**
+ * @func: a function initializing display
+ * @sucfunc: a function initializing the sheet (MSOE object) when the loading is successful
+ * @index: index of the sheet data (ID)
+ * @key: key of the sheet data (password)
+ * */
 server_load = (func, sucfunc, index, key) => {
     $.ajax({
         url: "/load",
@@ -14,7 +20,10 @@ server_load = (func, sucfunc, index, key) => {
         }
     });
 };
-
+/**
+ * @data: sheet data to be saved
+ * @func: a function executed when the saving is successful
+ * */
 server_save = (data, func) => {
     $.ajax({
         url: "/save",

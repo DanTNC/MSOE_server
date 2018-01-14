@@ -26,6 +26,7 @@ var port = process.env.PORT || 8080;
 
 http.listen(port, function () {
   console.log('Example app listening on http://msoe-fad11204.c9users.io:'+port);
+  console.log('Example sheet on http://msoe-fad11204.c9users.io:'+port+'?!Y+M+TN6NTK!6TLGISFWRF8S1KI9VUMP');
 });
 
 var sheet_data = {};

@@ -1,8 +1,8 @@
 var socket = io();
-var sheetchange = (data, index)=>{
+var sheetchange = (data, index)=>{// data: action, index: index of sheet
     socket.emit("modify", data, index);
 };
-var suscribe = (index)=>{
+var suscribe = (index)=>{// index: index of sheet
     socket.emit("sync", index);
 };
 
