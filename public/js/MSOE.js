@@ -58,6 +58,7 @@ var MSOE = new function() {
                 break;
             case 7:
             case 8:
+            case 9:
                 A.param2 = [A.X, A.X = A.param2][0];//swap A.X and A.param2
                 break;
             default:
@@ -108,6 +109,21 @@ var MSOE = new function() {
                 break;
             //-----------------direct(0: ->, 1: <-)-----------------//
             case 2://assemble <-> disassemble param: [A_DPos, direct]
+                var A_DPos = Act.param1;
+                if (A_DPos == 0 || abcstr[A_DPos - 1] == "\n" || A_DPos == 1 || abcstr[A_DPos - 1] == "$") return;
+                if (Act.param2 == 0){
+                    if (abcstr[A_DPos - 1] != " ") {
+                        abcstr = abcstr.substring(0, A_DPos) + " " + abcstr.substring(A_DPos);
+                        CrtPos = A_DPos + 1;
+                    }
+                }else if(Act.param2 == 1){
+                    if (abcstr[A_DPos - 1] == " ") {
+                        abcstr = abcstr.substring(0, A_DPos - 1) + abcstr.substring(A_DPos);
+                        CrtPos = A_DPos - 1;
+                    }
+                }else{
+                    console.error("invalid direction of inst: 2");
+                }
                 break;
             case 3://# <-> b param: [accidentialPos, direct]
                 break;
@@ -121,9 +137,10 @@ var MSOE = new function() {
                 break;
             case 8://infostr param: [infoIndex, newVal] X: oldVal
                 break;
-            case 9://default <-> night param: ["placeholder", direct]
+            case 9://clef param: [clefIndex, newClef] X:oldClef
                 break;
             default:
+                console.error("invalid instruction code");
                 break;
         }
     };
@@ -784,8 +801,6 @@ var MSOE = new function() {
         } else {
             InsBef = abcstr.length;
         }
-        // abcstr = abcstr.substring(0, InsBef) + finalstr + abcstr.substring(InsBef);
-        // CrtPos = (md != 1) ? mvpos(1) : CrtPos;
         if(str != "$[]"){
             let Act = {inst: 1, param1: InsBef, param2: finalstr};
             act(Act);
@@ -816,18 +831,12 @@ var MSOE = new function() {
         insertch(toabcnote(ch));
     };
     this.separate = () => { //separate two linked notes
-        if (CrtPos == 0 || abcstr[CrtPos - 1] == "\n" || CrtPos == 1 || abcstr[CrtPos - 1] == "$") return;
-        if (abcstr[CrtPos - 1] != " ") {
-            abcstr = abcstr.substring(0, CrtPos) + " " + abcstr.substring(CrtPos);
-            CrtPos++;
-        }
+        let Act = {inst: 2, param1: CrtPos, param2: 0};
+        act(Act);
     };
     this.assemble = () => { //assemble two notes
-        if (CrtPos == 0 || abcstr[CrtPos - 1] == "\n" || CrtPos == 1 || abcstr[CrtPos - 1] == "$") return;
-        if (abcstr[CrtPos - 1] == " ") {
-            abcstr = abcstr.substring(0, CrtPos - 1) + abcstr.substring(CrtPos);
-            CrtPos--;
-        }
+        let Act = {inst: 2, param1: CrtPos, param2: 1};
+        act(Act);
     };
     this.tie = () => { //tie two joint notes TODO: tie not joint notes
         if (CrtPos == 0 || abcstr[CrtPos - 1] == "\n" || CrtPos == 1 || abcstr[CrtPos - 1] == "$") return;
