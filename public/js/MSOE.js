@@ -144,11 +144,11 @@ var MSOE = new function() {
         actions.push(Act);
     };
 
-    var act = (Act) => { //record action and emit sheet change message for syncronization(TODO: edit interface)
+    var act = (Act) => { //record action and emit sheet change message for syncronization
         if(!Act) return;
         console.log("do :", Act.inst, Act.param1, Act.param2);
         re_actions = [];
-        //doAct(Act);
+        doAct(Act);
         actions.push(Act);
         sheetchange(Act, index);
     };
@@ -715,7 +715,6 @@ var MSOE = new function() {
             }
             CpStr = abcstr.substring(CpStP, CpStrEd);
             let Act = {inst: 0, param1: CpStP, param2: CpStr, X: CpStrEd};
-            doAct(Act);
             act(Act);
             console.log("cut : "+CpStr);
             CpStP = -1;
@@ -741,13 +740,11 @@ var MSOE = new function() {
     this.paste = () => { //paste copied or cutten string
         if (mvpos(1) == CrtPos) {
             let Act = {inst: 1, param1: abcstr.length, param2: CpStr};
-            doAct(Act);
             act(Act);
             CrtPos = abcstr.length - 1;
             CrtPos = mvpos(0);
         } else {
             let Act = {inst: 1, param1: mvpos(1), param2: CpStr};
-            doAct(Act);
             act(Act);
             CrtPos += CpStr.length;
             CrtPos = mvpos(0);
@@ -791,7 +788,6 @@ var MSOE = new function() {
         // CrtPos = (md != 1) ? mvpos(1) : CrtPos;
         if(str != "$[]"){
             let Act = {inst: 1, param1: InsBef, param2: finalstr};
-            doAct(Act);//TODO: remove
             act(Act);
         }else
             abcstr = abcstr.substring(0, InsBef) + finalstr + abcstr.substring(InsBef);
@@ -952,17 +948,11 @@ var MSOE = new function() {
                     DelEnd = abcstr.length;
                 }
                 var Content = abcstr.substring(CrtPos, DelEnd);
-                // abcstr = abcstr.substring(0, CrtPos) + abcstr.substring(DelEnd);
                 let Act = {inst: 0, param1: CrtPos, param2: Content};
-                doAct(Act);
                 act(Act);
             } else { //deleting "\n"
-                // var NxtPos = mvpos(0); //next position
-                // abcstr = abcstr.substring(0, CrtPos - 1) + abcstr.substring(CrtPos + 1);
                 let Act = {inst: 0, param1: CrtPos - 1, param2: "\n$"};
-                doAct(Act);
                 act(Act);
-                // CrtPos = NxtPos;
             }
         }
         console.log(CrtPos);
