@@ -117,8 +117,11 @@ var MSOE = new function() {
 			case 6://switchVoice param: [voiceA, voiceB] (don't need to reverse)
 			    break;
 			case 7://voicename param: [index, newName] X: oldName
+			    break;
 			case 8://infostr param: [infoIndex, newVal] X: oldVal
+			    break;
 			case 9://default <-> night param: ["placeholder", direct]
+			    break;
 			default:
 				break;
 		}
@@ -740,14 +743,18 @@ var MSOE = new function() {
 	};
     this.paste = () => { //paste copied or cutten string
         if (mvpos(1) == CrtPos) {
-            act({inst: 0, param1: abcstr.length, param2: CpStr});
-            abcstr = abcstr + CpStr;
+            let Act = {inst: 1, param1: abcstr.length, param2: CpStr};
+            doAct(Act);
+            act(Act);
+            // abcstr = abcstr + CpStr;
             CrtPos = abcstr.length - 1;
 			CrtPos = mvpos(0);
         } else {
-            act({inst: 0, param1: mvpos(1), param2: CpStr});
-            abcstr = abcstr.substring(0, mvpos(1)) + CpStr + abcstr.substring(mvpos(1));
-            CrtPos = mvpos(1) + CpStr.length;
+            let Act = {inst: 0, param1: mvpos(1), param2: CpStr};
+            doAct(Act);
+            act(Act);
+            // abcstr = abcstr.substring(0, mvpos(1)) + CpStr + abcstr.substring(mvpos(1));
+            CrtPos += CpStr.length;
             CrtPos = mvpos(0);
         }
 		checkbar();
@@ -778,17 +785,21 @@ var MSOE = new function() {
     };
     var insert = (str, md) => { //insert string in the right position. mode=1 for notations not occupying a position
         var InsBef = mvpos(1); //insert before
+        var finalstr = (md != 1 ? "$" : "") + str;
         if (InsBef != CrtPos) { //not the last note
             if (abcstr[InsBef - 1] == "\n") //if on the position before a "\n", insert before "\n"
                 InsBef--;
-            abcstr = abcstr.substring(0, InsBef) + (md != 1 ? "$" : "") + str + abcstr.substring(InsBef);
         } else {
 			InsBef = abcstr.length;
-            abcstr = abcstr + (md != 1 ? "$" : "") + str; //append
         }
-        CrtPos = (md != 1) ? mvpos(1) : CrtPos;
-        if(str != "$[]")
-			act({inst: 0, param1: InsBef, param2: (md != 1 ? "$" : "") + str});
+        // abcstr = abcstr.substring(0, InsBef) + finalstr + abcstr.substring(InsBef);
+        // CrtPos = (md != 1) ? mvpos(1) : CrtPos;
+        if(str != "$[]"){
+            let Act = {inst: 1, param1: InsBef, param2: finalstr};
+            doAct(Act);//TODO: remove
+			act(Act);
+		}else
+		    abcstr = abcstr.substring(0, InsBef) + finalstr + abcstr.substring(InsBef);
     };
     var insertch = (str) => { //insert for chord
         for (var i = mvpos(1) + 2; i < abcstr.length; i++) {
@@ -1103,31 +1114,31 @@ var MSOE = new function() {
     this.outmove2 = (md) => { //mvpos from outside the object (for "home" and "end")
         mvpos(md);
     };
-    this.miditone = (ch, inc) => { //calculate the miditone of a note ch: character of the note, inc: inccident
+    this.miditone = (ch, acc) => { //calculate the miditone of a note ch: character of the note, acc: accidental
         var temnum;
         var code = ch.charCodeAt(0);
         if (code >= 97) code -= 32;
         switch (code) {
             case 65:
-                temnum = 9 + inc;
+                temnum = 9 + acc;
                 break;
             case 66:
-                temnum = 11 + inc;
+                temnum = 11 + acc;
                 break;
             case 67:
-                temnum = 0 + inc;
+                temnum = 0 + acc;
                 break;
             case 68:
-                temnum = 2 + inc;
+                temnum = 2 + acc;
                 break;
             case 69:
-                temnum = 4 + inc;
+                temnum = 4 + acc;
                 break;
             case 70:
-                temnum = 5 + inc;
+                temnum = 5 + acc;
                 break;
             case 71:
-                temnum = 7 + inc;
+                temnum = 7 + acc;
                 break;
         }
         console.log("miditone : ", 48 + (Tstate) * 12 + temnum);
