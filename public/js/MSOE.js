@@ -1,9 +1,9 @@
 /* global $, history, location, printJS, MIDI */
 
 var Error = (e) => {
-	$("#error p").html(e);
-	$("#error").show();
-	setTimeout(()=>{$("#error").fadeOut()}, 2000);
+    $("#error p").html(e);
+    $("#error").show();
+    setTimeout(()=>{$("#error").fadeOut()}, 2000);
 };
 
 
@@ -13,16 +13,16 @@ var Error = (e) => {
 //
 var MSOE = new function() {
 
-	var Edit = true; //if it'editable
-	var Edit_const = false;
-	this.Edit_ = (set) => { //setter and getter of Edit(limited by Edit_const)
-		if(set !== undefined){
-			if(!Edit_const){
-				Edit = set;
-			}
-		}
-		return Edit;
-	};
+    var Edit = true; //if it'editable
+    var Edit_const = false;
+    this.Edit_ = (set) => { //setter and getter of Edit(limited by Edit_const)
+        if(set !== undefined){
+            if(!Edit_const){
+                Edit = set;
+            }
+        }
+        return Edit;
+    };
 
     var abcstr = "$"; //abcstring
     var Tstate = 1; //0:A, 1:A  2:a  3:a'
@@ -34,9 +34,9 @@ var MSOE = new function() {
     var vicchga; //Ath voice for VicChg;
     var strs = []; //voices
     var clef = []; //clef of voices
-	var voicename = []; //name of voices
-	//-----------------------------------------//
-	var maxoffset = 0; //the maximum of offset
+    var voicename = []; //name of voices
+    //-----------------------------------------//
+    var maxoffset = 0; //the maximum of offset
     var actions = []; //record the order of actions for the "undo" command
     var re_actions = []; //record the order of undone actions for the "redo" command
     
@@ -68,9 +68,9 @@ var MSOE = new function() {
         this.print();
     };
 
-	var doAct = (Act) => { //edit the sheet according to the description in Act(TODO: interface for editing)
-		switch(Act.inst){
-			case 0://insert <-> delete param: [insertPos, insertStr]
+    var doAct = (Act) => { //edit the sheet according to the description in Act(TODO: interface for editing)
+        switch(Act.inst){
+            case 0://insert <-> delete param: [insertPos, insertStr]
                 var Delen = true;// delete enable
                 for(var i = 0, len = Act.param2.length; i < len; i++){
                     if(abcstr[Act.param1+i]!=Act.param2[i]){
@@ -81,67 +81,68 @@ var MSOE = new function() {
                 }
                 if(Delen){
                     abcstr = abcstr.substring(0,Act.param1)+abcstr.substring(Act.param1+Act.param2.length);
-					CrtPos = Act.param1;
-					CrtPos = mvpos(0);
-					Act.inst = 1;
+                    CrtPos = Act.param1;
+                    CrtPos = mvpos(0);
+                    Act.inst = 1;
                 }
-				break;
-			case 1://delete <-> insert param: [deletePos, deleteStr] X: initPos
-				abcstr=abcstr.substring(0,Act.param1)+Act.param2+abcstr.substring(Act.param1);
-				if(Act.X !== undefined){//special position control parameter
-					CrtPos = Act.X;
-					if(abcstr[Act.X]!="$"){
-						CrtPos = mvpos(0);
-					}
-					Act.inst = 0;
-					break;
-				}
-				if(Act.param2 != "\n$"){
-					CrtPos = Act.param1;
-					console.log("CrtPos", CrtPos);
-					Act.inst = 0;
-				}else{
-					CrtPos = Act.param1 + 1;
-					Act.inst = 0;
-				}
-				break;
-			//-----------------direct(0: ->, 1: <-)-----------------//
-			case 2://assemble <-> disassemble param: [A_DPos, direct]
-				break;
-			case 3://# <-> b param: [accidentialPos, direct]
-				break;
-			case 4://tie <-> untie param: [T_UPos, direct]
-				break;
-			case 5://addVoice <-> delVoice param: [A_DIndex, direct] (index for addBefore)
-			    break;
-			case 6://switchVoice param: [voiceA, voiceB] (don't need to reverse)
-			    break;
-			case 7://voicename param: [index, newName] X: oldName
-			    break;
-			case 8://infostr param: [infoIndex, newVal] X: oldVal
-			    break;
-			case 9://default <-> night param: ["placeholder", direct]
-			    break;
-			default:
-				break;
-		}
-	};
+                break;
+            case 1://delete <-> insert param: [deletePos, deleteStr] X: initPos
+                abcstr=abcstr.substring(0,Act.param1)+Act.param2+abcstr.substring(Act.param1);
+                if(Act.X !== undefined){//special position control parameter
+                    CrtPos = Act.X;
+                    if(abcstr[Act.X]!="$"){
+                        CrtPos = mvpos(0);
+                    }
+                    Act.inst = 0;
+                    break;
+                }
+                if(Act.param2 != "\n$"){
+                    CrtPos = Act.param1;
+                    console.log("CrtPos", CrtPos);
+                    Act.inst = 0;
+                }else{
+                    CrtPos = Act.param1 + 1;
+                    console.log("CrtPos(newline)", CrtPos);
+                    Act.inst = 0;
+                }
+                break;
+            //-----------------direct(0: ->, 1: <-)-----------------//
+            case 2://assemble <-> disassemble param: [A_DPos, direct]
+                break;
+            case 3://# <-> b param: [accidentialPos, direct]
+                break;
+            case 4://tie <-> untie param: [T_UPos, direct]
+                break;
+            case 5://addVoice <-> delVoice param: [A_DIndex, direct] (index for addBefore)
+                break;
+            case 6://switchVoice param: [voiceA, voiceB] (don't need to reverse)
+                break;
+            case 7://voicename param: [index, newName] X: oldName
+                break;
+            case 8://infostr param: [infoIndex, newVal] X: oldVal
+                break;
+            case 9://default <-> night param: ["placeholder", direct]
+                break;
+            default:
+                break;
+        }
+    };
 
     this.undo = ()=>{ //TODO: sync this
-		var Act = actions.pop();
-		if(!Act) return;
-	    console.log("undo :", Act.inst, Act.param1, Act.param2);
-		doAct(Act);
-		re_actions.push(Act);
-	};
-	
-	this.redo = ()=>{ //TODO: sync this
-	    var Act = re_actions.pop();
-	    if(!Act) return;
-	    console.log("redo :", Act.inst, Act.param1, Act.param2);
-	    doAct(Act);
-	    actions.push(Act);
-	};
+        var Act = actions.pop();
+        if(!Act) return;
+        console.log("undo :", Act.inst, Act.param1, Act.param2);
+        doAct(Act);
+        re_actions.push(Act);
+    };
+    
+    this.redo = ()=>{ //TODO: sync this
+        var Act = re_actions.pop();
+        if(!Act) return;
+        console.log("redo :", Act.inst, Act.param1, Act.param2);
+        doAct(Act);
+        actions.push(Act);
+    };
 
     var act = (Act) => { //record action and emit sheet change message for syncronization(TODO: edit interface)
         if(!Act) return;
@@ -151,191 +152,191 @@ var MSOE = new function() {
         actions.push(Act);
         sheetchange(Act, index);
     };
-	//-----------------------------------------//for voices
+    //-----------------------------------------//for voices
     clef[0] = "treble"; //default value
-	voicename[0] = undefined; //default value
-	var InsVocBef = false; //insert before or after certain voice
-	this.insvocbef = (v) => { //setter and getter for InsVocBef
-	    if (v === undefined){
-	        return InsVocBef;   
-	    }else{
-		    InsVocBef = v;
-	    }
-	};
-	var SaveNLoad = (j) => { //save and load (j: jump to)
+    voicename[0] = undefined; //default value
+    var InsVocBef = false; //insert before or after certain voice
+    this.insvocbef = (v) => { //setter and getter for InsVocBef
+        if (v === undefined){
+            return InsVocBef;   
+        }else{
+            InsVocBef = v;
+        }
+    };
+    var SaveNLoad = (j) => { //save and load (j: jump to)
         if (j >= clef.length) return;
         strs[abcindex] = abcstr;
         abcstr = strs[j];
         abcindex = j;
         CrtPos = 0;
     };
-	this.ChgVicName = (vn) => { //change voice name
-		if(vn.indexOf("\"") != -1){
-			Error("A voicename can't contain \".");
-			return;
-		}
-		voicename[abcindex] = vn;
-		this.printVoc();
-	};
-	this.ClrVicName = () => { //clear voice name
-		voicename[abcindex]	= undefined;
-		this.printVoc();
-	};
+    this.ChgVicName = (vn) => { //change voice name
+        if(vn.indexOf("\"") != -1){
+            Error("A voicename can't contain \".");
+            return;
+        }
+        voicename[abcindex] = vn;
+        this.printVoc();
+    };
+    this.ClrVicName = () => { //clear voice name
+        voicename[abcindex]	= undefined;
+        this.printVoc();
+    };
     this.AddVoice = () => { //add voice
         if(strs.length == 0) strs[0] = abcstr;
-		var insind = (InsVocBef)?abcindex:(abcindex+1);
-		clef.splice(insind, 0, "treble");
-		strs.splice(insind, 0, "$");
-		voicename.splice(insind, 0, undefined);
-		if(!InsVocBef){
-			SaveNLoad(insind);
-		}else{
-			strs[abcindex+1] = abcstr;
-			abcstr = strs[abcindex];
-		}
-		this.printVoc();
+        var insind = (InsVocBef)?abcindex:(abcindex+1);
+        clef.splice(insind, 0, "treble");
+        strs.splice(insind, 0, "$");
+        voicename.splice(insind, 0, undefined);
+        if(!InsVocBef){
+            SaveNLoad(insind);
+        }else{
+            strs[abcindex+1] = abcstr;
+            abcstr = strs[abcindex];
+        }
+        this.printVoc();
     };
     this.DelVoice = () => { //delete voice
         if (clef.length == 1) return;
         strs = strs.slice(0, abcindex).concat(strs.slice(abcindex + 1));
         clef = clef.slice(0, abcindex).concat(clef.slice(abcindex + 1));
-		voicename = voicename.slice(0, abcindex).concat(voicename.slice(abcindex + 1));
-		if(abcindex != 0) abcindex--;
-		abcstr = strs[abcindex];
+        voicename = voicename.slice(0, abcindex).concat(voicename.slice(abcindex + 1));
+        if(abcindex != 0) abcindex--;
+        abcstr = strs[abcindex];
         CrtPos = 0;
-		this.printVoc();
+        this.printVoc();
     };
     this.VicChgA = () => { //set voice A for switching
         vicchga = abcindex;
     };
     this.VicChgB = () => { //set current voice as voice B for switching
         if (vicchga === undefined) return; //if not pressed "r" before
-		if (ChgVocMd) return; //if vicchga is set by ui
+        if (ChgVocMd) return; //if vicchga is set by ui
         if (strs[vicchga] === undefined || strs[abcindex] === undefined || clef[vicchga] === undefined) return; //clef of current voice definitely exists
         strs[vicchga] = [strs[abcindex], strs[abcindex] = strs[vicchga]][0]; //swap strs
         clef[vicchga] = [clef[abcindex], clef[abcindex] = clef[vicchga]][0]; //swap clef
         voicename[vicchga] = [voicename[abcindex], voicename[abcindex] = voicename[vicchga]][0]; //swap clef
         abcindex = vicchga;
-		vicchga = undefined;
-		this.printVoc();
+        vicchga = undefined;
+        this.printVoc();
     };
-	var VicChgB_ = (vicchgb) => { //set vicchgb as voice B for switching
+    var VicChgB_ = (vicchgb) => { //set vicchgb as voice B for switching
         if (vicchga === undefined) return; //if not pressed "r" before
         if (strs[vicchga] === undefined || strs[vicchgb] === undefined || clef[vicchga] === undefined) return; //clef of current voice definitely exists
-		strs[abcindex] = abcstr;
+        strs[abcindex] = abcstr;
         strs[vicchga] = [strs[vicchgb], strs[vicchgb] = strs[vicchga]][0]; //swap strs
         clef[vicchga] = [clef[vicchgb], clef[vicchgb] = clef[vicchga]][0]; //swap clef
         voicename[vicchga] = [voicename[vicchgb], voicename[vicchgb] = voicename[vicchga]][0]; //swap clef
-		abcstr = strs[abcindex];
-		if(abcindex == vicchga){
-			SaveNLoad(vicchgb);
-		}else if(abcindex == vicchgb){
-			SaveNLoad(vicchga);
-		}
-		vicchga = undefined;
-		this.printVoc();
-	};
-	//-----------------------------------------//for voice list
-	var ChgVocMd = false; //if voice A for voice switching is set
-	this.regVocLstEvt = () => { //register voice list events
-		$(".ui.dropdown").dropdown({"silent":true});
-		$(".mCSB_container").css("overflow","visible");
-		$(".v_num").click(function(){
-			if(ChgVocMd){
-				VicChgB_(parseInt($(this).html()) - 1);
-			}else{
-				vicchga = parseInt($(this).html()) - 1;
-				$(this).css("background","rgba(0, 0, 0, 0.15)");
-			}
-			ChgVocMd = !ChgVocMd;
-			MSOE.print();
-		});
-		$(".v_up").click(function(){
-			var vic = parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html()) - 1;
-			if(vic == 0) return;
-			vicchga = vic;
-			VicChgB_(vic - 1);
-			MSOE.print();
-		});
-		$(".v_down").click(function(){
-			var vic = parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html()) - 1;
-			if(vic == clef.length - 1) return;
-			vicchga = vic;
-			VicChgB_(vic + 1);
-			MSOE.print();
-		});
-		$(".v_div").click(function(){
-			if(!ChgVocMd || vicchga === undefined) return; //if other voice not clicked before
-			var vic = parseInt($(this).attr("data-value"));
-			if([vic, vic-1].includes(vicchga)){ //voices around divider can't be changed
-				ChgVocMd = false;
-				MSOE.printVoc();
-				return;
-			}
-			strs[abcindex] = abcstr;
-			clef.splice(vic, 0, clef[vicchga]);
-			strs.splice(vic, 0, strs[vicchga]);
-			voicename.splice(vic, 0, voicename[vicchga]);
-			var tmpvica = vicchga
-			if(vicchga > vic) vicchga++;
-        	strs = strs.slice(0, vicchga).concat(strs.slice(vicchga + 1));
-        	clef = clef.slice(0, vicchga).concat(clef.slice(vicchga + 1));
-			voicename = voicename.slice(0, vicchga).concat(voicename.slice(vicchga + 1));
-			abcstr = strs[abcindex];
-			if(abcindex == tmpvica){
-				SaveNLoad(vic);
-			}else if(abcindex >= vic){
-				SaveNLoad(abcindex+1);
-			}else{
-				SaveNLoad(abcindex-1);
-			}
-			vicchga = undefined;
-			ChgVocMd = false;
-			MSOE.printVoc();
-			MSOE.print();
-		});
-		$(".dp_clef").click(function(){
-			var vic = parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html()) - 1;
-			MSOE.ClfOrVic(parseInt($(this).attr("data-value")) + 49, true, vic);
-			MSOE.print();
-		});
-		$(".v_name").click(function(){
-			SaveNLoad(parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html()) - 1);
-			MSOE.print();
-		});
-		UIhandler.help_voice();
-	};
-	this.printVoc = () => { //render voice list
-		$("#voices .mCSB_container").html("");
-		$.each(clef,(index, value) => {
-			if(index != 0){
-				var d = $('<div class="ui divider v_div"></div>');
-				d.attr("data-value",index);
-				$("#voices .mCSB_container").append(d);
-			}
-			var e = $('<div class="row"><div class="ui inverted menu small borderless"><a class="item v_num help"></a><div class="ui dropdown floating item v_clef help"><div class="dp_menu menu"><a class="item dp_clef"></a><a class="item dp_clef"></a><a class="item dp_clef"></a></div></div><a class="item v_name help">Bass</a><div class="right menu"><a class="item v_up help"><i class="angle up mini icon"></i></a><a class="item v_down help"><i class="angle down mini icon"></i></a></div></div></div>');
-			e.find(".v_num").html(index+1);
-			e.find(".v_clef").prepend(RdClf(value, e, 0));
-			e.find(".v_name").text((voicename[index] === undefined)?RdClf(value, e, 1):voicename[index]);
-			$("#voices .mCSB_container").append(e);
-		});
-		var DOM = $("<div class='ui inverted segment'></div>");
-		DOM.css("height",$(".ui.dropdown .menu").height()+"px");
-		$("#voices .mCSB_container").append(DOM)
-		this.regVocLstEvt();
-	};
+        abcstr = strs[abcindex];
+        if(abcindex == vicchga){
+            SaveNLoad(vicchgb);
+        }else if(abcindex == vicchgb){
+            SaveNLoad(vicchga);
+        }
+        vicchga = undefined;
+        this.printVoc();
+    };
+    //-----------------------------------------//for voice list
+    var ChgVocMd = false; //if voice A for voice switching is set
+    this.regVocLstEvt = () => { //register voice list events
+        $(".ui.dropdown").dropdown({"silent":true});
+        $(".mCSB_container").css("overflow","visible");
+        $(".v_num").click(function(){
+            if(ChgVocMd){
+                VicChgB_(parseInt($(this).html()) - 1);
+            }else{
+                vicchga = parseInt($(this).html()) - 1;
+                $(this).css("background","rgba(0, 0, 0, 0.15)");
+            }
+            ChgVocMd = !ChgVocMd;
+            MSOE.print();
+        });
+        $(".v_up").click(function(){
+            var vic = parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html()) - 1;
+            if(vic == 0) return;
+            vicchga = vic;
+            VicChgB_(vic - 1);
+            MSOE.print();
+        });
+        $(".v_down").click(function(){
+            var vic = parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html()) - 1;
+            if(vic == clef.length - 1) return;
+            vicchga = vic;
+            VicChgB_(vic + 1);
+            MSOE.print();
+        });
+        $(".v_div").click(function(){
+            if(!ChgVocMd || vicchga === undefined) return; //if other voice not clicked before
+            var vic = parseInt($(this).attr("data-value"));
+            if([vic, vic-1].includes(vicchga)){ //voices around divider can't be changed
+                ChgVocMd = false;
+                MSOE.printVoc();
+                return;
+            }
+            strs[abcindex] = abcstr;
+            clef.splice(vic, 0, clef[vicchga]);
+            strs.splice(vic, 0, strs[vicchga]);
+            voicename.splice(vic, 0, voicename[vicchga]);
+            var tmpvica = vicchga
+            if(vicchga > vic) vicchga++;
+            strs = strs.slice(0, vicchga).concat(strs.slice(vicchga + 1));
+            clef = clef.slice(0, vicchga).concat(clef.slice(vicchga + 1));
+            voicename = voicename.slice(0, vicchga).concat(voicename.slice(vicchga + 1));
+            abcstr = strs[abcindex];
+            if(abcindex == tmpvica){
+                SaveNLoad(vic);
+            }else if(abcindex >= vic){
+                SaveNLoad(abcindex+1);
+            }else{
+                SaveNLoad(abcindex-1);
+            }
+            vicchga = undefined;
+            ChgVocMd = false;
+            MSOE.printVoc();
+            MSOE.print();
+        });
+        $(".dp_clef").click(function(){
+            var vic = parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html()) - 1;
+            MSOE.ClfOrVic(parseInt($(this).attr("data-value")) + 49, true, vic);
+            MSOE.print();
+        });
+        $(".v_name").click(function(){
+            SaveNLoad(parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html()) - 1);
+            MSOE.print();
+        });
+        UIhandler.help_voice();
+    };
+    this.printVoc = () => { //render voice list
+        $("#voices .mCSB_container").html("");
+        $.each(clef,(index, value) => {
+            if(index != 0){
+                var d = $('<div class="ui divider v_div"></div>');
+                d.attr("data-value",index);
+                $("#voices .mCSB_container").append(d);
+            }
+            var e = $('<div class="row"><div class="ui inverted menu small borderless"><a class="item v_num help"></a><div class="ui dropdown floating item v_clef help"><div class="dp_menu menu"><a class="item dp_clef"></a><a class="item dp_clef"></a><a class="item dp_clef"></a></div></div><a class="item v_name help">Bass</a><div class="right menu"><a class="item v_up help"><i class="angle up mini icon"></i></a><a class="item v_down help"><i class="angle down mini icon"></i></a></div></div></div>');
+            e.find(".v_num").html(index+1);
+            e.find(".v_clef").prepend(RdClf(value, e, 0));
+            e.find(".v_name").text((voicename[index] === undefined)?RdClf(value, e, 1):voicename[index]);
+            $("#voices .mCSB_container").append(e);
+        });
+        var DOM = $("<div class='ui inverted segment'></div>");
+        DOM.css("height",$(".ui.dropdown .menu").height()+"px");
+        $("#voices .mCSB_container").append(DOM)
+        this.regVocLstEvt();
+    };
     //-----------------------------------------//for clef
     var clefmode = false;
     this.ClfMdTgl = () => { //toggle clefmode
         clefmode = !clefmode;
-		if(clefmode){
-			$("#clef").css("color","#d7983b");
-		}else{
-			$("#clef").css("color","");
-		}
+        if(clefmode){
+            $("#clef").css("color","#d7983b");
+        }else{
+            $("#clef").css("color","");
+        }
     };
     this.ClfOrVic = (kc, ui, ind) => { //switch clef or voice (clefmode?clef:voice) kc: keycode, ui: UI?, ind: index
-		var clfind = (ui === true)?ind:abcindex; //UI sets certain index while keyboard sets current index
+        var clfind = (ui === true)?ind:abcindex; //UI sets certain index while keyboard sets current index
         if (clefmode || ui) {
             switch (kc) {
                 case 49:
@@ -352,45 +353,45 @@ var MSOE = new function() {
                     break;
                 default:
             }
-			this.printVoc();
+            this.printVoc();
         } else {
             SaveNLoad(kc - 49);
         }
     };
-	var RdClf = (s, e, Md)=> { //reduced name for clefs and modify UI due to this change s: full clef string, e: voice UI element, Md: mode(0: modify UI, 1: just return)
-		var Clfs = ["treble", "alto", "tenor", "bass"];
-		var OrClfs = Clfs.slice();
-		var res = "";
-		var color = "";
-		switch (s) {
-			case "treble":
-				res = "treble";
-				color = "olive";
-				break;
-			case "alto middle=C":
-				res = "alto";
-				color = "yellow";
-				break;
-			case "tenor middle=A":
-				res = "tenor";
-				color = "orange";
-				break;
-			case "bass,,":
-				res = "bass";
-				color = "brown";
-				break;
-		}
-		if(Md == 1){
-			return res;
-		}
-		e.find(".ui.inverted.menu").addClass(color);
-		Clfs.splice(Clfs.indexOf(res),1);
-		e.find(".dp_clef").eq(0).html(Clfs[0]).attr("data-value",OrClfs.indexOf(Clfs[0]));
-		e.find(".dp_clef").eq(1).html(Clfs[1]).attr("data-value",OrClfs.indexOf(Clfs[1]));
-		e.find(".dp_clef").eq(2).html(Clfs[2]).attr("data-value",OrClfs.indexOf(Clfs[2]));
-		return res;
-	};
-	//-----------------------------------------//for MIDI playing
+    var RdClf = (s, e, Md)=> { //reduced name for clefs and modify UI due to this change s: full clef string, e: voice UI element, Md: mode(0: modify UI, 1: just return)
+        var Clfs = ["treble", "alto", "tenor", "bass"];
+        var OrClfs = Clfs.slice();
+        var res = "";
+        var color = "";
+        switch (s) {
+            case "treble":
+                res = "treble";
+                color = "olive";
+                break;
+            case "alto middle=C":
+                res = "alto";
+                color = "yellow";
+                break;
+            case "tenor middle=A":
+                res = "tenor";
+                color = "orange";
+                break;
+            case "bass,,":
+                res = "bass";
+                color = "brown";
+                break;
+        }
+        if(Md == 1){
+            return res;
+        }
+        e.find(".ui.inverted.menu").addClass(color);
+        Clfs.splice(Clfs.indexOf(res),1);
+        e.find(".dp_clef").eq(0).html(Clfs[0]).attr("data-value",OrClfs.indexOf(Clfs[0]));
+        e.find(".dp_clef").eq(1).html(Clfs[1]).attr("data-value",OrClfs.indexOf(Clfs[1]));
+        e.find(".dp_clef").eq(2).html(Clfs[2]).attr("data-value",OrClfs.indexOf(Clfs[2]));
+        return res;
+    };
+    //-----------------------------------------//for MIDI playing
     var tune_ = null;
     this.tune = () => { //return tuneObj
         return tune_[0];
@@ -567,18 +568,18 @@ var MSOE = new function() {
                     clef = msg.sheet.clef;
 
                     Edit = msg.status.edit;
-					if(!Edit){
-						$(".right.menu a").hide();
-						$("#modaldiv1").modal("hide");
-						$("#modaldiv2").modal("hide");
-						$("input").attr("disabled","disabled")
-						Edit_const = true;
-						history.pushState({ title: "" }, "", host + "?!" + index);
-					}else if(key!=""){
-						$("#modaldiv1").modal("hide");
-						$("#modaldiv2").modal("hide");
-					}
-					updateinfo();
+                    if(!Edit){
+                        $(".right.menu a").hide();
+                        $("#modaldiv1").modal("hide");
+                        $("#modaldiv2").modal("hide");
+                        $("input").attr("disabled","disabled")
+                        Edit_const = true;
+                        history.pushState({ title: "" }, "", host + "?!" + index);
+                    }else if(key!=""){
+                        $("#modaldiv1").modal("hide");
+                        $("#modaldiv2").modal("hide");
+                    }
+                    updateinfo();
                     suscribe(index);
                     console.log(msg.status.msg);
                 } else {
@@ -654,11 +655,11 @@ var MSOE = new function() {
             $("#cut").addClass("disabled").css("color","");
             CpMd = false;
             var CpEdP = CrtPos; //copy end point
-			var Swap = false;
+            var Swap = false;
             if (CrtPos < CpStP) { //if the end is on the left of the startpoint, swap their values.
                 CpEdP = CpStP+3;
                 CpStP = CrtPos;
-				Swap = true;
+                Swap = true;
             }
             if (CpStP == 0 || abcstr[CpStP - 1] == "\n") { //don't copy the extra "$" of the startpoint of every line;
                 CpStP++;
@@ -675,31 +676,29 @@ var MSOE = new function() {
             } else {
                 CpStr = abcstr.substring(CpStP, CpStrEd);
             }
-			var p = CpStr.indexOf("$[]");
-			if (( p != -1 )&&( Swap )) {
-				CpStr = CpStr.substring(0,p)+CpStr.substring(p+3);
-			}
-			console.log("copy : "+CpStr);
-			CpStP = -1;
-			$("#copy").css("color","");
-			$("#paste").removeClass("disabled");
+            var p = CpStr.indexOf("$[]");
+            if (( p != -1 )&&( Swap )) {
+                CpStr = CpStr.substring(0,p)+CpStr.substring(p+3);
+            }
+            console.log("copy : "+CpStr);
+            CpStP = -1;
+            $("#copy").css("color","");
+            $("#paste").removeClass("disabled");
         } else {
             $("#cut").removeClass("disabled").css("color","#49beb5");
             CpMd = true;
             CpStP = CrtPos;
-			$("#copy").css("color","#49beb5");
+            $("#copy").css("color","#49beb5");
         }
     };
-	this.cutmode = () => { //cut
-		if(CpMd) {
-		    $("#cut").addClass("disabled").css("color","");
-			CpMd = false;
+    this.cutmode = () => { //cut
+        if(CpMd) {
+            $("#cut").addClass("disabled").css("color","");
+            CpMd = false;
             var CpEdP = CrtPos; //cut end point
-			var Swap = false;
             if (CrtPos < CpStP) { //if the end is on the left of the startpoint, swap their values.
-                CpEdP = CpStP+3;
+                CpEdP = CpStP;
                 CpStP = CrtPos;
-				Swap = true;
             }
             if (CpStP == 0 || abcstr[CpStP - 1] == "\n") { //don't cut the extra "$" of the startpoint of every line;
                 CpStP++;
@@ -712,52 +711,48 @@ var MSOE = new function() {
                 }
             }
             if (CpStrEd == CpEdP) {
-                CpStr = abcstr.substring(CpStP);
-                act({inst: 1, param1: CpStP, param2: CpStr, X: abcstr.length-1});
-				abcstr = abcstr.substring(0,CpStP);
-            } else {
-                CpStr = abcstr.substring(CpStP, CpStrEd);
-                act({inst: 1, param1: CpStP, param2: CpStr, X: CpStrEd});
-				abcstr = abcstr.substring(0,CpStP) + abcstr.substring(CpStrEd);
+                CpStrEd = abcstr.length;
             }
-			console.log("cut : "+CpStr);
-			CpStP = -1;
-			$("#copy").css("color","");
-			$("#paste").removeClass("disabled");
-		}
-	};
+            CpStr = abcstr.substring(CpStP, CpStrEd);
+            let Act = {inst: 0, param1: CpStP, param2: CpStr, X: CpStrEd};
+            doAct(Act);
+            act(Act);
+            console.log("cut : "+CpStr);
+            CpStP = -1;
+            $("#copy").css("color","");
+            $("#paste").removeClass("disabled");
+        }
+    };
     this.copycancel = () => { //cancel copy when copy mode is on
         if (CpMd) {
             $("#cut").addClass("disabled").css("color","");
             CpMd = false;
-			$("#copy").css("color","");
-			CpStP = -1;
+            $("#copy").css("color","");
+            CpStP = -1;
         }
     };
-	this.copyui = () => { //copy UI button handler
-		if(InsVocBef){
-			this.copycancel();
-		}else{
-			this.copymode();
-		}
-	};
+    this.copyui = () => { //copy UI button handler
+        if(InsVocBef){
+            this.copycancel();
+        }else{
+            this.copymode();
+        }
+    };
     this.paste = () => { //paste copied or cutten string
         if (mvpos(1) == CrtPos) {
             let Act = {inst: 1, param1: abcstr.length, param2: CpStr};
             doAct(Act);
             act(Act);
-            // abcstr = abcstr + CpStr;
             CrtPos = abcstr.length - 1;
-			CrtPos = mvpos(0);
+            CrtPos = mvpos(0);
         } else {
-            let Act = {inst: 0, param1: mvpos(1), param2: CpStr};
+            let Act = {inst: 1, param1: mvpos(1), param2: CpStr};
             doAct(Act);
             act(Act);
-            // abcstr = abcstr.substring(0, mvpos(1)) + CpStr + abcstr.substring(mvpos(1));
             CrtPos += CpStr.length;
             CrtPos = mvpos(0);
         }
-		checkbar();
+        checkbar();
     };
     //-----------------------------------------//for editing
     this.ChgDstate = (md) => { //change duration state
@@ -790,16 +785,16 @@ var MSOE = new function() {
             if (abcstr[InsBef - 1] == "\n") //if on the position before a "\n", insert before "\n"
                 InsBef--;
         } else {
-			InsBef = abcstr.length;
+            InsBef = abcstr.length;
         }
         // abcstr = abcstr.substring(0, InsBef) + finalstr + abcstr.substring(InsBef);
         // CrtPos = (md != 1) ? mvpos(1) : CrtPos;
         if(str != "$[]"){
             let Act = {inst: 1, param1: InsBef, param2: finalstr};
             doAct(Act);//TODO: remove
-			act(Act);
-		}else
-		    abcstr = abcstr.substring(0, InsBef) + finalstr + abcstr.substring(InsBef);
+            act(Act);
+        }else
+            abcstr = abcstr.substring(0, InsBef) + finalstr + abcstr.substring(InsBef);
     };
     var insertch = (str) => { //insert for chord
         for (var i = mvpos(1) + 2; i < abcstr.length; i++) {
@@ -944,33 +939,30 @@ var MSOE = new function() {
     this.newline = () => { //add "\n"
         if (CrtPos != 0 && abcstr[CrtPos - 1] != "\n") { //ABCJS doesn't allow 2 "\n"s in series
             insert("\n$", 1);
-            CrtPos = mvpos(1);
         }
     };
     this.del = () => { //delete note
         if (CrtPos != 0) { //if not the start of abcstring
             if (abcstr[CrtPos - 1] != "\n") { //deleting notes
                 var DelEnd = mvpos(1); //delete end
-                var Latter = "";
-                var Content="";
                 if (DelEnd != CrtPos) { //if not the last note
                     if (abcstr[DelEnd - 1] == "\n") //if on the position before a "\n", keep "\n" in Latter
                         DelEnd--;
-                    Latter = abcstr.substring(DelEnd);
-                    Content=abcstr.substring(CrtPos,DelEnd);
                 }else{
-					Content=abcstr.substring(CrtPos);
-				}
-                abcstr = abcstr.substring(0, CrtPos) + Latter;
-                act({inst: 1, param1: CrtPos, param2: Content});
-                CrtPos = mvpos(0);
-            } else { //deleting "\n"
-                var NxtPos = mvpos(0); //next position
-                if (abcstr[CrtPos - 1] == "\n") {
-                    abcstr = abcstr.substring(0, CrtPos - 1) + abcstr.substring(CrtPos + 1);
-                	act({inst: 1, param1: CrtPos - 1, param2: "\n$"});
-                    CrtPos = NxtPos;
+                    DelEnd = abcstr.length;
                 }
+                var Content = abcstr.substring(CrtPos, DelEnd);
+                // abcstr = abcstr.substring(0, CrtPos) + abcstr.substring(DelEnd);
+                let Act = {inst: 0, param1: CrtPos, param2: Content};
+                doAct(Act);
+                act(Act);
+            } else { //deleting "\n"
+                // var NxtPos = mvpos(0); //next position
+                // abcstr = abcstr.substring(0, CrtPos - 1) + abcstr.substring(CrtPos + 1);
+                let Act = {inst: 0, param1: CrtPos - 1, param2: "\n$"};
+                doAct(Act);
+                act(Act);
+                // CrtPos = NxtPos;
             }
         }
         console.log(CrtPos);
@@ -988,10 +980,10 @@ var MSOE = new function() {
                 abcstr = abcstr.substring(0, mvpos(1)) + abcstr.substring(mvpos(1) + 3);
             } else if (abcstr.substr(mvpos(1), 2) === "$[") {
                 abcstr = abcstr.substring(0, mvpos(1) + 1) + "#" + abcstr.substring(mvpos(1) + 1);
-				var pos = mvpos(1);
+                var pos = mvpos(1);
                 CrtPos = mvpos(1);
-				act({inst: 0, param1: pos, param2: abcstr.substring(pos, ((CrtPos == mvpos(1))?abcstr.length:mvpos(1)))});
-            	checkbar();
+                act({inst: 0, param1: pos, param2: abcstr.substring(pos, ((CrtPos == mvpos(1))?abcstr.length:mvpos(1)))});
+                checkbar();
             }
             this.print();
         }
