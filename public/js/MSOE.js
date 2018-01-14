@@ -53,6 +53,9 @@ var MSOE = new function() {
             case 1:
                 A.inst = 0;
                 break;
+            case 3:
+                A.param2 = [1, 0, 3, 2][A.param2];
+                break;
             case 6:
                 //do nothing
                 break;
@@ -116,28 +119,60 @@ var MSOE = new function() {
                         abcstr = abcstr.substring(0, A_DPos) + " " + abcstr.substring(A_DPos);
                         CrtPos = A_DPos + 1;
                     }
+                    Act.param2 = 1;
+                    Act.param1++;
                 }else if(Act.param2 == 1){
                     if (abcstr[A_DPos - 1] == " ") {
                         abcstr = abcstr.substring(0, A_DPos - 1) + abcstr.substring(A_DPos);
                         CrtPos = A_DPos - 1;
                     }
+                    Act.param2 = 0;
+                    Act.param1--;
                 }else{
                     console.error("invalid direction of inst: 2");
                 }
                 break;
-            case 3://# <-> b param: [accidentialPos, direct]
+            case 3://# <-> b param: [accidentialPos, md]
                 break;
-            case 4://tie <-> untie param: [T_UPos, direct]
+            case 4://untie <-> tie param: [T_UPos, direct]
+                var T_UPos = Act.param1;
+                if (T_UPos == 0 || abcstr[T_UPos - 1] == "\n" || T_UPos == 1 || abcstr[T_UPos - 1] == "$") return;
+                if (Act.param2 == 0){
+                    if (abcstr[T_UPos - 1] != "-") {
+                        abcstr = abcstr.substring(0, T_UPos) + "-" + abcstr.substring(T_UPos);
+                        CrtPos = T_UPos + 1;
+                    }
+                    Act.param2 = 1;
+                    Act.param1++;
+                }else if(Act.param2 == 1){
+                    if (abcstr[T_UPos - 1] == "-") {
+                        abcstr = abcstr.substring(0, T_UPos - 1) + abcstr.substring(T_UPos);
+                        CrtPos = T_UPos - 1;
+                    }
+                    Act.param2 = 0;
+                    Act.param1--;
+                }else{
+                    console.error("invalid direction of inst: 4");
+                }
                 break;
             case 5://addVoice <-> delVoice param: [A_DIndex, direct] (index for addBefore)
                 break;
             case 6://switchVoice param: [voiceA, voiceB] (don't need to reverse)
                 break;
             case 7://voicename param: [index, newName] X: oldName
+                voicename[Act.param1] = Act.param2;
+                Act.param2 = [Act.X, Act.X = Act.param2][0];
+                this.printVoc();
                 break;
             case 8://infostr param: [infoIndex, newVal] X: oldVal
+                infostrs[infoinputs[Act.param1]] = Act.param2;
+                $("input[name=" + Act.param1 + "]").val(Act.param2);
+                Act.param2 = [Act.X, Act.X = Act.param2][0];
                 break;
             case 9://clef param: [clefIndex, newClef] X:oldClef
+                clef[Act.param1] = Act.param2;
+                Act.param2 = [Act.X, Act.X = Act.param2][0];
+                this.printVoc();
                 break;
             default:
                 console.error("invalid instruction code");
@@ -148,7 +183,7 @@ var MSOE = new function() {
     this.undo = ()=>{ //TODO: sync this
         var Act = actions.pop();
         if(!Act) return;
-        console.log("undo :", Act.inst, Act.param1, Act.param2);
+        console.log("undo :", Act.inst, Act.param1, Act.param2, Act.X);
         doAct(Act);
         re_actions.push(Act);
     };
@@ -156,14 +191,15 @@ var MSOE = new function() {
     this.redo = ()=>{ //TODO: sync this
         var Act = re_actions.pop();
         if(!Act) return;
-        console.log("redo :", Act.inst, Act.param1, Act.param2);
+        console.log("redo :", Act.inst, Act.param1, Act.param2, Act.X);
         doAct(Act);
         actions.push(Act);
     };
 
     var act = (Act) => { //record action and emit sheet change message for syncronization
         if(!Act) return;
-        console.log("do :", Act.inst, Act.param1, Act.param2);
+        console.log("do :", Act.inst, Act.param1, Act.param2, Act.X);
+        // console.log("actions:", actions);
         re_actions = [];
         doAct(Act);
         actions.push(Act);
@@ -192,11 +228,15 @@ var MSOE = new function() {
             Error("A voicename can't contain \".");
             return;
         }
-        voicename[abcindex] = vn;
+        let Act = {inst: 7, param1: abcindex, param2: vn, X: voicename[abcindex]};
+        // voicename[abcindex] = vn;
+        act(Act);
         this.printVoc();
     };
     this.ClrVicName = () => { //clear voice name
-        voicename[abcindex]	= undefined;
+        let Act = {inst: 7, param1: abcindex, X: voicename[abcindex]};
+        // voicename[abcindex]	= undefined;
+        act(Act);
         this.printVoc();
     };
     this.AddVoice = () => { //add voice
@@ -256,7 +296,7 @@ var MSOE = new function() {
     //-----------------------------------------//for voice list
     var ChgVocMd = false; //if voice A for voice switching is set
     this.regVocLstEvt = () => { //register voice list events
-        $(".ui.dropdown").dropdown({"silent":true});
+        $(".ui.dropdown").dropdown({silent:true});
         $(".mCSB_container").css("overflow","visible");
         $(".v_num").click(function(){
             if(ChgVocMd){
@@ -355,22 +395,24 @@ var MSOE = new function() {
     this.ClfOrVic = (kc, ui, ind) => { //switch clef or voice (clefmode?clef:voice) kc: keycode, ui: UI?, ind: index
         var clfind = (ui === true)?ind:abcindex; //UI sets certain index while keyboard sets current index
         if (clefmode || ui) {
+            var newClef;
             switch (kc) {
                 case 49:
-                    clef[clfind] = "treble";
+                    newClef = "treble";
                     break;
                 case 50:
-                    clef[clfind] = "alto middle=C";
+                    newClef = "alto middle=C";
                     break;
                 case 51:
-                    clef[clfind] = "tenor middle=A";
+                    newClef = "tenor middle=A";
                     break;
                 case 52:
-                    clef[clfind] = "bass,,";
+                    newClef = "bass,,";
                     break;
                 default:
             }
-            this.printVoc();
+            let Act = {inst: 9, param1: clfind, param2: newClef, X: clef[clfind]};
+            act(Act);
         } else {
             SaveNLoad(kc - 49);
         }
@@ -452,6 +494,7 @@ var MSOE = new function() {
     this.print = () => { //output svg
         var bpmstr = (infostrs["bpmstr"] == "")?"180":infostrs["bpmstr"];
         var SS = "T: " + infostrs["ttlstr"] + "\nM: " + infostrs["tmpstr"] + "\nL: " + Lstr + "\nC: " + infostrs["cmpstr"] + "\nQ: " + bpmstr + "\n" + ForPrint();
+        // console.log("entire abcstr:", SS);
         tune_ = abcjs.renderAbc('boo', SS, {}, {
             add_classes: true,
             editable: true,
@@ -630,11 +673,10 @@ var MSOE = new function() {
         "bpmstr":""
     };
     this.chginfo = (a) => { //change info strings
-        if (!Edit && a.name!="whatisbpm") return;
+        if ((!Edit && a.name!="whatisbpm")||(a.name === "")) return;
         switch (a.name) {
             case "whatistempo": //update tempo
                 if (a.value.length == 2) a.value = a.value[0] + "/" + a.value[1]; //if user is lazy and inputs, for example, 44 for 4/4, add "/" for the lazy guy
-                infostrs["tmpstr"] = a.value;
                 for (var i = 0; i < infostrs["tmpstr"].length; i++) {
                     if (infostrs["tmpstr"][i] == "/") {
                         Lstr = "1/" + infostrs["tmpstr"].substring(i + 1);
@@ -642,9 +684,10 @@ var MSOE = new function() {
                     }
                 }
                 if (a.value == "") Lstr = "1/4";
-                break;
             default: //update infos
-                infostrs[infoinputs[a.name]] = a.value;
+                let Act = {inst: 8, param1: a.name, param2: a.value, X: infostrs[infoinputs[a.name]]};
+                act(Act);
+                // infostrs[infoinputs[a.name]] = a.value;
         }
         this.print();
     }
@@ -756,12 +799,12 @@ var MSOE = new function() {
     };
     this.paste = () => { //paste copied or cutten string
         if (mvpos(1) == CrtPos) {
-            let Act = {inst: 1, param1: abcstr.length, param2: CpStr};
+            let Act = {inst: 1, param1: abcstr.length, param2: CpStr, X: abcstr.length + CpStr.length - 1};
             act(Act);
             CrtPos = abcstr.length - 1;
             CrtPos = mvpos(0);
         } else {
-            let Act = {inst: 1, param1: mvpos(1), param2: CpStr};
+            let Act = {inst: 1, param1: mvpos(1), param2: CpStr, X: mvpos(1) + CpStr.length - 1};
             act(Act);
             CrtPos += CpStr.length;
             CrtPos = mvpos(0);
@@ -839,18 +882,12 @@ var MSOE = new function() {
         act(Act);
     };
     this.tie = () => { //tie two joint notes TODO: tie not joint notes
-        if (CrtPos == 0 || abcstr[CrtPos - 1] == "\n" || CrtPos == 1 || abcstr[CrtPos - 1] == "$") return;
-        if (abcstr[CrtPos - 1] != "-") {
-            abcstr = abcstr.substring(0, CrtPos) + "-" + abcstr.substring(CrtPos);
-            CrtPos++;
-        }
+        let Act = {inst: 4, param1: CrtPos, param2: 0};
+        act(Act);
     };
     this.untie = () => { //untie tied notes
-        if (CrtPos == 0 || abcstr[CrtPos - 1] == "\n" || CrtPos == 1 || abcstr[CrtPos - 1] == "$") return;
-        if (abcstr[CrtPos - 1] == "-") {
-            abcstr = abcstr.substring(0, CrtPos - 1) + abcstr.substring(CrtPos);
-            CrtPos--;
-        }
+        let Act = {inst: 4, param1: CrtPos, param2: 1};
+        act(Act);
     };
     this.accidental = (md) => { //add or delete accidental (# or b)
         if (md == 0) {

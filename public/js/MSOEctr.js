@@ -272,6 +272,9 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
             MSOE.undo();
             break;
             // ----------Undo--------------------
+        case 2://"ctrl+b" redo
+            MSOE.redo();
+            break;
         case 83://"shift+s" save
             MSOE.save();
             break;
