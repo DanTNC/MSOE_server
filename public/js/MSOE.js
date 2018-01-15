@@ -72,14 +72,14 @@ var MSOE = new function() {
         this.print();
     };
 
-    var doAct = (Act) => { //edit the sheet according to the description in Act(TODO: interface for editing)
-        switch(Act.inst){
-            case 0://insert <-> delete param: [insertPos, insertStr]
+    const CPU = [//edit the sheet according to the inst code and params (just like a CPU)
+            function(Act){
+            //inst 0:  insert <-> delete param: [insertPos, insertStr]
                 var Delen = true;// delete enable
                 for(var i = 0, len = Act.param2.length; i < len; i++){
                     if(abcstr[Act.param1+i]!=Act.param2[i]){
                         Delen = false;
-                        console.log("something's wrong with content");
+                        console.error("something's wrong with content");
                         return;
                     }
                 }
@@ -89,8 +89,9 @@ var MSOE = new function() {
                     CrtPos = mvpos(0);
                     Act.inst = 1;
                 }
-                break;
-            case 1://delete <-> insert param: [deletePos, deleteStr] X: initPos
+            },
+            function(Act){
+            //inst 1:  delete <-> insert param: [deletePos, deleteStr] X: initPos
                 abcstr=abcstr.substring(0,Act.param1)+Act.param2+abcstr.substring(Act.param1);
                 if(Act.X !== undefined){//special position control parameter
                     CrtPos = Act.X;
@@ -98,7 +99,7 @@ var MSOE = new function() {
                         CrtPos = mvpos(0);
                     }
                     Act.inst = 0;
-                    break;
+                    return;
                 }
                 if(Act.param2 != "\n$"){
                     CrtPos = Act.param1;
@@ -109,9 +110,10 @@ var MSOE = new function() {
                     console.log("CrtPos(newline)", CrtPos);
                     Act.inst = 0;
                 }
-                break;
+            },
             //-----------------direct(0: ->, 1: <-)-----------------//
-            case 2://assemble <-> disassemble param: [A_DPos, direct]
+            function(Act){
+            //inst 2:  assemble <-> disassemble param: [A_DPos, direct]
                 var A_DPos = Act.param1;
                 if (A_DPos == 0 || abcstr[A_DPos - 1] == "\n" || A_DPos == 1 || abcstr[A_DPos - 1] == "$") return;
                 if (Act.param2 == 0){
@@ -131,10 +133,12 @@ var MSOE = new function() {
                 }else{
                     console.error("invalid direction of inst: 2");
                 }
-                break;
-            case 3://# <-> b param: [accidentialPos, md]
-                break;
-            case 4://untie <-> tie param: [T_UPos, direct]
+            },
+            function(Act){
+            //inst 3:  # <-> b param: [accidentialPos, md]
+            },
+            function(Act){
+            //inst 4:  untie <-> tie param: [T_UPos, direct]
                 var T_UPos = Act.param1;
                 if (T_UPos == 0 || abcstr[T_UPos - 1] == "\n" || T_UPos == 1 || abcstr[T_UPos - 1] == "$") return;
                 if (Act.param2 == 0){
@@ -154,29 +158,38 @@ var MSOE = new function() {
                 }else{
                     console.error("invalid direction of inst: 4");
                 }
-                break;
-            case 5://addVoice <-> delVoice param: [A_DIndex, direct] (index for addBefore)
-                break;
-            case 6://switchVoice param: [voiceA, voiceB] (don't need to reverse)
-                break;
-            case 7://voicename param: [index, newName] X: oldName
+            },
+            function(Act){
+            //inst 5:  addVoice <-> delVoice param: [A_DIndex, direct] (index for addBefore)
+            },
+            function(Act){
+            //inst 6:  switchVoice param: [voiceA, voiceB] (don't need to reverse)
+            },
+            function(Act){
+            //inst 7:  voicename param: [index, newName] X: oldName
                 voicename[Act.param1] = Act.param2;
                 Act.param2 = [Act.X, Act.X = Act.param2][0];
-                this.printVoc();
-                break;
-            case 8://infostr param: [infoIndex, newVal] X: oldVal
+                MSOE.printVoc();
+            },
+            function(Act){
+            //inst 8:  infostr param: [infoIndex, newVal] X: oldVal
                 infostrs[infoinputs[Act.param1]] = Act.param2;
                 $("input[name=" + Act.param1 + "]").val(Act.param2);
                 Act.param2 = [Act.X, Act.X = Act.param2][0];
-                break;
-            case 9://clef param: [clefIndex, newClef] X:oldClef
+            },
+            function(Act){
+            //inst 9:  clef param: [clefIndex, newClef] X:oldClef
                 clef[Act.param1] = Act.param2;
                 Act.param2 = [Act.X, Act.X = Act.param2][0];
-                this.printVoc();
-                break;
-            default:
-                console.error("invalid instruction code");
-                break;
+                MSOE.printVoc();
+            }
+        ];
+
+    var doAct = (Act) => { //edit the sheet according to the description in Act(TODO: interface for editing)
+        if(Act.inst < CPU.length){
+            CPU[Act.inst](Act);
+        }else{
+            console.error("invalid instruction code");
         }
     };
 
