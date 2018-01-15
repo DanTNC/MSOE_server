@@ -44,34 +44,6 @@ var MSOE = new function() {
     
     
     //-----------------------------------------//for actions
-    this.sync = (A)=>{ //callback for syncronization when mutiple edittors are editing the same sheet
-        re_actions = [];
-        switch(A.inst){ //reverse actions(description stored for redo before)
-            case 0:
-                A.inst = 1;
-                break;
-            case 1:
-                A.inst = 0;
-                break;
-            case 3:
-                A.param2 = [1, 0, 3, 2][A.param2];
-                break;
-            case 6:
-                //do nothing
-                break;
-            case 7:
-            case 8:
-            case 9:
-                A.param2 = [A.X, A.X = A.param2][0];//swap A.X and A.param2
-                break;
-            default:
-                A.param2 = (A.param2 == 0)? 1: 0;
-        }
-        doAct(A);
-        actions.push(A);
-        this.print();
-    };
-
     const CPU = [//edit the sheet according to the inst code and params (just like a CPU)
             function(Act){
             //inst 0:  insert <-> delete param: [insertPos, insertStr]
@@ -196,6 +168,7 @@ var MSOE = new function() {
     this.undo = ()=>{ //TODO: sync this
         var Act = actions.pop();
         if(!Act) return;
+        sync_undo();
         console.log("undo :", Act.inst, Act.param1, Act.param2, Act.X);
         doAct(Act);
         re_actions.push(Act);
@@ -204,6 +177,7 @@ var MSOE = new function() {
     this.redo = ()=>{ //TODO: sync this
         var Act = re_actions.pop();
         if(!Act) return;
+        sync_redo();
         console.log("redo :", Act.inst, Act.param1, Act.param2, Act.X);
         doAct(Act);
         actions.push(Act);
@@ -217,6 +191,34 @@ var MSOE = new function() {
         doAct(Act);
         actions.push(Act);
         sheetchange(Act, index);
+    };
+    
+    this.sync = (A)=>{ //callback for syncronization when mutiple edittors are editing the same sheet
+        re_actions = [];
+        switch(A.inst){ //reverse actions(description stored for redo before)
+            case 0:
+                A.inst = 1;
+                break;
+            case 1:
+                A.inst = 0;
+                break;
+            case 3:
+                A.param2 = [1, 0, 3, 2][A.param2];
+                break;
+            case 6:
+                //do nothing
+                break;
+            case 7:
+            case 8:
+            case 9:
+                A.param2 = [A.X, A.X = A.param2][0];//swap A.X and A.param2
+                break;
+            default:
+                A.param2 = (A.param2 == 0)? 1: 0;
+        }
+        doAct(A);
+        actions.push(A);
+        this.print();
     };
     //-----------------------------------------//for voices
     clef[0] = "treble"; //default value

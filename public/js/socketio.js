@@ -5,6 +5,12 @@ var sheetchange = (data, index)=>{// data: action, index: index of sheet
 var suscribe = (index)=>{// index: index of sheet
     socket.emit("sync", index);
 };
+var sync_undo = ()=>{
+    socket.emit("undo");
+};
+var sync_redo = ()=>{
+    socket.emit("redo");
+};
 
 socket.on("real_time", (Act)=>{
     //MSOE.sync(Act); taken out for now, actived after actions completed
@@ -19,5 +25,9 @@ socket.on("update", (actions)=>{
     }
     edit_mode();
 });
+
+socket.on("undo", ()=>{MSOE.undo();});
+
+socket.on("redo", ()=>{MSOE.redo();});
 
 //TODO: check key to prevent unauthorized user from editing
