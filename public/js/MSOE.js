@@ -7,10 +7,17 @@ var Error = (e) => {
 };
 
 
-//dependencies:
-//  socketio.js: sheetchange(data, index), suscribe(index)
-//  server.js: serverload(func, sucfunc, index, key), serversave(data, func)
-//
+/** dependencies:
+ *      socketio.js:
+ *          sheetchange(data, index),
+ *          suscribe(index)
+ *      server.js:
+ *          serverload(func, sucfunc, index, key),
+ *          serversave(data, func),
+ *          sync_undo(),
+ *          sync_redo()
+ *
+ **/
 var MSOE = new function() {
 
     var Edit = true; //if it'editable
@@ -52,7 +59,7 @@ var MSOE = new function() {
                     if(abcstr[Act.param1+i]!=Act.param2[i]){
                         Delen = false;
                         console.error("something's wrong with content");
-                        return;
+                        return 1;
                     }
                 }
                 if(Delen){
@@ -87,7 +94,10 @@ var MSOE = new function() {
             function(Act){
             //inst 2:  assemble <-> disassemble param: [A_DPos, direct]
                 var A_DPos = Act.param1;
-                if (A_DPos == 0 || abcstr[A_DPos - 1] == "\n" || A_DPos == 1 || abcstr[A_DPos - 1] == "$") return;
+                if (A_DPos == 0 || abcstr[A_DPos - 1] == "\n" || A_DPos == 1 || abcstr[A_DPos - 1] == "$"){
+                    console.log("warning: illegal position for inst: 2");
+                    return 1;
+                }
                 if (Act.param2 == 0){
                     if (abcstr[A_DPos - 1] != " ") {
                         abcstr = abcstr.substring(0, A_DPos) + " " + abcstr.substring(A_DPos);
@@ -104,15 +114,142 @@ var MSOE = new function() {
                     Act.param1--;
                 }else{
                     console.error("invalid direction of inst: 2");
+                    return 1;
                 }
             },
             function(Act){
             //inst 3:  # <-> b param: [accidentialPos, md]
+                CrtPos = Act.param1;
+                var md = Act.param2;
+                if (md == 0) {
+                    if (CrtPos != 0 && abcstr[CrtPos - 1] != "\n" && abcstr[CrtPos + 1] != "|" && abcstr[CrtPos + 1] != "#") {
+                        if (abcstr[CrtPos + 2] != "^") { //only allow 2 #s
+                            if (abcstr[CrtPos + 1] != "_") {
+                                abcstr = abcstr.substring(0, CrtPos + 1) + "^" + abcstr.substring(CrtPos + 1);
+                                if (abcstr[CrtPos + 2] == "^") MSOE.miditone(abcstr[CrtPos + 3], 2);
+                                else MSOE.miditone(abcstr[CrtPos + 2], 1);
+                            } else { //if b exists, delete one b
+                                abcstr = abcstr.substring(0, CrtPos + 1) + abcstr.substring(CrtPos + 2);
+                                if (abcstr[CrtPos + 1] == "_") MSOE.miditone(abcstr[CrtPos + 2], -1);
+                                else MSOE.miditone(abcstr[CrtPos + 1], 0);
+                            }
+                            Act.param2 = 1;
+                        }else{
+                            console.log("warning: only allow two #s");
+                            return 1;
+                        }
+                    }else{
+                        console.log("warning: illegal position for inst: 3, md: 0");
+                        return 1;
+                    }
+                } else if (md == 1) {
+                    if (CrtPos != 0 && abcstr[CrtPos - 1] != "\n" && abcstr[CrtPos + 1] != "|" && abcstr[CrtPos + 1] != "#") {
+                        if (abcstr[CrtPos + 2] != "_") { //only allow 2 bs
+                            if (abcstr[CrtPos + 1] != "^") {
+                                abcstr = abcstr.substring(0, CrtPos + 1) + "_" + abcstr.substring(CrtPos + 1);
+                                if (abcstr[CrtPos + 2] == "_") MSOE.miditone(abcstr[CrtPos + 3], -2);
+                                else MSOE.miditone(abcstr[CrtPos + 2], -1);
+                            } else { //if # exists, delete one #
+                                abcstr = abcstr.substring(0, CrtPos + 1) + abcstr.substring(CrtPos + 2);
+                                if (abcstr[CrtPos + 1] == "^") MSOE.miditone(abcstr[CrtPos + 2], 1);
+                                else MSOE.miditone(abcstr[CrtPos + 1], 0);
+                            }
+                            Act.param2 = 0;
+                        }else{
+                            console.log("warning: only allow two bs");
+                            return 1;
+                        }
+                    }else{
+                        console.log("warning: illegal position for inst: 3, md: 1");
+                        return 1;
+                    }
+                } else if (md == 2) {
+                    var ChEnd; //chord end
+                    var LstNt; //last note of this chord
+                    var NtChs = ["a", "b", "c", "d", "e", "f", "g", "A", "B", "C", "D", "E", "F", "G"]; //possible note chars
+                    for (var i = mvpos(1) + 2; i < abcstr.length; i++) {
+                        if (abcstr[i] == "]") {
+                            ChEnd = i;
+                            break;
+                        }
+                        if (i == abcstr.length - 1){
+                            console.error("can't find end of chord");
+                            return 1;
+                        }
+                    }
+                    for (var i = ChEnd - 1; i > mvpos(1); i--) {
+                        if (NtChs.includes(abcstr[i])) {
+                            LstNt = i - 1;
+                            break;
+                        }
+                        if (i == mvpos(1) + 1){
+                            console.error("can't find last note of this chord");
+                            return 1;
+                        }
+                    }
+                    if (!(abcstr[LstNt] == "^" && abcstr[LstNt - 1] == "^")) { //only allow 2 #s
+                        if (abcstr[LstNt] != "_") {
+                            abcstr = abcstr.substring(0, LstNt + 1) + "^" + abcstr.substring(LstNt + 1);
+                            if (abcstr[LstNt] == "^") MSOE.miditone(abcstr[LstNt + 2], 2);
+                            else MSOE.miditone(abcstr[LstNt + 2], 1);
+                        } else { //if b exists, delete one b
+                            abcstr = abcstr.substring(0, LstNt) + abcstr.substring(LstNt + 1);
+                            if (abcstr[LstNt - 1] == "_") MSOE.miditone(abcstr[LstNt], -1);
+                            else MSOE.miditone(abcstr[LstNt], 0);
+                        }
+                        return 1;//chord mode records whole string at once, so this action should not be recorded
+                    }else{
+                        console.log("warning: only allow 2 #s");
+                        return 1;
+                    }
+                } else if (md == 3) {
+                    var ChEnd; //chord end
+                    var LstNt; //last note of this chord
+                    var NtChs = ["a", "b", "c", "d", "e", "f", "g", "A", "B", "C", "D", "E", "F", "G"]; //possible note chars
+                    for (var i = mvpos(1) + 2; i < abcstr.length; i++) {
+                        if (abcstr[i] == "]") {
+                            ChEnd = i;
+                            break;
+                        }
+                        if (i == abcstr.length - 1){
+                            console.error("can't find end of chord");
+                            return 1;
+                        }
+                    }
+                    for (var i = ChEnd - 1; i > mvpos(1); i--) {
+                        if (NtChs.includes(abcstr[i])) {
+                            LstNt = i - 1;
+                            break;
+                        }
+                        if (i == mvpos(1) + 1){
+                            console.error("can't find last note of this chord");
+                            return 1;
+                        }
+                    }
+                    if (!(abcstr[LstNt] == "_" && abcstr[LstNt - 1] == "_")) { //only allow 2 bs
+                        if (abcstr[LstNt] != "^") {
+                            abcstr = abcstr.substring(0, LstNt + 1) + "_" + abcstr.substring(LstNt + 1);
+                            if (abcstr[LstNt] == "_") MSOE.miditone(abcstr[LstNt + 2], -2);
+                            else MSOE.miditone(abcstr[LstNt + 2], -1);
+                        } else { //if b exists, delete one b
+                            abcstr = abcstr.substring(0, LstNt) + abcstr.substring(LstNt + 1);
+                            if (abcstr[LstNt - 1] == "^") MSOE.miditone(abcstr[LstNt], 1);
+                            else MSOE.miditone(abcstr[LstNt], 0);
+                        }
+                        return 1;//chord mode records whole string at once, so this action should not be recorded
+                    }else{
+                        console.log("warning: only allow 2 bs");
+                        return 1;
+                    }
+                }
             },
             function(Act){
             //inst 4:  untie <-> tie param: [T_UPos, direct]
                 var T_UPos = Act.param1;
-                if (T_UPos == 0 || abcstr[T_UPos - 1] == "\n" || T_UPos == 1 || abcstr[T_UPos - 1] == "$") return;
+                if (T_UPos == 0 || abcstr[T_UPos - 1] == "\n" || T_UPos == 1 || abcstr[T_UPos - 1] == "$"){
+                    console.log("warning: illegal position for inst: 4");
+                    return 1;
+                }
                 if (Act.param2 == 0){
                     if (abcstr[T_UPos - 1] != "-") {
                         abcstr = abcstr.substring(0, T_UPos) + "-" + abcstr.substring(T_UPos);
@@ -159,9 +296,10 @@ var MSOE = new function() {
 
     var doAct = (Act) => { //edit the sheet according to the description in Act(TODO: interface for editing)
         if(Act.inst < CPU.length){
-            CPU[Act.inst](Act);
+            return CPU[Act.inst](Act);
         }else{
             console.error("invalid instruction code");
+            return 1;
         }
     };
 
@@ -183,14 +321,16 @@ var MSOE = new function() {
         actions.push(Act);
     };
 
-    var act = (Act) => { //record action and emit sheet change message for syncronization
+    var act = (Act, chord) => { //record action and emit sheet change message for syncronization
         if(!Act) return;
         console.log("do :", Act.inst, Act.param1, Act.param2, Act.X);
         // console.log("actions:", actions);
         re_actions = [];
-        doAct(Act);
-        actions.push(Act);
-        sheetchange(Act, index);
+        //not need to do the work if it's a chord, and don't record it if there's an error
+        if(chord === true || doAct(Act) !== 1){
+            actions.push(Act);
+            sheetchange(Act, index);
+        }
     };
     
     this.sync = (A)=>{ //callback for syncronization when mutiple edittors are editing the same sheet
@@ -905,93 +1045,8 @@ var MSOE = new function() {
         act(Act);
     };
     this.accidental = (md) => { //add or delete accidental (# or b)
-        if (md == 0) {
-            if (CrtPos != 0 && abcstr[CrtPos - 1] != "\n" && abcstr[CrtPos + 1] != "|" && abcstr[CrtPos + 1] != "#") {
-                if (abcstr[CrtPos + 2] != "^") { //only allow 2 #s
-                    if (abcstr[CrtPos + 1] != "_") {
-                        abcstr = abcstr.substring(0, CrtPos + 1) + "^" + abcstr.substring(CrtPos + 1);
-                        if (abcstr[CrtPos + 2] == "^") this.miditone(abcstr[CrtPos + 3], 2);
-                        else this.miditone(abcstr[CrtPos + 2], 1);
-                    } else { //if b exists, delete one b
-                        abcstr = abcstr.substring(0, CrtPos + 1) + abcstr.substring(CrtPos + 2);
-                        if (abcstr[CrtPos + 1] == "_") this.miditone(abcstr[CrtPos + 2], -1);
-                        else this.miditone(abcstr[CrtPos + 1], 0);
-                    }
-                }
-            }
-        } else if (md == 1) {
-            if (CrtPos != 0 && abcstr[CrtPos - 1] != "\n" && abcstr[CrtPos + 1] != "|" && abcstr[CrtPos + 1] != "#") {
-                if (abcstr[CrtPos + 2] != "_") { //only allow 2 bs
-                    if (abcstr[CrtPos + 1] != "^") {
-                        abcstr = abcstr.substring(0, CrtPos + 1) + "_" + abcstr.substring(CrtPos + 1);
-                        if (abcstr[CrtPos + 2] == "_") this.miditone(abcstr[CrtPos + 3], -2);
-                        else this.miditone(abcstr[CrtPos + 2], -1);
-                    } else { //if # exists, delete one #
-                        abcstr = abcstr.substring(0, CrtPos + 1) + abcstr.substring(CrtPos + 2);
-                        if (abcstr[CrtPos + 1] == "^") this.miditone(abcstr[CrtPos + 2], 1);
-                        else this.miditone(abcstr[CrtPos + 1], 0);
-                    }
-                }
-            }
-        } else if (md == 2) {
-            var ChEnd; //chord end
-            var LstNt; //last note of this chord
-            var NtChs = ["a", "b", "c", "d", "e", "f", "g", "A", "B", "C", "D", "E", "F", "G"]; //possible note chars
-            for (var i = mvpos(1) + 2; i < abcstr.length; i++) {
-                if (abcstr[i] == "]") {
-                    ChEnd = i;
-                    break;
-                }
-                if (i == abcstr.length - 1) return;
-            }
-            for (var i = ChEnd - 1; i > mvpos(1); i--) {
-                if (NtChs.includes(abcstr[i])) {
-                    LstNt = i - 1;
-                    break;
-                }
-                if (i == mvpos(1) + 1) return;
-            }
-            if (!(abcstr[LstNt] == "^" && abcstr[LstNt - 1] == "^")) { //only allow 2 #s
-                if (abcstr[LstNt] != "_") {
-                    abcstr = abcstr.substring(0, LstNt + 1) + "^" + abcstr.substring(LstNt + 1);
-                    if (abcstr[LstNt] == "^") this.miditone(abcstr[LstNt + 2], 2);
-                    else this.miditone(abcstr[LstNt + 2], 1);
-                } else { //if b exists, delete one b
-                    abcstr = abcstr.substring(0, LstNt) + abcstr.substring(LstNt + 1);
-                    if (abcstr[LstNt - 1] == "_") this.miditone(abcstr[LstNt], -1);
-                    else this.miditone(abcstr[LstNt], 0);
-                }
-            }
-        } else if (md == 3) {
-            var ChEnd; //chord end
-            var LstNt; //last note of this chord
-            var NtChs = ["a", "b", "c", "d", "e", "f", "g", "A", "B", "C", "D", "E", "F", "G"]; //possible note chars
-            for (var i = mvpos(1) + 2; i < abcstr.length; i++) {
-                if (abcstr[i] == "]") {
-                    ChEnd = i;
-                    break;
-                }
-                if (i == abcstr.length - 1) return;
-            }
-            for (var i = ChEnd - 1; i > mvpos(1); i--) {
-                if (NtChs.includes(abcstr[i])) {
-                    LstNt = i - 1;
-                    break;
-                }
-                if (i == mvpos(1) + 1) return;
-            }
-            if (!(abcstr[LstNt] == "_" && abcstr[LstNt - 1] == "_")) { //only allow 2 bs
-                if (abcstr[LstNt] != "^") {
-                    abcstr = abcstr.substring(0, LstNt + 1) + "_" + abcstr.substring(LstNt + 1);
-                    if (abcstr[LstNt] == "_") this.miditone(abcstr[LstNt + 2], -2);
-                    else this.miditone(abcstr[LstNt + 2], -1);
-                } else { //if b exists, delete one b
-                    abcstr = abcstr.substring(0, LstNt) + abcstr.substring(LstNt + 1);
-                    if (abcstr[LstNt - 1] == "^") this.miditone(abcstr[LstNt], 1);
-                    else this.miditone(abcstr[LstNt], 0);
-                }
-            }
-        }
+        let Act = {inst: 3, param1: CrtPos, param2: md};
+        act(Act);
     };
     this.newline = () => { //add "\n"
         if (CrtPos != 0 && abcstr[CrtPos - 1] != "\n") { //ABCJS doesn't allow 2 "\n"s in series
@@ -1033,7 +1088,7 @@ var MSOE = new function() {
                 abcstr = abcstr.substring(0, mvpos(1) + 1) + "#" + abcstr.substring(mvpos(1) + 1);
                 var pos = mvpos(1);
                 CrtPos = mvpos(1);
-                act({inst: 0, param1: pos, param2: abcstr.substring(pos, ((CrtPos == mvpos(1))?abcstr.length:mvpos(1)))});
+                act({inst: 0, param1: pos, param2: abcstr.substring(pos, ((CrtPos == mvpos(1))?abcstr.length:mvpos(1)))}, true);
                 checkbar();
             }
             this.print();
