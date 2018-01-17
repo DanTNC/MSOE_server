@@ -49,8 +49,8 @@ io.on("connection", function(socket){
         socket_count[index]--;
         if(socket_count[index] == 0){
           console.log("save "+JSON.stringify(sheet_data[index]));//TODO: save changed sheet in tmp database
-          socket_count[index] == undefined;
-          sheet_data[index] == undefined;
+          socket_count[index] = undefined;
+          sheet_data[index] = undefined;
         }
       });
     });//TODO: check if tmp database has unsaved sheet and ask if load
