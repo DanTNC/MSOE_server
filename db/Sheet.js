@@ -17,7 +17,8 @@ var SheetSchema = new mongoose.Schema({
     abcindex: Number,
     Lstr: String,
     strs: Array,
-    clef: Array
+    clef: Array,
+    voicename: Array
   });
 
 var Sheet = mongoose.model('MSOE', SheetSchema, 'MSOE');
