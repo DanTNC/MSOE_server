@@ -266,10 +266,48 @@ var MSOE = new function() {
                     Act.param1--;
                 }else{
                     console.error("invalid direction of inst: 4");
+                    return 1;
                 }
             },
             function(Act){
-            //inst 5:  addVoice <-> delVoice param: [A_DIndex, direct] (index for addBefore)
+            //inst 5:  addVoice <-> delVoice param: [A_DIndex, direct] X: InsVocBef R: Restore
+                if(Act.param2 == 1){//add voice
+                    SaveNLoad(Act.param1);
+                    var InsVocBef = Act.X;
+                    // if(strs.length == 0) strs[0] = abcstr;
+                    var insind = (InsVocBef)?abcindex:(abcindex+1);
+                    var Restore = Act.R;
+                    clef.splice(insind, 0, Restore.clef);
+                    strs.splice(insind, 0, Restore.str);
+                    voicename.splice(insind, 0, Restore.vn);
+                    if(!InsVocBef){
+                        SaveNLoad(insind);
+                    }else{
+                        strs[abcindex+1] = abcstr;
+                        abcstr = strs[abcindex];
+                    }
+                    Act.param2 = 0;
+                    MSOE.printVoc();
+                }else if(Act.param2 == 0){//delete voice
+                    if (clef.length == 1){
+                        console.error("can't delete the only voice");
+                        return 1;
+                    }
+                    // if(strs.length == 0) strs[0] = abcstr;
+                    SaveNLoad((Act.X)?Act.param1:(Act.param1+1));
+                    strs = strs.slice(0, abcindex).concat(strs.slice(abcindex + 1));
+                    clef = clef.slice(0, abcindex).concat(clef.slice(abcindex + 1));
+                    voicename = voicename.slice(0, abcindex).concat(voicename.slice(abcindex + 1));
+                    if(abcindex == strs.length) abcindex--;
+                    abcstr = strs[abcindex];
+                    console.log(strs, abcindex);
+                    CrtPos = 0;
+                    Act.param2 = 1;
+                    MSOE.printVoc();
+                }else{
+                    console.error("invalid direction of inst: 5");
+                    return 1;
+                }
             },
             function(Act){
             //inst 6:  switchVoice param: [voiceA, voiceB] (don't need to reverse)
@@ -308,6 +346,7 @@ var MSOE = new function() {
         if(!Act) return;
         sync_undo();
         console.log("undo :", Act.inst, Act.param1, Act.param2, Act.X);
+        SaveNLoad(Act.index);
         doAct(Act);
         re_actions.push(Act);
     };
@@ -317,6 +356,7 @@ var MSOE = new function() {
         if(!Act) return;
         sync_redo();
         console.log("redo :", Act.inst, Act.param1, Act.param2, Act.X);
+        SaveNLoad(Act.index);
         doAct(Act);
         actions.push(Act);
     };
@@ -326,6 +366,7 @@ var MSOE = new function() {
         console.log("do :", Act.inst, Act.param1, Act.param2, Act.X);
         // console.log("actions:", actions);
         re_actions = [];
+        Act.index = abcindex;
         //not need to do the work if it's a chord, and don't record it if there's an error
         if(chord === true || doAct(Act) !== 1){
             actions.push(Act);
@@ -384,39 +425,23 @@ var MSOE = new function() {
             return;
         }
         let Act = {inst: 7, param1: abcindex, param2: vn, X: voicename[abcindex]};
-        // voicename[abcindex] = vn;
         act(Act);
-        this.printVoc();
     };
     this.ClrVicName = () => { //clear voice name
         let Act = {inst: 7, param1: abcindex, X: voicename[abcindex]};
-        // voicename[abcindex]	= undefined;
         act(Act);
-        this.printVoc();
     };
     this.AddVoice = () => { //add voice
-        if(strs.length == 0) strs[0] = abcstr;
-        var insind = (InsVocBef)?abcindex:(abcindex+1);
-        clef.splice(insind, 0, "treble");
-        strs.splice(insind, 0, "$");
-        voicename.splice(insind, 0, undefined);
-        if(!InsVocBef){
-            SaveNLoad(insind);
-        }else{
-            strs[abcindex+1] = abcstr;
-            abcstr = strs[abcindex];
-        }
-        this.printVoc();
+        let Act = {inst: 5, param1: abcindex, param2: 1, X: InsVocBef,
+            R: {clef: "treble", str: "$", vn: undefined}
+        };
+        act(Act);
     };
     this.DelVoice = () => { //delete voice
-        if (clef.length == 1) return;
-        strs = strs.slice(0, abcindex).concat(strs.slice(abcindex + 1));
-        clef = clef.slice(0, abcindex).concat(clef.slice(abcindex + 1));
-        voicename = voicename.slice(0, abcindex).concat(voicename.slice(abcindex + 1));
-        if(abcindex != 0) abcindex--;
-        abcstr = strs[abcindex];
-        CrtPos = 0;
-        this.printVoc();
+        let Act = {inst: 5, param1: (abcindex == 0)?abcindex:abcindex-1, param2: 0, X: (abcindex == 0)?true:false,
+            R: {clef: clef[abcindex], str: abcstr, vn: voicename[abcindex]}
+        };
+        act(Act);
     };
     this.VicChgA = () => { //set voice A for switching
         vicchga = abcindex;
