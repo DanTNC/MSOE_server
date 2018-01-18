@@ -270,13 +270,12 @@ var MSOE = new function() {
                 }
             },
             function(Act){
-            //inst 5:  addVoice <-> delVoice param: [A_DIndex, direct] X: InsVocBef R: Restore
+            //inst 5:  addVoice <-> delVoice param: [Restore, direct] X: InsVocBef
                 if(Act.param2 == 1){//add voice
-                    SaveNLoad(Act.param1);
                     var InsVocBef = Act.X;
-                    // if(strs.length == 0) strs[0] = abcstr;
+                    if(strs.length == 0) strs[0] = abcstr;
                     var insind = (InsVocBef)?abcindex:(abcindex+1);
-                    var Restore = Act.R;
+                    var Restore = Act.param1;
                     clef.splice(insind, 0, Restore.clef);
                     strs.splice(insind, 0, Restore.str);
                     voicename.splice(insind, 0, Restore.vn);
@@ -293,15 +292,18 @@ var MSOE = new function() {
                         console.error("can't delete the only voice");
                         return 1;
                     }
-                    // if(strs.length == 0) strs[0] = abcstr;
-                    SaveNLoad((Act.X)?Act.param1:(Act.param1+1));
-                    strs = strs.slice(0, abcindex).concat(strs.slice(abcindex + 1));
-                    clef = clef.slice(0, abcindex).concat(clef.slice(abcindex + 1));
-                    voicename = voicename.slice(0, abcindex).concat(voicename.slice(abcindex + 1));
-                    if(abcindex == strs.length) abcindex--;
-                    abcstr = strs[abcindex];
-                    console.log(strs, abcindex);
-                    CrtPos = 0;
+                    var InsVocBef = Act.X;
+                    var delind = (InsVocBef)?abcindex:(abcindex+1);
+                    strs = strs.slice(0, delind).concat(strs.slice(delind + 1))
+                    clef = clef.slice(0, delind).concat(clef.slice(delind + 1));
+                    voicename = voicename.slice(0, delind).concat(voicename.slice(delind + 1));
+                    if(!InsVocBef){
+                        SaveNLoad(delind);
+                    }else if(abcindex == strs.length){
+                        abcindex--;
+                        abcstr = strs[abcindex];
+                        CrtPos = 0;
+                    }
                     Act.param2 = 1;
                     MSOE.printVoc();
                 }else{
@@ -310,7 +312,25 @@ var MSOE = new function() {
                 }
             },
             function(Act){
-            //inst 6:  switchVoice param: [voiceA, voiceB] (don't need to reverse)
+            //inst 6:  switchVoice param: [voiceA, voiceB]
+                var vicchga_ = Act.param1;
+                var vicchgb_ = Act.param2;
+                if (strs[vicchga_] === undefined || strs[vicchgb_] === undefined || clef[vicchga_] === undefined){//clef of current voice definitely exists
+                    console.error("something wrong with content");
+                    return 1;
+                }
+                strs[abcindex] = abcstr;
+                strs[vicchga_] = [strs[vicchgb_], strs[vicchgb_] = strs[vicchga_]][0]; //swap strs
+                clef[vicchga_] = [clef[vicchgb_], clef[vicchgb_] = clef[vicchga_]][0]; //swap clef
+                voicename[vicchga_] = [voicename[vicchgb_], voicename[vicchgb_] = voicename[vicchga_]][0]; //swap voicename
+                abcstr = strs[abcindex];
+                if(abcindex == vicchga_){
+                    SaveNLoad(vicchgb_);
+                }else if(abcindex == vicchgb_){
+                    SaveNLoad(vicchga_);
+                }
+                Act.param2 = [Act.param1, Act.param1 = Act.param2][0];
+                MSOE.printVoc();
             },
             function(Act){
             //inst 7:  voicename param: [index, newName] X: oldName
@@ -387,7 +407,7 @@ var MSOE = new function() {
                 A.param2 = [1, 0, 3, 2][A.param2];
                 break;
             case 6:
-                //do nothing
+                A.param2 = [A.param1, A.param1 = A.param2][0];//swap A.param1 and A.param2
                 break;
             case 7:
             case 8:
@@ -432,46 +452,34 @@ var MSOE = new function() {
         act(Act);
     };
     this.AddVoice = () => { //add voice
-        let Act = {inst: 5, param1: abcindex, param2: 1, X: InsVocBef,
-            R: {clef: "treble", str: "$", vn: undefined}
+        let Act = {inst: 5, param1: {clef: "treble", str: "$", vn: undefined},
+            param2: 1, X: InsVocBef
         };
         act(Act);
     };
     this.DelVoice = () => { //delete voice
-        let Act = {inst: 5, param1: (abcindex == 0)?abcindex:abcindex-1, param2: 0, X: (abcindex == 0)?true:false,
-            R: {clef: clef[abcindex], str: abcstr, vn: voicename[abcindex]}
-        };
+        var X;
+        var param1 = {clef: clef[abcindex], str: abcstr, vn: voicename[abcindex]};
+        if(abcindex != 0){
+            SaveNLoad(abcindex-1);
+            X = false;
+        }else{
+            X = true;
+        }
+        let Act = {inst: 5, param1: param1, param2: 0, X: X};
         act(Act);
     };
     this.VicChgA = () => { //set voice A for switching
         vicchga = abcindex;
     };
     this.VicChgB = () => { //set current voice as voice B for switching
-        if (vicchga === undefined) return; //if not pressed "r" before
-        if (ChgVocMd) return; //if vicchga is set by ui
-        if (strs[vicchga] === undefined || strs[abcindex] === undefined || clef[vicchga] === undefined) return; //clef of current voice definitely exists
-        strs[vicchga] = [strs[abcindex], strs[abcindex] = strs[vicchga]][0]; //swap strs
-        clef[vicchga] = [clef[abcindex], clef[abcindex] = clef[vicchga]][0]; //swap clef
-        voicename[vicchga] = [voicename[abcindex], voicename[abcindex] = voicename[vicchga]][0]; //swap clef
-        abcindex = vicchga;
-        vicchga = undefined;
-        this.printVoc();
+        VicChgB_(abcindex);
     };
     var VicChgB_ = (vicchgb) => { //set vicchgb as voice B for switching
         if (vicchga === undefined) return; //if not pressed "r" before
-        if (strs[vicchga] === undefined || strs[vicchgb] === undefined || clef[vicchga] === undefined) return; //clef of current voice definitely exists
-        strs[abcindex] = abcstr;
-        strs[vicchga] = [strs[vicchgb], strs[vicchgb] = strs[vicchga]][0]; //swap strs
-        clef[vicchga] = [clef[vicchgb], clef[vicchgb] = clef[vicchga]][0]; //swap clef
-        voicename[vicchga] = [voicename[vicchgb], voicename[vicchgb] = voicename[vicchga]][0]; //swap clef
-        abcstr = strs[abcindex];
-        if(abcindex == vicchga){
-            SaveNLoad(vicchgb);
-        }else if(abcindex == vicchgb){
-            SaveNLoad(vicchga);
-        }
+        let Act = {inst: 6, param1: vicchga, param2: vicchgb};
+        act(Act);
         vicchga = undefined;
-        this.printVoc();
     };
     //-----------------------------------------//for voice list
     var ChgVocMd = false; //if voice A for voice switching is set
@@ -763,7 +771,8 @@ var MSOE = new function() {
                 abcindex: abcindex,
                 Lstr: Lstr,
                 strs: strs,
-                clef: clef
+                clef: clef,
+                voicename: voicename
             };
             server_save(data, function(msg) {
                 console.log(msg);
@@ -791,7 +800,6 @@ var MSOE = new function() {
         index = url.split("!")[1] || "";
         key = url.split("!")[2] || "";
 
-        var pointer = this;
         if (index !== "") { //call ajax to load sheet data
             server_load(func, function(msg) {
                 console.log(msg);
@@ -806,6 +814,7 @@ var MSOE = new function() {
                     Lstr = msg.sheet.Lstr;
                     strs = msg.sheet.strs;
                     clef = msg.sheet.clef;
+                    voicename = msg.sheet.voicename || [];
 
                     Edit = msg.status.edit;
                     if(!Edit){

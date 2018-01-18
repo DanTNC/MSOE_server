@@ -61,7 +61,8 @@ router.post('/', function(req, res) {
                abcindex: req.body.abcindex,
                Lstr: req.body.Lstr,
                strs: req.body.strs,
-               clef: req.body.clef
+               clef: req.body.clef,
+               voicename: req.body.voicename
             });
 
             SheetData.save(function(err) {
@@ -118,6 +119,7 @@ router.post('/', function(req, res) {
             }
         });
         if((message.status.error=== false) && (message.status.success===true)) { //update sheet data
+            console.log(req.body);
             var SheetData = {
                 index: req.body.index,
                 key: req.body.key,
@@ -126,7 +128,8 @@ router.post('/', function(req, res) {
                 abcindex: req.body.abcindex,
                 Lstr: req.body.Lstr,
                 strs: req.body.strs,
-                clef: req.body.clef
+                clef: req.body.clef,
+                voicename: req.body.voicename
             };
             Sheet.update(query, SheetData,  function(err) {
                 if(err) {
@@ -140,7 +143,7 @@ router.post('/', function(req, res) {
                 message.url.index = req.body.index;
                 message.url.key = req.body.key;
                 res.json(message);
-                console.log("Success updata sheet data");
+                console.log("Success update sheet data");
                 console.log(SheetData);
             });            
         }

@@ -22,7 +22,8 @@ router.post('/', function(req, res) {
             abcindex: 0,
             Lstr: "",
             strs: null,
-            clef: null
+            clef: null,
+            voicename: null
         }
     };
 
@@ -54,6 +55,7 @@ router.post('/', function(req, res) {
                 message.sheet.Lstr = sheet.Lstr;
                 message.sheet.strs = sheet.strs;
                 message.sheet.clef = sheet.clef;
+                message.sheet.voicename = sheet.voicename;
     
                 res.json(message);
                 console.log("Key confirmed");
@@ -69,6 +71,7 @@ router.post('/', function(req, res) {
 				message.sheet.Lstr = sheet.Lstr;
                 message.sheet.strs = sheet.strs;
                 message.sheet.clef = sheet.clef;
+                message.sheet.voicename = sheet.voicename;
 
                 res.json(message);
                 console.log("Key error where "+req.body.key+" != "+sheet.key);

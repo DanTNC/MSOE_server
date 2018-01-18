@@ -251,7 +251,7 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
         case 119: //"w" add a voice
             MSOE.AddVoice();
             break;
-        case 87: //"shift+w" delete current voice
+        case 101: //"e" delete current voice
             MSOE.DelVoice();
             break;
         case 114: //"r" swap two voices (mark current voice to be one of them)
