@@ -1,4 +1,17 @@
 /* global $, history, location, printJS, MIDI, MSOE */
+
+var ErrorMes = (e) => {
+    $("#error p").html(e);
+    $("#error").show();
+    setTimeout(()=>{$("#error").fadeOut()}, 2000);
+};
+
+var SuccessMes = (e) => {
+    $("#success p").html(e);
+    $("#success").show();
+    setTimeout(()=>{$("#success").fadeOut()}, 2000);
+};
+
 var UIhandler = new function(){
     var help_ = false; //if help mode is on
     var help_content = { //<UI button selector>:<help message> pairs
@@ -105,11 +118,11 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
             // ----------Change Dstate-----------
         case 63: //"shift+?" for chord mode
         case 47: //"?"
-            document.getElementById("octave").innerHTML = (MSOE.ChgTstate(1) + 3);
+            $("#octave").text(MSOE.ChgTstate(1) + 3);
             break;
         case 34: //"shift+'" for chord mode
         case 39: //"'" 
-            document.getElementById("octave").innerHTML = (MSOE.ChgTstate(0) + 3);
+            $("#octave").text(MSOE.ChgTstate(0) + 3);
             break;
             // ----------Change Tstate-----------
         case 122: //"Z"
@@ -160,7 +173,7 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
             if (!MSOE.checkpause()) { //Pause with duration of 8 is illegal
                 MSOE.outinsert("z", 1, 0, 1);
             } else {
-                Error("Pause with duration of 2 is illegal.");
+                ErrorMes("Pause with duration of 2 is illegal.");
             }
             break;
             // ----------Insert Pause-----------

@@ -86,7 +86,7 @@ button{
   position: absolute;
   border: solid 0.1vw black;
 }
-#error {
+#error, #success {
   width: 14.5vw;
 }
 .white{

@@ -1,12 +1,5 @@
 /* global $, history, location, printJS, MIDI */
 
-var Error = (e) => {
-    $("#error p").html(e);
-    $("#error").show();
-    setTimeout(()=>{$("#error").fadeOut()}, 2000);
-};
-
-
 /** dependencies:
  *      socketio.js:
  *          sheetchange(data, index),
@@ -16,6 +9,9 @@ var Error = (e) => {
  *          serversave(data, func),
  *          sync_undo(),
  *          sync_redo()
+ *      MSOEctr.js:
+ *          ErrorMes(message)
+ *          SuccessMes(message)
  *
  **/
 var MSOE = new function() {
@@ -441,7 +437,7 @@ var MSOE = new function() {
     };
     this.ChgVicName = (vn) => { //change voice name
         if(vn.indexOf("\"") != -1){
-            Error("A voicename can't contain \".");
+            ErrorMes("A voicename can't contain \".");
             return;
         }
         let Act = {inst: 7, param1: abcindex, param2: vn, X: voicename[abcindex]};
@@ -784,6 +780,7 @@ var MSOE = new function() {
                     key = msg.url.key;
                     suscribe(index);
                     console.log(msg.status.msg);
+                    SuccessMes("Successfully saved.");
                 } else {
                     console.log(msg.status.msg);
                 }
@@ -792,7 +789,8 @@ var MSOE = new function() {
                 history.pushState({ title: "" }, "", host + "?!" + index + "!" + key);
             }
         } else {
-            console.log("Web browser doesn't support history api");
+            console.error("Web browser doesn't support history api");
+            ErrorMes("Your browser doesn't have a needed api support");
         }
     };
     this.urlload = (func) => { //load sheet from database using info in url
