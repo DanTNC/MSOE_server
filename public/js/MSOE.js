@@ -778,7 +778,7 @@ var MSOE = new function() {
                 if (msg.status.success) {
                     index = msg.url.index;
                     key = msg.url.key;
-                    suscribe(index);
+                    suscribe(index, false);
                     console.log(msg.status.msg);
                     SuccessMes("Successfully saved.");
                 } else {
@@ -827,7 +827,7 @@ var MSOE = new function() {
                         $("#modaldiv2").modal("hide");
                     }
                     updateinfo();
-                    suscribe(index);
+                    suscribe(index, true);
                     console.log(msg.status.msg);
                 } else {
                     console.log(msg.status.msg);

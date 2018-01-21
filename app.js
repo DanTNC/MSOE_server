@@ -9,6 +9,8 @@ var io = require('socket.io')(http);
 var index = require('./routes/index');
 var load = require('./routes/load');
 var save = require('./routes/save');
+var tempload = require('./db/tempload');
+var tempsave = require('./db/tempsave');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -37,10 +39,26 @@ io.on("connection", function(socket){
   socket.on('disconnect', function(){
     console.log('user disconnected');
   });
-  socket.on('sync', function(index){
-    sheet_data[index] = sheet_data[index] || [];
-    socket.emit("update", sheet_data[index]);
+  socket.on('sync', function(index, update){
     socket_count[index] = (socket_count[index] || 0) + 1;
+    if(socket_count[index] == 1){//first save or connect
+      if(update){//first connect (load temp data)
+        tempload(index, function(temp_data){
+          sheet_data[index] = temp_data;
+          socket.emit("update", sheet_data[index]);
+        });
+      }else{//first save
+        sheet_data[index] = [];
+      }
+    }else{//sync with already connected others
+      if(update){//update with other guys
+        sheet_data[index] = sheet_data[index] || [];
+        socket.emit("update", sheet_data[index]);
+      }else{//save temp data
+        sheet_data[index] = [];
+      }
+    }
+    
     socket.join(index, function(){
       let rooms = Object.keys(socket.rooms);
       console.log(rooms);
@@ -48,12 +66,14 @@ io.on("connection", function(socket){
         console.log('user leave from '+index);
         socket_count[index]--;
         if(socket_count[index] == 0){
-          console.log("save "+JSON.stringify(sheet_data[index]));//TODO: save changed sheet in tmp database
-          socket_count[index] = undefined;
-          sheet_data[index] = undefined;
+          console.log("save "+JSON.stringify(sheet_data[index]));
+          tempsave(index, sheet_data[index], function(){
+            socket_count[index] = undefined;
+            sheet_data[index] = undefined;
+          });
         }
       });
-    });//TODO: check if tmp database has unsaved sheet and ask if load
+    });
   });
   socket.on('modify',function(data, index){
     if(Object.keys(socket.rooms).indexOf(index) < 0){

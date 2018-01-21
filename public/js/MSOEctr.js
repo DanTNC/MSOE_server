@@ -12,6 +12,12 @@ var SuccessMes = (e) => {
     setTimeout(()=>{$("#success").fadeOut()}, 2000);
 };
 
+var WarningMes = (e) => {
+    $("#warning p").html(e);
+    $("#warning").show();
+    setTimeout(()=>{$("#warning").fadeOut()}, 2000);
+};
+
 var UIhandler = new function(){
     var help_ = false; //if help mode is on
     var help_content = { //<UI button selector>:<help message> pairs
@@ -86,6 +92,10 @@ var UIhandler = new function(){
     this.printabc = () => { //print the sheet as PDF
         printJS("sheet", "html");
     };
+    
+    this.loading = () => {
+        
+    }
 };
 
 MSOE.UIhandler(UIhandler); //register UIhandler

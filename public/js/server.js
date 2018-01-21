@@ -4,7 +4,7 @@
  * @index: index of the sheet data (ID)
  * @key: key of the sheet data (password)
  * */
-server_load = (func, sucfunc, index, key) => {
+var server_load = (func, sucfunc, index, key) => {
     $.ajax({
         url: "/load",
         method: "POST",
@@ -24,7 +24,7 @@ server_load = (func, sucfunc, index, key) => {
  * @data: sheet data to be saved
  * @func: a function executed when the saving is successful
  * */
-server_save = (data, func) => {
+var server_save = (data, func) => {
     $.ajax({
         url: "/save",
         method: "POST",
