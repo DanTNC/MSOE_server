@@ -1325,4 +1325,8 @@ var MSOE = new function() {
     this.UIhandler = (UI) => {
         UIhandler = UI;
     };
+    
+    this.loading = (show) => { //delegate loading request to UIhandler
+        UIhandler.loading(show);
+    };
 };

@@ -21,12 +21,13 @@ socket.on("update", (actions)=>{
     if(actions.length != 0){
         WarningMes("Some unsaved modifications are found.");
     }
-    //TODO: tell user the sheet's loading
+    MSOE.loading(true);
     preview_mode();
     for (let Act of actions){
-        MSOE.sync(Act); //taken out for now, actived after actions completed
+        MSOE.sync(Act);
     }
     edit_mode();
+    MSOE.loading(false);
 });
 
 socket.on("undo", ()=>{MSOE.undo();});

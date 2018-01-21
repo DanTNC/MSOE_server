@@ -93,8 +93,12 @@ var UIhandler = new function(){
         printJS("sheet", "html");
     };
     
-    this.loading = () => {
-        
+    this.loading = (show) => { //show or hide loader
+        if(show){
+            $("#preloader").show();
+        }else{
+            $("#preloader").hide();
+        }
     }
 };
 
