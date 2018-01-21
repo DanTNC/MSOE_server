@@ -392,12 +392,14 @@ $(document).ready(function() {
         }
         $('#modaldiv1')
             .modal({
-                allowMultiple: false
+                allowMultiple: false,
+                blurring: true,
+                onHidden: function(){
+                    $('#modaldiv2').modal('setting', 'transition', 'vertical flip').modal('show');
+                }
             })
-            .modal({
-                blurring: true
-            })
-            .modal('setting', 'closable', false);
+            //.modal('setting', 'closable', false);
+            ;
         if(m){
             $("#modaldiv1").modal('setting', 'transition', 'vertical flip').modal("show");
         }

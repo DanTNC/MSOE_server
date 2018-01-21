@@ -268,13 +268,13 @@
             })
             .modal({
                 blurring: true
-            })
-            .modal('setting', 'closable', false);
-        $('#infohome, #infomodal').click(function() {
+            });
+        $('#infomodal').click(function() {
+            $('#modaldiv1').modal('hide');
+        });
+        $('#infohome').click(function() {
             $('#modaldiv2').modal('setting', 'transition', 'vertical flip').modal('show');
         });
-        </script>
-        <script type="text/javascript">
         $('#submit').click(function() {
             $('#modaldiv2').modal('hide');
         });
