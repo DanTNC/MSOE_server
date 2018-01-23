@@ -18,274 +18,286 @@
 </head>
 
 <body>
-    <div id="preloader">
-        <img id="loading" src="img/loading.gif"/>
-        <p>The sheet is loading...</p>
-    </div>
-    <div id="modaldiv1" class="ui modal start">
-        <h1 class="ui center aligned huge header"><img class="ui large circular image" src="img/logo.png"/>
-            <div class="ui center aligned large header">Music Sheet Online Editor
-                <div class="center aligned sub header ">線上樂譜編輯網</div>
+    <div class="ui right sidebar inverted vertical menu mCustomScrollbar"  data-mcs-theme="minimal" data-mcs-axis="y" id="sidebar">
+        <div class="item">
+            <span id="mannual_window">
+                <i class="large angle double left icon" id="mannual_width"></i>
+                <i class="large external square icon" id="mannual_new"></i>
+            </span>
+            <br>
+            <br>
+            <span id="font">字體 : </span>
+            <div class="tiny ui buttons">
+                <button class="ui inverted brown button font active" id="font_0">大</button>
+                <button class="ui inverted teal button font" id="font_1">小</button>
             </div>
-            <button class="ui center aligned large button" id="infomodal">START</button>
-        </h1>
-    </div>
-    <div id="modaldiv2" class="ui modal fill">
-        <h2 class="ui header"><img src="img/logo.png" class="ui circular image"> 樂譜資訊 Score Info <h3 class="sub header"> 開始編輯！填入樂譜的資訊 </h3></h2>
-        <form class="ui form">
-            <div class="two fields">
-                <div class="field">
-                    <label> 編輯人 Editor </label>
-                    <input type="text" name="whoiseditor" placeholder="Editor Name Here">
-                </div>
-                <div class="field">
-                    <label> 作曲人 Composer </label>
-                    <input type="text" name="whoiscomposer" placeholder="Composer Name Here">
-                </div>
-            </div>
-            <div class="field">
-                <label> 譜名 Title </label>
-                <input type="text" name="whatistitle" placeholder="Title Here">
-            </div>
-            <div class="field">
-                <label> 副標 Subtitle </label>
-                <input type="text" name="whatissubtitle" placeholder="Subtitle Here">
-            </div>
-            <div class="two fields">
-                <div class="field">
-                    <label> 專輯 Album </label>
-                    <input type="text" name="whichalbum" placeholder="Album Name">
-                </div>
-                <div class="field">
-                    <label> 演出者 Artist </label>
-                    <input type="text" name="whoisartist" placeholder="Artist Name Here">
-                </div>
-            </div>
-            <div class="ui button" id="submit" tabindex="0"> 提交 Submit </div>
-        </form>
-    </div>
-    <div class="ui top thin inverted menu" id="topbar">
-        <a class="item help" id="infohome">Score Info</a>
-        <a class="item help" id="mannualgo">Mannual</a>
-        <a class="item" id="help">Help</a>
-        <a class="item help edit-but" id="save">Save</a>
-        <a class="item help pre-but" id="play">Play</a>
-        <a class="item help pre-but" id="print">Print</a>
-        <a class="item help pre-but" id="share">Share</a>
-        <script type="text/javascript">
-            $("#help").popup({
-                content: "Popup info for UI",
-                on: "hover",
-                position: "bottom left",
-                target: "#help",
-                variation: "basic mini",
-                delay: {
-                    show:30
-                }
-            });
-        </script>
-        <div class="right menu">
-            <a class="item help" id="edit" onclick="edit_mode()">Edit</a>
-            <a class="item help" id="preview" onclick="preview_mode()">Preview</a>
-            <a class="item help" id="night" onclick="UIhandler.night_mode()">Night</a>
+        </div>
+        <div class="item">
+            <h2 class="ui header" style="color:white;">游標指令</h2>
+            <p class="mannual">
+                左 :向左移一格
+                <br> 右 :向右移一格
+                <br> 上 :移動到上一行最尾端
+                <br> 下 :移動到下一行最開始
+                <br> home :移動到此行最開始
+                <br> end :移動到此行最尾端
+                <br>
+                <br> </p>
+        </div>
+        <div class="item">
+            <h2 class="ui header" style="color:white;">編輯指令</h2>
+            <p class="mannual">
+				Z~M :輸入音符
+                <br> shift+Z~M :和弦模式
+                <br> D :休止符
+                <br> | :手動加小節線
+                <br> &lt&gt :節拍(/2 or *2)
+                <br> shift+&lt&gt :增減附點
+                <br> ? :升八度 :(從C3到C6)
+                <br> ' :降八度 :(從C3到C6)
+                <br> Backspace :刪除
+                <br> ] :增加升音記號
+                <br> [ :增加降音記號
+                <br> S :將連在一起的音符分開
+                <br> A :將被分開的音符再次連起來
+				<br> Enter :換行
+                <br> - :與前一個音連音
+				<br> + :與前一個音解除連音
+				<br> ctrl+Z :復原
+				<br> ctrl+B :重做
+                <br> </p>
+        </div>
+        <div class="item">
+            <h2 class="ui header" style="color:white;">複製指令</h2>
+            <p class="mannual">
+				shift+F (普通模式下) :開啟複製/剪下模式並記錄此點為複製/剪下開始點
+                <br> shift+F (複製/剪下模式下) :以目前位置為複製結束點，記錄複製的東西並結束複製/剪下模式
+                <br> H (複製/剪下模式下) :以目前位置為剪下結束點，記錄剪下的東西並結束複製/剪下模式
+                <br> F (複製/剪下模式下) :取消複製/剪下
+                <br> G :貼上
+                <br>
+                <br> </p>
+        </div>
+        <div class="item">
+            <h2 class="ui header" style="color:white;">聲部指令</h2>
+            <p class="mannual">
+				W :新增一個聲部
+                <br> E :刪除目前聲部 (只剩一個聲部時無法使用)
+                <br> R :紀錄此聲部為聲部A
+                <br> shift+R :將此聲部與聲部A交換位置
+                <br> Q :進入譜號設定模式
+				<br> 1~6 (普通模式下) :切換游標到聲部1~6
+				<br> 1~4 (譜號設定模式下) :設定譜號為 (treble alto tenor bass)
+                <br> </p>
         </div>
     </div>
-    <div class="ui grid">
-        <div class="four wide column left_menu">
-            <div class="rows">
-                <div class="logo"><img src="img/logo.png" class="logo" width=300px></div>
-            </div>
-            <!--row top left-->
-            <div class="left">
-                <div class="ui raised segment inverted" id="voices">
-				</div>
-				<script type="text/javascript">
-				    $("#voices").mCustomScrollbar({
-				        theme: "minimal",
-				        axis: "yx"
-				    });
-				</script>
-				<!--<div class="ui raised segment inverted mCustomScrollbar" data-mcs-theme="minimal" data-mcs-axis="yx" id="voices">-->
-				<!--</div>-->
-				<div class="ui four item inverted menu small borderless">
-					<a class="item help" id="copy">Copy</a>
-					<a class="item disabled help" id="cut">Cut</a>
-					<a class="item disabled help" id="paste">Paste</a>
-					<a class="item help" id="clef">Clef</a>
-				</div>
-				<div class="ui inverted menu small borderless" style="margin-left: -0.5vw;">
-					<a class="item help" id="plus"><i class="plus mini icon"></i></a>
-					<a class="item help" id="minus"><i class="minus mini icon"></i></a>
-					<div class="item">
-						<div class="ui input" style="width: 8vw;">
-							<input id="voicename" type="text" placeholder='voicename(no ")'/>
-						</div>
-					</div>
-					<div class="right menu">
-						<a class="item help" id="check"><i class="checkmark mini icon"></i></a>
-						<a class="item help" id="remove"><i class="remove mini icon"></i></a>
-					</div>
-				</div>
-                <div class="footer_input one wide column row meter" id="meter">Meter</div>
-                <div class="footer_input one wide column row ui input mini" id="meter_in">
-                    <input class="input_tempo" name="whatistempo" placeholder="4/4" />
+    <div class="pusher">
+        <div id="preloader">
+            <img id="loading" src="img/loading.gif"/>
+            <p>The sheet is loading...</p>
+        </div>
+        <div id="modaldiv1" class="ui modal start">
+            <h1 class="ui center aligned huge header"><img class="ui large circular image" src="img/logo.png"/>
+                <div class="ui center aligned large header">Music Sheet Online Editor
+                    <div class="center aligned sub header ">線上樂譜編輯網</div>
                 </div>
-                <div class="footer_input one wide column row" id="octave_">
-					<div class="ui label teal mini">
-				  		Octave:
-						<div class="detail" id="octave">4</div>
-					</div>
+                <button class="ui center aligned large button" id="infomodal">START</button>
+            </h1>
+        </div>
+        <div id="modaldiv2" class="ui modal fill">
+            <h2 class="ui header"><img src="img/logo.png" class="ui circular image"> 樂譜資訊 Score Info <h3 class="sub header"> 開始編輯！填入樂譜的資訊 </h3></h2>
+            <form class="ui form">
+                <div class="two fields">
+                    <div class="field">
+                        <label> 編輯人 Editor </label>
+                        <input type="text" name="whoiseditor" placeholder="Editor Name Here">
+                    </div>
+                    <div class="field">
+                        <label> 作曲人 Composer </label>
+                        <input type="text" name="whoiscomposer" placeholder="Composer Name Here">
+                    </div>
+                </div>
+                <div class="field">
+                    <label> 譜名 Title </label>
+                    <input type="text" name="whatistitle" placeholder="Title Here">
+                </div>
+                <div class="field">
+                    <label> 副標 Subtitle </label>
+                    <input type="text" name="whatissubtitle" placeholder="Subtitle Here">
+                </div>
+                <div class="two fields">
+                    <div class="field">
+                        <label> 專輯 Album </label>
+                        <input type="text" name="whichalbum" placeholder="Album Name">
+                    </div>
+                    <div class="field">
+                        <label> 演出者 Artist </label>
+                        <input type="text" name="whoisartist" placeholder="Artist Name Here">
+                    </div>
+                </div>
+                <div class="ui button" id="submit" tabindex="0"> 提交 Submit </div>
+            </form>
+        </div>
+        <div class="ui top thin inverted menu" id="topbar">
+            <a class="item help" id="infohome">Score Info</a>
+            <a class="item help" id="mannualgo">Mannual</a>
+            <a class="item" id="help">Help</a>
+            <a class="item help edit-but" id="save">Save</a>
+            <a class="item help pre-but" id="play">Play</a>
+            <a class="item help pre-but" id="print">Print</a>
+            <a class="item help pre-but" id="share">Share</a>
+            <script type="text/javascript">
+                $("#help").popup({
+                    content: "Popup info for UI",
+                    on: "hover",
+                    position: "bottom left",
+                    target: "#help",
+                    variation: "basic mini",
+                    delay: {
+                        show:30
+                    }
+                });
+            </script>
+            <div class="right menu">
+                <a class="item help" id="edit" onclick="edit_mode()">Edit</a>
+                <a class="item help" id="preview" onclick="preview_mode()">Preview</a>
+                <a class="item help" id="night" onclick="UIhandler.night_mode()">Night</a>
+            </div>
+        </div>
+        <div class="ui grid">
+            <div class="four wide column left_menu">
+                <div class="rows">
+                    <div class="logo"><img src="img/logo.png" class="logo" width=300px></div>
+                </div>
+                <!--row top left-->
+                <div class="left">
+                    <div class="ui raised segment inverted" id="voices">
+    				</div>
+    				<script type="text/javascript">
+    				    $("#voices").mCustomScrollbar({
+    				        theme: "minimal",
+    				        axis: "yx"
+    				    });
+    				</script>
+    				<div class="ui four item inverted menu small borderless">
+    					<a class="item help" id="copy">Copy</a>
+    					<a class="item disabled help" id="cut">Cut</a>
+    					<a class="item disabled help" id="paste">Paste</a>
+    					<a class="item help" id="clef">Clef</a>
+    				</div>
+    				<div class="ui inverted menu small borderless" style="margin-left: -0.5vw;">
+    					<a class="item help" id="plus"><i class="plus mini icon"></i></a>
+    					<a class="item help" id="minus"><i class="minus mini icon"></i></a>
+    					<div class="item">
+    						<div class="ui input" style="width: 8vw;">
+    							<input id="voicename" type="text" placeholder='voicename(no ")'/>
+    						</div>
+    					</div>
+    					<div class="right menu">
+    						<a class="item help" id="check"><i class="checkmark mini icon"></i></a>
+    						<a class="item help" id="remove"><i class="remove mini icon"></i></a>
+    					</div>
+    				</div>
+                    <div class="footer_input one wide column row meter" id="meter">Meter</div>
+                    <div class="footer_input one wide column row ui input mini" id="meter_in">
+                        <input class="input_tempo" name="whatistempo" placeholder="4/4" />
+                    </div>
+                    <div class="footer_input one wide column row" id="octave_">
+    					<div class="ui label teal small">
+    				  		Octave:
+    						<div class="detail" id="octave">4</div>
+    					</div>
+                    </div>
+                </div>
+            </div>
+            <div class="nine wide column sheet" id="sheet">
+                <div class="boo" id="boo"></div>
+                <div class="midi" id="midi"></div>
+            </div>
+            <div class="three wide column panel-group right_menu">
+                <div class="ui sticky" style="width: 272px !important; height: 262.531px !important;">
+                    <h3 class="ui header">Keyboard</h3>
+                    <div class="keyboard">
+                        <button id="C" class="white" onclick="btn(this)">Z</button>
+                        <button id="CS" class="black"></button>
+                        <button id="D" class="white" onclick="btn(this)">X</button>
+                        <button id="DS" class="black"></button>
+                        <button id="E" class="white" onclick="btn(this)">C</button>
+                        <button id="F" class="white" onclick="btn(this)">V</button>
+                        <button id="FS" class="black"></button>
+                        <button id="G" class="white" onclick="btn(this)">B</button>
+                        <button id="GS" class="black"></button>
+                        <button id="A" class="white" onclick="btn(this)">N</button>
+                        <button id="AS" class="black"></button>
+                        <button id="B" class="white" onclick="btn(this)">M</button>
+                    </div>
+    				<div class="ui negative message" style="display: none;" id="error">
+    				    <div class="header">
+    					    Error
+    					</div>
+    					<p>
+    						A voicename can't contain ".
+    					</p>
+    				</div>
+    				<div class="ui positive message" style="display: none;" id="success">
+    				    <div class="header">
+    					    Success
+    					</div>
+    					<p>
+    						Successfully saved.
+    					</p>
+    				</div>
+    				<div class="ui warning message" style="display: none;" id="warning">
+    				    <div class="header">
+    					    Warning
+    					</div>
+    					<p>
+    						Some unsaved modifications are found.
+    					</p>
+    				</div>
+                </div>
+            </div>
+            <div class="three wide column panel-group-preview right_menu">
+                <div class="one wide column row" id="bpm">
+                    BPM
+                </div>
+                <div class="ui input mini" id="bpm_input">
+                    <input type="text" placeholder="180" name="whatisbpm"/>
                 </div>
             </div>
         </div>
-        <div class="nine wide column sheet" id="sheet">
-            <div class="boo" id="boo"></div>
-            <div class="midi" id="midi"></div>
-        </div>
-        <div class="three wide column panel-group right_menu">
-            <div class="ui sticky" style="width: 272px !important; height: 262.531px !important;">
-                <h3 class="ui header">Keyboard</h3>
-                <div class="keyboard">
-                    <button id="C" class="white" onclick="btn(this)">Z</button>
-                    <button id="CS" class="black"></button>
-                    <button id="D" class="white" onclick="btn(this)">X</button>
-                    <button id="DS" class="black"></button>
-                    <button id="E" class="white" onclick="btn(this)">C</button>
-                    <button id="F" class="white" onclick="btn(this)">V</button>
-                    <button id="FS" class="black"></button>
-                    <button id="G" class="white" onclick="btn(this)">B</button>
-                    <button id="GS" class="black"></button>
-                    <button id="A" class="white" onclick="btn(this)">N</button>
-                    <button id="AS" class="black"></button>
-                    <button id="B" class="white" onclick="btn(this)">M</button>
-                </div>
-				<div class="ui negative message" style="display: none;" id="error">
-				    <div class="header">
-					    Error
-					</div>
-					<p>
-						A voicename can't contain ".
-					</p>
-				</div>
-				<div class="ui positive message" style="display: none;" id="success">
-				    <div class="header">
-					    Success
-					</div>
-					<p>
-						Successfully saved.
-					</p>
-				</div>
-				<div class="ui warning message" style="display: none;" id="warning">
-				    <div class="header">
-					    Warning
-					</div>
-					<p>
-						Some unsaved modifications are found.
-					</p>
-				</div>
-            </div>
-        </div>
-        <div class="three wide column panel-group-preview right_menu">
-            <div class="one wide column row" id="bpm">
-                BPM
-            </div>
-            <div class="ui input mini" id="bpm_input">
-                <input type="text" placeholder="180" name="whatisbpm"/>
-            </div>
-        </div>
-        <div class="two wide column" data-mcs-theme="minimal" data-mcs-axis="y">
-            <div class="ui right sidebar inverted vertical menu mCustomScrollbar"  data-mcs-theme="minimal" data-mcs-axis="y" id="sidebar">
-                <div class="item">
-                    <h2 class="ui header" style="color:white;">游標指令</h2>
-                    <p class="mannual">
-                        左 :向左移一格
-                        <br> 右 :向右移一格
-                        <br> 上 :移動到上一行最尾端
-                        <br> 下 :移動到下一行最開始
-                        <br> home :移動到此行最開始
-                        <br> end :移動到此行最尾端
-                        <br>
-                        <br> </p>
-                </div>
-                <div class="item">
-                    <h2 class="ui header" style="color:white;">編輯指令</h2>
-                    <p class="mannual">
-						Z~M :輸入音符
-                        <br> shift+Z~M :和弦模式
-                        <br> D :休止符
-                        <br> | :手動加小節線
-                        <br> &lt&gt :節拍(/2 or *2)
-                        <br> shift+&lt&gt :增減附點
-                        <br> ? :升八度 :(從C3到C6)
-                        <br> ' :降八度 :(從C3到C6)
-                        <br> Backspace :刪除
-                        <br> ] :增加升音記號
-                        <br> [ :增加降音記號
-                        <br> S :將連在一起的音符分開
-                        <br> A :將被分開的音符再次連起來
-						<br> Enter :換行
-                        <br> - :與前一個音連音
-						<br> + :與前一個音解除連音
-						<br> ctrl+Z :復原
-						<br> ctrl+B :重做
-                        <br> </p>
-                </div>
-                <div class="item">
-                    <h2 class="ui header" style="color:white;">複製指令</h2>
-                    <p class="mannual">
-						shift+F (普通模式下) :開啟複製/剪下模式並記錄此點為複製/剪下開始點
-                        <br> shift+F (複製/剪下模式下) :以目前位置為複製結束點，記錄複製的東西並結束複製/剪下模式
-                        <br> H (複製/剪下模式下) :以目前位置為剪下結束點，記錄剪下的東西並結束複製/剪下模式
-                        <br> F (複製/剪下模式下) :取消複製/剪下
-                        <br> G :貼上
-                        <br>
-                        <br> </p>
-                </div>
-                <div class="item">
-                    <h2 class="ui header" style="color:white;">聲部指令</h2>
-                    <p class="mannual">
-						W :新增一個聲部
-                        <br> E :刪除目前聲部 (只剩一個聲部時無法使用)
-                        <br> R :紀錄此聲部為聲部A
-                        <br> shift+R :將此聲部與聲部A交換位置
-                        <br> Q :進入譜號設定模式
-						<br> 1~6 (普通模式下) :切換游標到聲部1~6
-						<br> 1~4 (譜號設定模式下) :設定譜號為 (treble alto tenor bass)
-                        <br> </p>
-                </div>
-            </div>
-        </div>
-        <script type="text/javascript">
-        $('#mannualback,#mannualgo').click(function() {
-            $('#sidebar').sidebar('setting', 'transition', 'overlay')
-            .sidebar('toggle');
+    </div>
+    <script type="text/javascript">
+    $('#mannualback,#mannualgo').click(function() {
+        $('#sidebar').sidebar('setting', 'transition', 'overlay')
+        .sidebar('toggle');
+    });
+    </script>
+    <script type="text/javascript">
+    $('#modaldiv2')
+        .modal({
+            allowMultiple: false
+        })
+        .modal({
+            blurring: true
         });
-        </script>
-        <script type="text/javascript">
-        $('#modaldiv2')
-            .modal({
-                allowMultiple: false
-            })
-            .modal({
-                blurring: true
-            });
-        $('#infomodal').click(function() {
-            $('#modaldiv1').modal('hide');
-        });
-        $('#infohome').click(function() {
-            $('#modaldiv2').modal('setting', 'transition', 'vertical flip').modal('show');
-        });
-        $('#submit').click(function() {
-            $('#modaldiv2').modal('hide');
-        });
-        </script>
-        <script src='js/abcjs_basic_midi.js'></script>
-        <!--<script src="https://cdn.jsdelivr.net/mojs/latest/mo.min.js"></script>>-->
-        <!--script src="js/initializedlogpage.js"></script-->
-        <script src='js/server.js'></script>
-        <script src="js/MSOE.js"></script>
-        <script src="js/MSOEctr.js"></script>
-        <script src="js/modechange.js"></script>
+    $('#infomodal').click(function() {
+        $('#modaldiv1').modal('hide');
+    });
+    $('#infohome').click(function() {
+        $('#modaldiv2').modal('setting', 'transition', 'vertical flip').modal('show');
+    });
+    $('#submit').click(function() {
+        $('#modaldiv2').modal('hide');
+    });
+    </script>
+    <script src='js/abcjs_basic_midi.js'></script>
+    <!--<script src="https://cdn.jsdelivr.net/mojs/latest/mo.min.js"></script>>-->
+    <!--script src="js/initializedlogpage.js"></script-->
+    <script src='js/server.js'></script>
+    <script src="js/MSOE.js"></script>
+    <script src="js/MSOEctr.js"></script>
+    <script src="js/modechange.js"></script>
 </body>
 
 </html>

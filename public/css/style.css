@@ -57,7 +57,7 @@ button{
 }
 
 .mannual {
-  font-size:8px;
+  font-size:0.9vw;
   color:white;
 }
 .panel-heading {
@@ -322,4 +322,14 @@ img.logo{
   color: white;
   font-size: 2vw;
   margin-top: 59vh;
+}
+
+#mannual_window i:hover{
+  color: chocolate;
+}
+
+#sidebar_new {
+  width: 100vw;
+  height: 100vh;
+  border-radius: 0;
 }

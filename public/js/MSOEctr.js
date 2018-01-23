@@ -100,6 +100,27 @@ var UIhandler = new function(){
             $("#preloader").hide();
         }
     }
+    
+    var font_size = ["0.9vw", "0.7vw"];
+    this.mannual_font = (index) => { //toggle mannual font size
+        $(".font").removeClass("active");
+        $("#font_" + index).addClass("active");
+        $(".mannual").css("font-size", font_size[index]);
+    };
+    
+    var mannual_widen = false;
+    this.mannual_width = () => { //toggle mannual width
+        mannual_widen = !mannual_widen;
+        if(mannual_widen){
+            // $("#sidebar").width("100vw");
+            $("#sidebar").animate({"width":"100vw"});
+            $("#mannual_width").removeClass("left").addClass("right");
+        }else{
+            // $("#sidebar").width("260px");
+            $("#sidebar").animate({"width":"260px"});
+            $("#mannual_width").removeClass("right").addClass("left");
+        }
+    };
 };
 
 MSOE.UIhandler(UIhandler); //register UIhandler
@@ -468,6 +489,15 @@ $(document).ready(function() {
     $("#remove").click(function(){
         MSOE.ClrVicName();
         MSOE.print();
+    });
+    $(".font").click(function(){
+        UIhandler.mannual_font(parseInt($(this).attr("id").substring(5)));
+    });
+    $("#mannual_width").click(function(){
+        UIhandler.mannual_width();
+    });
+    $("#mannual_new").click(function(){
+        window.open(window.location.origin + "/mannual", "_blank");
     });
     MIDI.setup({
         soundfontUrl: window.ABCJS.midi.soundfountUrl,
