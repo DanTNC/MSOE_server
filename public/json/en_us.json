@@ -1,0 +1,71 @@
+{
+    "mannual":
+    [
+        {
+            "header":"cursor commands",
+            "content":
+            [
+                "left-arrow :move to the left slot",
+                "right-arrow :move to the right slot",
+                "up-arrow :move to the end of the previous line",
+                "down-arrow :move to the beginning of the next line",
+                "home :move to the beginning of the current line",
+                "end :move to the end of the current line"
+            ]
+        },
+        {
+            "header":"edit commands",
+            "content":
+            [
+                "Z~M :enter notes",
+                "shift+Z~M :chord mode",
+                "D :pause",
+                "| :add a bar mannually",
+                "&lt&gt :tempo(/2 or *2)",
+                "shift+&lt&gt :add or remove dots",
+                "? :increase an octave :(C3 to C6)",
+                "' :decrease an octave :(C3 to C6)",
+                "Backspace :delete",
+                "] :add a sharp or remove a flat",
+                "[ :add a flat or remove a sharp",
+                "S :separate two linked notes",
+                "A :assemble two adjacent notes",
+				"Enter :break a line",
+                "- :tie with previous note",
+				"+ :untie from previous note",
+				"ctrl+Z :undo",
+				"ctrl+B :redo",
+				"shift+S :save sheet"
+            ]
+        },
+        {
+            "header":"copy commands",
+            "content":
+            [
+                "shift+F (normal mode) :enter copy/cut mode and record this point as start point",
+                "shift+F (copy/cut mode) :set this point as end point, copy everything between the points, and end copy/cut mode",
+                "H (copy/cut mode) :set this point as end point, cut everything between the points, and end copy/cut mode",
+                "F (copy/cut mode) :cancel copy/cut mode",
+                "G :paste"
+            ]
+        },
+        {
+            "header":"voice commands",
+            "content":
+            [
+                "W :insert a voice",
+                "E :delete current voice (invalid when there's only one voice)",
+                "R :record current voice as voiceA",
+                "shift+R :swap with voiceA",
+                "Q :enter clef mode",
+				"1~6 (normal mode) :move cursor to voice 1~6",
+				"1~4 (clef mode) :set the clef as (treble alto tenor bass)"
+            ]
+        }
+    ],
+    "font":{
+        "title":"font-size : ",
+        "L":"large",
+        "S":"small"
+    }
+}
