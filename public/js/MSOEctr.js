@@ -436,6 +436,11 @@ var btn = (a) => { //buttons for notes
     highlight(a);
 };
 
+
+$(window).on("load", function(){
+    $('#preloader').fadeOut('slow',function(){console.log("loaded");});
+});
+
 $(document).ready(function() {
     MSOE.urlload(function(m){
         MSOE.print();
