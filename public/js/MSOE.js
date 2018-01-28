@@ -629,9 +629,9 @@ var MSOE = new function() {
         }
         e.find(".ui.inverted.menu").addClass(color);
         Clfs.splice(Clfs.indexOf(res),1);
-        e.find(".dp_clef").eq(0).html(Clfs[0]).attr("data-value",OrClfs.indexOf(Clfs[0]));
-        e.find(".dp_clef").eq(1).html(Clfs[1]).attr("data-value",OrClfs.indexOf(Clfs[1]));
-        e.find(".dp_clef").eq(2).html(Clfs[2]).attr("data-value",OrClfs.indexOf(Clfs[2]));
+        for (let i = 0; i < 3; i++){
+            e.find(".dp_clef").eq(i).html(Clfs[i]).attr("data-value",OrClfs.indexOf(Clfs[i]));
+        }
         return res;
     };
     //-----------------------------------------//for MIDI playing
@@ -640,7 +640,7 @@ var MSOE = new function() {
         return tune_[0];
     };
     this.playing = false; //if the music is playing
-    this.bpm = ()=>{ //return bpm of the sheet
+    this.bpm = () => { //return bpm of the sheet
         return (infostrs["bpmstr"] == "")?180:Number(infostrs["bpmstr"]);
     };
     //-----------------------------------------//for print
