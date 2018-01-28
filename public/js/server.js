@@ -8,7 +8,6 @@ var server_load = (func, sucfunc, index, key) => {
     $.ajax({
         url: "/load",
         method: "POST",
-        async: false,
         data: {
             index: index,
             key: key,
@@ -28,7 +27,6 @@ var server_save = (data, func) => {
     $.ajax({
         url: "/save",
         method: "POST",
-        async: false,
         data: data,
         success: func,
         error: function() {
