@@ -644,33 +644,33 @@ var MSOE = new function() {
         return (infostrs["bpmstr"] == "")?180:Number(infostrs["bpmstr"]);
     };
     //-----------------------------------------//for print
-    var rmsmb = (str, cursor) => { //remove symbols should not be in the final abcstring
-        var Ins = mvpos(1);
-        if (Ins == CrtPos) Ins = abcstr.length;
-        if (abcstr[Ins - 1] == "\n") Ins--;
-        if (cursor) {
-            str = str.substring(0, Ins) + "!style=x!G" + numtostr(Math.pow(2, Dstate % 10 - 4) * (1 - Math.pow(1 / 2, Math.floor(Dstate / 10) + 1))) + str.substring(Ins);
-        }
+    var rmsmb = (str) => { //remove symbols should not be in the final abcstring
         console.log("after rmsmb:" + str);
         return str.replace(/[*$#]/g, "");
     };
     var GetStrOffset = (ix) => { //get the length before the voice for highlight listener (ix: index)
         var sum = 0;
         for (var i = 0; i < ix + 1; i++) {
-            sum += 20 + (Math.floor(Math.log10(i + 1)) + 1) + clef[i].length + ((voicename[i] === undefined)?RdClf(clef[i], undefined, 1):voicename[i]).length;
-            if (i != ix) sum += rmsmb(strs[i], false).length + 4;
+            sum += 18 + (Math.floor(Math.log10(i + 1)) + 1) + clef[i].length + ((voicename[i] === undefined)?RdClf(clef[i], undefined, 1):voicename[i]).length;
+            if (i != ix) sum += rmsmb(strs[i]).length + 2;
         }
-        maxoffset = rmsmb(abcstr, true).length + 1;
+        maxoffset = rmsmb(abcstr).length + 1;
         return sum;
     };
-    
+    var GetLineOffset = (line) => { //get the position of nth line's start
+        var pos = 0;
+        for (let i = 0; i < line; i++){
+            pos = abcstr.indexOf("\n", pos) + 1;
+        }
+        return pos;
+    }
     var ForPrint = () => { //construct the string for ABCJS rendering
         var finalstr = "";
         for (var i = 0; i < clef.length; i++) {
             if (i != abcindex) {
-                finalstr += "V: " + (i + 1) + " clef=" + clef[i] + " name=\"" + ((voicename[i] === undefined)?RdClf(clef[i], undefined, 1):voicename[i]) + "\"\n[|" + rmsmb(strs[i], false) + " |]\n";
+                finalstr += "V: " + (i + 1) + " clef=" + clef[i] + " name=\"" + ((voicename[i] === undefined)?RdClf(clef[i], undefined, 1):voicename[i]) + "\"\n" + rmsmb(strs[i]) + " \n";
             } else {
-                finalstr += "V: " + (i + 1) + " clef=" + clef[i] + " name=\"" + ((voicename[i] === undefined)?RdClf(clef[i], undefined, 1):voicename[i]) + "\"\n[|" + rmsmb(abcstr, Edit) + " |]\n";
+                finalstr += "V: " + (i + 1) + " clef=" + clef[i] + " name=\"" + ((voicename[i] === undefined)?RdClf(clef[i], undefined, 1):voicename[i]) + "\"\n" + rmsmb(abcstr) + " \n";
             }
         }
         return finalstr;
@@ -684,26 +684,33 @@ var MSOE = new function() {
             editable: true,
             listener: {
                 highlight: (abcElem) => { //update CrtPos when note is clicked
-                    console.log(abcElem.startChar);
+                    console.log(abcElem);
                     var ignsmbs = ["$", "#", "*"]; //symbols that won't be in the final abcstring
-                    var NumBefCrt = 0; //number of chars before current position
-                    for (var i = 1; i < (mvpos(1) == CrtPos ? abcstr.length : mvpos(1)); i++) {
-                        if (!ignsmbs.includes(abcstr[i])) {
-                            NumBefCrt++;
-                        }
-                    }
-                    console.log(NumBefCrt);
+                    // var NumBefCrt = 0; //number of chars before current position
+                    // for (var i = 1; i < (mvpos(1) == CrtPos ? abcstr.length : mvpos(1)); i++) {
+                    //     if (!ignsmbs.includes(abcstr[i])) {
+                    //         NumBefCrt++;
+                    //     }
+                    // }
+                    // console.log(NumBefCrt);
                     var offset = abcElem.startChar - 19 - infostrs["ttlstr"].length - infostrs["tmpstr"].length - Lstr.length - infostrs["cmpstr"].length - bpmstr.length - GetStrOffset(abcindex);
                     console.log(offset);
-                    if ((offset < 0) || (offset > maxoffset) || (isNaN(offset))){
+                    if ((isNaN(offset))){ //click on staff
+                        var line = abcElem.abselem.elemset[0].attrs.class.match(/l([^ ]*)/)[1];
+                        CrtPos = GetLineOffset(line);
                         this.print();
                         return;
                     }
-                    if (offset > NumBefCrt + 10 + String(numtostr(Math.pow(2, Dstate % 10 - 4) * (1 - Math.pow(1 / 2, Math.floor(Dstate / 10) + 1)))).length) { //if after the cursor, - the string length of cursor
-                        offset -= (10 + String(numtostr(Math.pow(2, Dstate % 10 - 4) * (1 - Math.pow(1 / 2, Math.floor(Dstate / 10) + 1)))).length);
-                    } else if (offset == NumBefCrt + 1) {
+                    if ((offset < 0) || (offset > maxoffset)){
+                        this.print();
                         return;
                     }
+                    // if (offset > NumBefCrt + 10 + String(numtostr(Math.pow(2, Dstate % 10 - 4) * (1 - Math.pow(1 / 2, Math.floor(Dstate / 10) + 1)))).length) { //if after the cursor, - the string length of cursor
+                    //     offset -= (10 + String(numtostr(Math.pow(2, Dstate % 10 - 4) * (1 - Math.pow(1 / 2, Math.floor(Dstate / 10) + 1)))).length);
+                    // } else 
+                    // if (offset == NumBefCrt + 1) {
+                    //     return;
+                    // }
                     if (offset == 0) {
                         CrtPos = 0;
                         this.print();
@@ -744,6 +751,7 @@ var MSOE = new function() {
             }
         }, {});
         $("path, tspan").attr("fill", (UIhandler.night?"white":"#000000"));
+        this.cursorBounce(this.getCssClass(), (UIhandler.night?"white":"#000000"));
     };
     //-----------------------------------------//for urlload and save
     var url = "";
@@ -781,13 +789,14 @@ var MSOE = new function() {
                     suscribe(index, false);
                     console.log(msg.status.msg);
                     SuccessMes("Successfully saved.");
+                    if (push) {
+                        history.pushState({ title: "" }, "", host + "?!" + index + "!" + key);
+                    }
                 } else {
                     console.log(msg.status.msg);
                 }
             });
-            if (push) {
-                history.pushState({ title: "" }, "", host + "?!" + index + "!" + key);
-            }
+            
         } else {
             console.error("Web browser doesn't support history api");
             ErrorMes("Your browser doesn't have a needed api support");
@@ -1320,6 +1329,73 @@ var MSOE = new function() {
     this.checkpause = () => { //check if the pause is legal
         return (Math.pow(2, Dstate % 10 - 5) * eval(Lstr) >= 2);
     }
+    this.getCssClass = (CrtPos_, abcindex_) => { //an interface for further possible proxy use
+        CrtPos_ = CrtPos_ || CrtPos;
+        abcindex_ = abcindex_ || abcindex;
+        return CrtPos_cssClass(CrtPos_, abcindex_);
+    }
+    //convert CrtPos to or from a note's cssClass (selector) type: number <-> string
+    //typeof from: number => CrtPos, abcindex -> cssClass, noteindex
+    //typeof from: string => cssClass, noteindex -> CrtPos, abcindex
+    var CrtPos_cssClass = (from, index) => {
+        //cssClass: "path.note.lX.mX.vX:eq(X)" or "path.staff-extra.lX.vX" or "path.bar.lX.mX.vX"
+        if ((typeof from) == "number"){ //from CrtPos to cssClass
+            //do 
+            var L = "", M = "", V = "", note = "", type = "";
+            V = ".v" + index;
+            if(from == 0 || abcstr[from-1] == "\n"){ //start of a line
+                type = ".staff-extra";
+            }else if(abcstr[from+1] == "|"){ //bar
+                type = ".bar";
+            }else{
+                type = ".note";
+            }
+            var line = 0;
+            var start = 0;
+            var substr = abcstr.substring(1, from + 1);
+            while(substr.indexOf("\n$", start) != -1){
+                start = substr.indexOf("\n$", start) + 2;
+                line++;
+            }
+            L = ".l" + line;
+            if(type != ".staff-extra"){
+                var measure = 0;
+                while(substr.indexOf("$|", start) != -1){
+                    start = substr.indexOf("$|", start) + 2;
+                    measure++;
+                }
+                M = ".m" + measure;
+            }
+            if(type == ".note"){
+                var noteindex = -1;
+                while(substr.indexOf("$", start) != -1){
+                    start = substr.indexOf("$", start) + 1;
+                    noteindex++;
+                }
+                note = ":eq(" + noteindex + ")";
+            }
+            return "path" + type + L + M + V + note;
+        }else if((typeof from) == "string"){ //from cssClass to CrtPos
+            //do
+        }else{
+            console.warn("the type of argument is not supported");
+        }
+    };
+    
+    var bouncingID, previousSelector;
+    this.cursorBounce = (selector, color)=>{ //make certain element has bouncing effect to be a cursor
+        var a = true;
+        stopBounce();
+        bouncingID = setInterval(function(){
+            $(selector).attr("stroke",(a)?color:"none");
+            a=!a;
+        }, 500);
+        previousSelector = selector;
+    };
+    var stopBounce = () => {
+        clearInterval(bouncingID);
+        $(previousSelector).attr("stroke","none");
+    };
     
     var UIhandler;//UI handler from outside the object (would become critical argument of constructor in API version)
     this.UIhandler = (UI) => {

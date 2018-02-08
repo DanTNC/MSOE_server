@@ -79,12 +79,12 @@ var UIhandler = new function(){
         this.night = !this.night;
         if(this.night){
             $("#sheet").css("background-color","#090909");
-            $("path, tspan").attr("fill","white");
             $("#night").text("Default");
+            MSOE.print();
         }else{
             $("#sheet").css("background-color","");
-            $("path, tspan").attr("fill","#000000");
             $("#night").text("Night");
+            MSOE.print();
         }
     };
     
