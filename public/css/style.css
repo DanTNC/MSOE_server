@@ -333,3 +333,8 @@ img.logo{
   height: 100vh;
   border-radius: 0;
 }
+
+#hint {
+  text-align: center;
+  font-size: 1vw;
+}

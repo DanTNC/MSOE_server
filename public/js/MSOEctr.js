@@ -18,6 +18,14 @@ var WarningMes = (e) => {
     setTimeout(()=>{$("#warning").fadeOut()}, 2000);
 };
 
+var StartHint = (show) => {
+    if(show){
+        $("#hint").show();
+    }else{
+        $("#hint").hide();
+    }
+};
+
 var UIhandler = new function(){
     var help_ = false; //if help mode is on
     var help_content = { //<UI button selector>:<help message> pairs

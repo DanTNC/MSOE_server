@@ -676,6 +676,7 @@ var MSOE = new function() {
         return finalstr;
     };
     this.print = () => { //output svg
+        StartHint(abcstr == "$");
         var bpmstr = (infostrs["bpmstr"] == "")?"180":infostrs["bpmstr"];
         var SS = "T: " + infostrs["ttlstr"] + "\nM: " + infostrs["tmpstr"] + "\nL: " + Lstr + "\nC: " + infostrs["cmpstr"] + "\nQ: " + bpmstr + "\n" + ForPrint();
         // console.log("entire abcstr:", SS);
@@ -686,13 +687,6 @@ var MSOE = new function() {
                 highlight: (abcElem) => { //update CrtPos when note is clicked
                     console.log(abcElem);
                     var ignsmbs = ["$", "#", "*"]; //symbols that won't be in the final abcstring
-                    // var NumBefCrt = 0; //number of chars before current position
-                    // for (var i = 1; i < (mvpos(1) == CrtPos ? abcstr.length : mvpos(1)); i++) {
-                    //     if (!ignsmbs.includes(abcstr[i])) {
-                    //         NumBefCrt++;
-                    //     }
-                    // }
-                    // console.log(NumBefCrt);
                     var offset = abcElem.startChar - 19 - infostrs["ttlstr"].length - infostrs["tmpstr"].length - Lstr.length - infostrs["cmpstr"].length - bpmstr.length - GetStrOffset(abcindex);
                     console.log(offset);
                     if ((isNaN(offset))){ //click on staff
@@ -705,12 +699,6 @@ var MSOE = new function() {
                         this.print();
                         return;
                     }
-                    // if (offset > NumBefCrt + 10 + String(numtostr(Math.pow(2, Dstate % 10 - 4) * (1 - Math.pow(1 / 2, Math.floor(Dstate / 10) + 1)))).length) { //if after the cursor, - the string length of cursor
-                    //     offset -= (10 + String(numtostr(Math.pow(2, Dstate % 10 - 4) * (1 - Math.pow(1 / 2, Math.floor(Dstate / 10) + 1)))).length);
-                    // } else 
-                    // if (offset == NumBefCrt + 1) {
-                    //     return;
-                    // }
                     if (offset == 0) {
                         CrtPos = 0;
                         this.print();
@@ -751,7 +739,11 @@ var MSOE = new function() {
             }
         }, {});
         $("path, tspan").attr("fill", (UIhandler.night?"white":"#000000"));
-        this.cursorBounce(this.getCssClass(), (UIhandler.night?"white":"#000000"));
+        if(Edit){
+            cursorBounce(this.getCssClass(), (UIhandler.night?"white":"#000000"));
+        }else{
+            stopBounce();
+        }
     };
     //-----------------------------------------//for urlload and save
     var url = "";
@@ -1376,14 +1368,14 @@ var MSOE = new function() {
             }
             return "path" + type + L + M + V + note;
         }else if((typeof from) == "string"){ //from cssClass to CrtPos
-            //do
+            //reserved
         }else{
             console.warn("the type of argument is not supported");
         }
     };
     
     var bouncingID, previousSelector;
-    this.cursorBounce = (selector, color)=>{ //make certain element has bouncing effect to be a cursor
+    var cursorBounce = (selector, color)=>{ //make certain element has bouncing effect to be a cursor
         var a = true;
         stopBounce();
         bouncingID = setInterval(function(){
