@@ -676,7 +676,7 @@ var MSOE = new function() {
         return finalstr;
     };
     this.print = () => { //output svg
-        StartHint(abcstr == "$");
+        StartHint(allstr_empty());
         var bpmstr = (infostrs["bpmstr"] == "")?"180":infostrs["bpmstr"];
         var SS = "T: " + infostrs["ttlstr"] + "\nM: " + infostrs["tmpstr"] + "\nL: " + Lstr + "\nC: " + infostrs["cmpstr"] + "\nQ: " + bpmstr + "\n" + ForPrint();
         // console.log("entire abcstr:", SS);
@@ -1371,6 +1371,20 @@ var MSOE = new function() {
             //reserved
         }else{
             console.warn("the type of argument is not supported");
+        }
+    };
+    
+    var allstr_empty = () => {
+        if(strs.length == 0){
+            return (abcstr == "$");
+        }else{
+            return strs.reduce((res, str, i) => {
+                if(i != abcindex){
+                    return res && (str == "$");
+                }else{
+                    return res && (abcstr == "$");
+                }
+            }, true);
         }
     };
     
