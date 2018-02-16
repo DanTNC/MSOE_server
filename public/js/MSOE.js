@@ -588,7 +588,7 @@ var MSOE = new function() {
                     newClef = "alto middle=C";
                     break;
                 case 51:
-                    newClef = "tenor middle=A";
+                    newClef = "tenor";
                     break;
                 case 52:
                     newClef = "bass,,";
@@ -615,7 +615,7 @@ var MSOE = new function() {
                 res = "alto";
                 color = "yellow";
                 break;
-            case "tenor middle=A":
+            case "tenor":
                 res = "tenor";
                 color = "orange";
                 break;
