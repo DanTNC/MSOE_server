@@ -1334,7 +1334,7 @@ var MSOE = new function() {
         if ((typeof from) == "number"){ //from CrtPos to cssClass
             //do 
             var L = "", M = "", V = "", note = "", type = "";
-            V = ".v" + index;
+            V = ".v" + (index - empty_strs_count());
             if(from == 0 || abcstr[from-1] == "\n"){ //start of a line
                 type = ".staff-extra";
             }else if(abcstr[from+1] == "|"){ //bar
@@ -1374,11 +1374,12 @@ var MSOE = new function() {
         }
     };
     
-    var allstr_empty = () => {
-        if(strs.length == 0){
+    var allstr_empty = (before) => { //return if all abcstrs are empty. before: the index to test before
+        let strs_ = strs.slice(0, before);
+        if(strs_.length == 0){
             return (abcstr == "$");
         }else{
-            return strs.reduce((res, str, i) => {
+            return strs_.reduce((res, str, i) => {
                 if(i != abcindex){
                     return res && (str == "$");
                 }else{
@@ -1387,11 +1388,27 @@ var MSOE = new function() {
             }, true);
         }
     };
+    var empty_strs_count = () => { //return the number of continous empty abcstrs from index 0
+        return strs.reduce((res, str, i) => {
+            if(res.count == false) return res;
+            let str_ = (i == abcindex)?abcstr:str;
+            if(str_ == "$"){
+                res.sum++;
+                console.log(res);
+                return res;
+            }else{
+                res.count = false;
+                console.log(res);
+                return res;
+            }
+        }, {sum: 0, count: true}).sum;
+    };
     
     var bouncingID, previousSelector;
     var cursorBounce = (selector, color)=>{ //make certain element has bouncing effect to be a cursor
         var a = true;
         stopBounce();
+        if(allstr_empty(abcindex + 1)) return;
         bouncingID = setInterval(function(){
             $(selector).attr("stroke",(a)?color:"none");
             a=!a;
