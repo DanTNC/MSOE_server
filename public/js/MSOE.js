@@ -422,11 +422,7 @@ var MSOE = new function() {
     voicename[0] = undefined; //default value
     var InsVocBef = false; //insert before or after certain voice
     this.insvocbef = (v) => { //setter and getter for InsVocBef
-        if (v === undefined){
-            return InsVocBef;   
-        }else{
-            InsVocBef = v;
-        }
+        return (InsVocBef = v || InsVocBef);
     };
     var SaveNLoad = (j) => { //save and load (j: jump to)
         if (j >= clef.length) return;
