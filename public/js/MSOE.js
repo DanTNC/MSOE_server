@@ -995,6 +995,38 @@ var MSOE = new function() {
         }
         checkbar();
     };
+    //-----------------------------------------//for note selector
+    var SelNotes = []; // array of {pos:Number, sel:String}
+    this.PartialSelNotes = (mode, guest) => {
+        var mapfunc = n => n;
+        if (mode=="pos") mapfunc = n => n.pos;
+        if (mode=="sel") mapfunc = n => n.sel;
+        var subject = guest || SelNotes;
+        return subject.map(mapfunc);
+    };
+    this.SelNoteClr = () => { //clear selected notes, called when the sheet is changed
+        this.SelNoteHighLight("clear", {color:(UIhandler.night?"white":"#000000")});
+        SelNotes = [];
+    };
+    this.SelNotesPush = (notes) => { //add new notes to selected notes
+        if(Array.isArray(notes)){
+            SelNotes = SelNotes.concat(notes);
+            this.SelNoteHighLight("HL", {color: "cyan", notes: this.PartialSelNotes("sel", notes)});
+        }else{
+            SelNotes.push(notes);
+            this.SelNoteHighLight("HL", {color: "cyan", notes: notes.sel});
+        }
+    };
+    this.SelNoteHighLight = (op, arg) => { //highlight selected notes or clear highlighting. op: "clear" or "HL", arg: color or notes.sels...
+        switch (op) {
+            case "clear":
+                $("tspan, span").attr("fill", arg.color);
+                break;
+            case "HL":
+                $(arg.notes.split(", ")).attr("fill", arg.color);
+                break;
+        }
+    };
     //-----------------------------------------//for editing
     this.ChgDstate = (md) => { //change duration state
         switch (md) {
