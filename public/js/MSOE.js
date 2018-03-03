@@ -422,7 +422,7 @@ var MSOE = new function() {
     voicename[0] = undefined; //default value
     var InsVocBef = false; //insert before or after certain voice
     this.insvocbef = (v) => { //setter and getter for InsVocBef
-        return (InsVocBef = v || InsVocBef);
+        return (InsVocBef = (v === undefined)?InsVocBef:v);
     };
     var SaveNLoad = (j) => { //save and load (j: jump to)
         if (j >= clef.length) return;
@@ -680,42 +680,7 @@ var MSOE = new function() {
             add_classes: true,
             editable: true,
             listener: {
-                highlight: (abcElem) => { //update CrtPos when note is clicked
-                    console.log(abcElem);
-                    var ignsmbs = ["$", "#", "*"]; //symbols that won't be in the final abcstring
-                    var offset = abcElem.startChar - 19 - infostrs["ttlstr"].length - infostrs["tmpstr"].length - Lstr.length - infostrs["cmpstr"].length - bpmstr.length - GetStrOffset(abcindex);
-                    console.log(offset);
-                    if ((isNaN(offset))){ //click on staff
-                        var line = abcElem.abselem.elemset[0].attrs.class.match(/l([^ ]*)/)[1];
-                        CrtPos = GetLineOffset(line);
-                        this.print();
-                        return;
-                    }
-                    if ((offset < 0) || (offset > maxoffset)){
-                        this.print();
-                        return;
-                    }
-                    if (offset == 0) {
-                        CrtPos = 0;
-                        this.print();
-                        return;
-                    }
-                    for (var i = 0; i < abcstr.length; i++) {
-                        if (!ignsmbs.includes(abcstr[i])) {
-                            if (offset != 1) {
-                                offset--;
-                            } else if (abcstr[i] != "[") {
-                                CrtPos = i - 1;
-                                this.print();
-                                return;
-                            } else { //for chord
-                                CrtPos = i - 2;
-                                this.print();
-                                return;
-                            }
-                        }
-                    }
-                }
+                highlight: click_handler
             }
         });
         let qpm_ = Number(infostrs["bpmstr"]);
@@ -739,6 +704,53 @@ var MSOE = new function() {
             cursorBounce(this.getCssClass(), (UIhandler.night?"white":"#000000"));
         }else{
             stopBounce();
+        }
+    };
+    var click_handler = (abcElem) => {
+        if(this.insvocbef()){ //select notes
+            sel_handler(abcElem);
+        }else if(this.tiemode()){ //tie notes
+            tie_handler(abcElem);
+        }else{
+            pos_handler(abcElem);
+        }
+    };
+    var pos_handler = (abcElem) => { //update CrtPos when note is clicked
+        console.log("move cursor");
+        var bpmstr = (infostrs["bpmstr"] == "")?"180":infostrs["bpmstr"];
+        console.log(abcElem);
+        var ignsmbs = ["$", "#", "*"]; //symbols that won't be in the final abcstring
+        var offset = abcElem.startChar - 19 - infostrs["ttlstr"].length - infostrs["tmpstr"].length - Lstr.length - infostrs["cmpstr"].length - bpmstr.length - GetStrOffset(abcindex);
+        console.log(offset);
+        if ((isNaN(offset))){ //click on staff
+            var line = abcElem.abselem.elemset[0].attrs.class.match(/l([^ ]*)/)[1];
+            CrtPos = GetLineOffset(line);
+            this.print();
+            return;
+        }
+        if ((offset < 0) || (offset > maxoffset)){ //illegal offset
+            this.print();
+            return;
+        }
+        if (offset == 0) {
+            CrtPos = 0;
+            this.print();
+            return;
+        }
+        for (var i = 0; i < abcstr.length; i++) {
+            if (!ignsmbs.includes(abcstr[i])) {
+                if (offset != 1) {
+                    offset--;
+                } else if (abcstr[i] != "[") {
+                    CrtPos = i - 1;
+                    this.print();
+                    return;
+                } else { //for chord
+                    CrtPos = i - 2;
+                    this.print();
+                    return;
+                }
+            }
         }
     };
     //-----------------------------------------//for urlload and save
@@ -1020,13 +1032,27 @@ var MSOE = new function() {
     this.SelNoteHighLight = (op, arg) => { //highlight selected notes or clear highlighting. op: "clear" or "HL", arg: color or notes.sels...
         switch (op) {
             case "clear":
-                $("tspan, span").attr("fill", arg.color);
+                $("path, tspan").attr("fill", arg.color);
                 break;
             case "HL":
                 $(arg.notes.split(", ")).attr("fill", arg.color);
                 break;
         }
     };
+    var sel_handler = (abcElem) => { //select notes
+        console.log("select notes");
+    };
+    //-----------------------------------------//for tieing not joint notes
+    var tiemode = false;
+    this.tiemode = (toggle) => { //toggle tiemode and return it. toggle: toggle or not
+        if(toggle){
+            tiemode = !tiemode;
+        }
+        return tiemode;
+    };
+    var tie_handler = (abcElem) => { //tie notes
+        console.log("tie notes");
+    }
     //-----------------------------------------//for editing
     this.ChgDstate = (md) => { //change duration state
         switch (md) {

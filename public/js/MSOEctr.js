@@ -515,6 +515,13 @@ $(document).ready(function() {
         MSOE.cutmode();
         MSOE.print();
     });
+    $("#tie").click(function(){
+        if(MSOE.tiemode(true)){
+            $("#tie").css("color","#b5cc18");
+        }else{
+            $("#tie").css("color","");
+        }
+    });
     $("#clef").click(function(){
         MSOE.ClfMdTgl();
     });
