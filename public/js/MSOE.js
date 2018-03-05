@@ -803,7 +803,7 @@ var MSOE = new function() {
         }
     };
     this.urlload = (func) => { //load sheet from database using info in url
-        url = location.href.split("?")[1] || "";
+        url = location.search.split("?")[1] || "";
         index = url.split("!")[1] || "";
         key = url.split("!")[2] || "";
 

@@ -34,3 +34,18 @@ var server_save = (data, func) => {
         }
     });
 };
+/**
+ * @callback: a function executed after a good response is received
+ * */
+var server_getCID = (callback) => {
+    $.ajax({
+        url: "/CID",
+        method: "POST",
+        success: function(data) {
+            callback(data.CID);
+        },
+        error: function() {
+            console.log("Ajax error when POST /CID");
+        }
+    });
+};

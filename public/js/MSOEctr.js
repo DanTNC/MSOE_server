@@ -163,6 +163,10 @@ var UIhandler = new function(){
             console.error("no such file corresponding to the language.");
         }
     };
+    this.imported = (sheets) => { //display exported sheets on screen to let the user choose
+        //TODO: implement
+        console.log(sheets);
+    };
 };
 
 MSOE.UIhandler(UIhandler); //register UIhandler
@@ -449,7 +453,7 @@ $(window).on("load", function(){
     $('#preloader').fadeOut('slow',function(){console.log("loaded");});
 });
 
-$(document).ready(function() {
+$(document).ready(function(){
     MSOE.urlload(function(m){
         MSOE.print();
         MSOE.printVoc();

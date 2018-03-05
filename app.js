@@ -9,7 +9,9 @@ var io = require('socket.io')(http);
 var index = require('./routes/index');
 var load = require('./routes/load');
 var save = require('./routes/save');
+var auth = require('./routes/auth');
 var mannual = require('./routes/mannual');
+var getCID = require('./routes/CID');
 var tempload = require('./db/tempload');
 var tempsave = require('./db/tempsave');
 
@@ -23,6 +25,8 @@ app.use('/', index);
 app.use('/mannual', mannual);
 app.use('/load', load);
 app.use('/save', save);
+app.use('/auth',auth);
+app.use('/CID',getCID);
 
 app.use(express.static(path.resolve(__dirname, 'public')));
 
