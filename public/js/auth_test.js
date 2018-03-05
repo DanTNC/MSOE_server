@@ -3,7 +3,7 @@ var auth = () => {
         window.sessionStorage.setItem("back", window.location.search);
         var params = {
             'client_id': CID,
-            'redirect_uri': window.location.host + '/auth',
+            'redirect_uri': window.location.origin + '/auth',
             'response_type': 'token',
             'scope': 'https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.metadata',
             'include_granted_scopes': 'true'
