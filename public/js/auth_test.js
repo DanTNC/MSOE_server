@@ -3,7 +3,7 @@ var auth = () => {
         window.sessionStorage.setItem("back", window.location.search);
         var params = {
             'client_id': CID,
-            'redirect_uri': 'http://msoe-fad11204.c9users.io:8080/auth',
+            'redirect_uri': window.location.host + '/auth',
             'response_type': 'token',
             'scope': 'https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.metadata',
             'include_granted_scopes': 'true'
