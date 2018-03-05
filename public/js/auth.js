@@ -6,8 +6,8 @@ $(document).ready(function(){
     window.sessionStorage.setItem("drive",token);
     var back = window.sessionStorage.getItem("back");
     if(back != undefined){
-        window.location.pathname = back;
+        window.location = window.location.origin + back;
     }else{
-        window.location.pathname = "/";
+        window.location = window.location.origin;
     }
 });
