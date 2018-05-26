@@ -74,8 +74,8 @@ io.on("connection", function(socket){
         if(socket_count[index] == 0){
           console.log("save "+JSON.stringify(sheet_data[index]));
           tempsave(index, sheet_data[index], function(){
-            socket_count[index] = undefined;
-            sheet_data[index] = undefined;
+            delete socket_count[index];
+            delete sheet_data[index];
           });
         }
       });
