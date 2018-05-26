@@ -717,41 +717,8 @@ var MSOE = new function() {
     };
     var pos_handler = (abcElem) => { //update CrtPos when note is clicked
         console.log("move cursor");
-        var bpmstr = (infostrs["bpmstr"] == "")?"180":infostrs["bpmstr"];
-        console.log(abcElem);
-        var ignsmbs = ["$", "#", "*"]; //symbols that won't be in the final abcstring
-        var offset = abcElem.startChar - 19 - infostrs["ttlstr"].length - infostrs["tmpstr"].length - Lstr.length - infostrs["cmpstr"].length - bpmstr.length - GetStrOffset(abcindex);
-        console.log(offset);
-        if ((isNaN(offset))){ //click on staff
-            var line = abcElem.abselem.elemset[0].attrs.class.match(/l([^ ]*)/)[1];
-            CrtPos = GetLineOffset(line);
-            this.print();
-            return;
-        }
-        if ((offset < 0) || (offset > maxoffset)){ //illegal offset
-            this.print();
-            return;
-        }
-        if (offset == 0) {
-            CrtPos = 0;
-            this.print();
-            return;
-        }
-        for (var i = 0; i < abcstr.length; i++) {
-            if (!ignsmbs.includes(abcstr[i])) {
-                if (offset != 1) {
-                    offset--;
-                } else if (abcstr[i] != "[") {
-                    CrtPos = i - 1;
-                    this.print();
-                    return;
-                } else { //for chord
-                    CrtPos = i - 2;
-                    this.print();
-                    return;
-                }
-            }
-        }
+        CrtPos = clicked_index(abcElem);
+        this.print();
     };
     //-----------------------------------------//for urlload and save
     var url = "";
@@ -1457,6 +1424,35 @@ var MSOE = new function() {
             }
         }, {sum: 0, count: true}).sum;
     };
+    
+    var clicked_index = (abcElem) => {
+        var bpmstr = (infostrs["bpmstr"] == "")?"180":infostrs["bpmstr"];
+        console.log(abcElem);
+        var ignsmbs = ["$", "#", "*"]; //symbols that won't be in the final abcstring
+        var offset = abcElem.startChar - 19 - infostrs["ttlstr"].length - infostrs["tmpstr"].length - Lstr.length - infostrs["cmpstr"].length - bpmstr.length - GetStrOffset(abcindex);
+        console.log(offset);
+        if ((isNaN(offset))){ //click on staff
+            var line = abcElem.abselem.elemset[0].attrs.class.match(/l([^ ]*)/)[1];
+            return GetLineOffset(line);
+        }
+        if ((offset < 0) || (offset > maxoffset)){ //illegal offset
+            return CrtPos;
+        }
+        if (offset == 0) {
+            return 0;
+        }
+        for (var i = 0; i < abcstr.length; i++) {
+            if (!ignsmbs.includes(abcstr[i])) {
+                if (offset != 1) {
+                    offset--;
+                } else if (abcstr[i] != "[") {
+                    return i - 1;
+                } else { //for chord
+                    return i - 2;
+                }
+            }
+        }
+    }
     
     var bouncingID, previousSelector;
     var cursorBounce = (selector, color)=>{ //make certain element has bouncing effect to be a cursor
