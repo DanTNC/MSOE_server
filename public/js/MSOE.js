@@ -360,6 +360,7 @@ var MSOE = new function() {
     this.undo = ()=>{ //TODO: sync this
         var Act = actions.pop();
         if(!Act) return;
+        this.SelNoteClr();
         sync_undo();
         console.log("undo :", Act.inst, Act.param1, Act.param2, Act.X);
         SaveNLoad(Act.index);
@@ -370,6 +371,7 @@ var MSOE = new function() {
     this.redo = ()=>{ //TODO: sync this
         var Act = re_actions.pop();
         if(!Act) return;
+        this.SelNoteClr();
         sync_redo();
         console.log("redo :", Act.inst, Act.param1, Act.param2, Act.X);
         SaveNLoad(Act.index);
@@ -379,6 +381,7 @@ var MSOE = new function() {
 
     var act = (Act, chord) => { //record action and emit sheet change message for syncronization
         if(!Act) return;
+        this.SelNoteClr();
         console.log("do :", Act.inst, Act.param1, Act.param2, Act.X);
         // console.log("actions:", actions);
         re_actions = [];
@@ -701,7 +704,7 @@ var MSOE = new function() {
         }, {});
         $("path, tspan").attr("fill", (UIhandler.night?"white":"#000000"));
         if(Edit){
-            cursorBounce(this.getCssClass(), (UIhandler.night?"white":"#000000"));
+            this.SelNoteHighLight_();
         }else{
             stopBounce();
         }
@@ -987,14 +990,30 @@ var MSOE = new function() {
         this.SelNoteHighLight("clear", {color:(UIhandler.night?"white":"#000000")});
         SelNotes = [];
     };
+    this.SelNotesIndexOf = (notes) => {
+        var notePos = notes.pos;
+        var SelNotesPos = this.PartialSelNotes("pos");
+        return SelNotesPos.indexOf(notePos);
+    };
     this.SelNotesPush = (notes) => { //add new notes to selected notes
-        if(Array.isArray(notes)){
-            SelNotes = SelNotes.concat(notes);
-            this.SelNoteHighLight("HL", {color: "cyan", notes: this.PartialSelNotes("sel", notes)});
+        // if(Array.isArray(notes)){
+        //     SelNotes = SelNotes.concat(notes);
+        //     console.log(SelNotes);
+        //     this.SelNoteHighLight("HL", {color: "cyan", notes: this.PartialSelNotes("sel")});
+        // }else{
+        var index = this.SelNotesIndexOf(notes);
+        if(index != -1){
+            SelNotes.splice(index, 1);   
         }else{
             SelNotes.push(notes);
-            this.SelNoteHighLight("HL", {color: "cyan", notes: notes.sel});
         }
+        console.log(SelNotes);
+        this.SelNoteHighLight("clear", {color:(UIhandler.night?"white":"#000000")});
+        this.SelNoteHighLight("HL", {color: "cyan", notes: this.PartialSelNotes("sel")});
+        // }
+    };
+    this.SelNoteHighLight_ = () => {
+        this.SelNoteHighLight("HL", {color: "cyan", notes: this.PartialSelNotes("sel")});
     };
     this.SelNoteHighLight = (op, arg) => { //highlight selected notes or clear highlighting. op: "clear" or "HL", arg: color or notes.sels...
         switch (op) {
@@ -1002,12 +1021,20 @@ var MSOE = new function() {
                 $("path, tspan").attr("fill", arg.color);
                 break;
             case "HL":
-                $(arg.notes.split(", ")).attr("fill", arg.color);
+                $(arg.notes.join(", ")).attr("fill", arg.color);
+                if(arg.notes.includes(this.getCssClass(this.chordPos()))){
+                    cursorBounce(this.getCssClass(this.chordPos()), "cyan");
+                }else{
+                    cursorBounce(this.getCssClass(this.chordPos()), (UIhandler.night?"white":"#000000"));
+                }
                 break;
         }
     };
     var sel_handler = (abcElem) => { //select notes
         console.log("select notes");
+        var selected = clicked_index(abcElem);
+        console.log("clicked on: " + selected);
+        this.SelNotesPush({pos: selected, sel: this.getCssClass(selected)});
     };
     //-----------------------------------------//for tieing not joint notes
     var tiemode = false;
@@ -1128,26 +1155,42 @@ var MSOE = new function() {
         console.log(CrtPos);
         console.log(abcstr);
     };
+    var chordmode = false;
+    this.chordmode = (ch) => {
+        if (ch !== undefined){
+            chordmode = ch;
+        }
+        return chordmode;
+    };
+    this.chordPos = () => {
+        if (this.chordmode() && abcstr.substr(mvpos(1), 3) !== "$[]"){
+            return mvpos(1);
+        }else{
+            return undefined;
+        }
+    };
     this.chmodeon = () => { //chord mode on
-        var InsBef = mvpos(1); //insert before
-        if ((InsBef == CrtPos) || (abcstr[InsBef + 1] != "[")) {
-            insert("$[]", 1);
-        }
-    };
-    this.chmodeoff = (k) => { //chord mode off
-        if (k == 16) { //"shift" for chord mode off
-            if (abcstr.substr(mvpos(1), 3) === "$[]") { //if no notes are inserted
-                abcstr = abcstr.substring(0, mvpos(1)) + abcstr.substring(mvpos(1) + 3);
-            } else if (abcstr.substr(mvpos(1), 2) === "$[") {
-                abcstr = abcstr.substring(0, mvpos(1) + 1) + "#" + abcstr.substring(mvpos(1) + 1);
-                var pos = mvpos(1);
-                CrtPos = mvpos(1);
-                act({inst: 0, param1: pos, param2: abcstr.substring(pos, ((CrtPos == mvpos(1))?abcstr.length:mvpos(1)))}, true);
-                checkbar();
+        if (this.chordmode()){
+            var InsBef = mvpos(1); //insert before
+            if ((InsBef == CrtPos) || (abcstr[InsBef + 1] != "[")) {
+                insert("$[]", 1);
             }
-            this.print();
         }
     };
+    this.chmodeoff = () => { //chord mode off
+        this.chplclr();
+        if (abcstr.substr(mvpos(1), 2) === "$[") {
+            abcstr = abcstr.substring(0, mvpos(1) + 1) + "#" + abcstr.substring(mvpos(1) + 1);
+            var pos = mvpos(1);
+            CrtPos = mvpos(1);
+            act({inst: 0, param1: pos, param2: abcstr.substring(pos, ((CrtPos == mvpos(1))?abcstr.length:mvpos(1)))}, true);
+            checkbar();
+        }
+        this.print();
+    };
+    this.chplclr = () => {
+        abcstr = abcstr.replace(/\$\[\]/g, "");
+    }
     //-----------------------------------------//helpers
     var tonum = (str) => { //transform string representation of fraction to number
         var Dnmntr = 0; //denominator
@@ -1343,8 +1386,8 @@ var MSOE = new function() {
         return (Math.pow(2, Dstate % 10 - 5) * eval(Lstr) >= 2);
     }
     this.getCssClass = (CrtPos_, abcindex_) => { //an interface for further possible proxy use
-        CrtPos_ = CrtPos_ || CrtPos;
-        abcindex_ = abcindex_ || abcindex;
+        CrtPos_ = (CrtPos_ == undefined)?CrtPos:CrtPos_;
+        abcindex_ = (abcindex_ == undefined)?abcindex:abcindex_;
         return CrtPos_cssClass(CrtPos_, abcindex_);
     }
     //convert CrtPos to or from a note's cssClass (selector) type: number <-> string

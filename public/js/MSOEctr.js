@@ -383,44 +383,71 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
     MSOE.print();
 };
 
+var pre_move = () => {
+    MSOE.chmodeoff();
+};
+
+var post_move = () => {
+    MSOE.chmodeon();
+    MSOE.SelNoteClr();
+    MSOE.print();
+};
+
 var move = () => { // some keys can't be detected in keypress
     if (checkinput()) return; //if inpus tags are focus, turn off key events
     if (!MSOE.Edit_()) return;
     //not using switch for speed(avoid looking up table)
     if (event.keyCode == 37) { //"left"
+        pre_move();
         MSOE.outmove(0);
+        post_move();
     }
     if (event.keyCode == 39) { //"right"
+        pre_move();
         MSOE.outmove(1);
+        post_move();
     }
     if (event.keyCode == 38) { //"up"
+        pre_move();
         MSOE.outmove(2);
+        post_move();
     }
     if (event.keyCode == 40) { //"down"
+        pre_move();
         MSOE.outmove(3);
+        post_move();
     }
     if (event.keyCode == 36) { //"home"
-        MSOE.outmove2(4);
+        pre_move();
+        MSOE.outmove(4);
+        post_move();
     }
     if (event.keyCode == 35) { //"end"
-        MSOE.outmove2(5);
+        pre_move();
+        MSOE.outmove(5);
+        post_move();
     }
     if (event.keyCode == 8) { //"backspace"
         MSOE.del();
+        MSOE.print();
     }
     if (event.keyCode == 16) { //"shift" for chord mode on
+        MSOE.chordmode(true);
         MSOE.chmodeon();
     }
     if (event.keyCode == 17) { //"ctrl" for add voice before
         MSOE.insvocbef(true);
     }
-    MSOE.print();
+    console.log("keycode : "+event.keyCode);
 };
 
 var chord = () => { //keyup event for chord mode
     if (checkinput()) return;
     if (!MSOE.Edit_()) return;
-    MSOE.chmodeoff(event.keyCode);
+    if (event.keyCode == 16) { //"shift" for chord mode off
+        MSOE.chordmode(false);
+        MSOE.chmodeoff();
+    }
     if (event.keyCode == 17) { //"ctrl" for add voice before
         MSOE.insvocbef(false);
     }
