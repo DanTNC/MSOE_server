@@ -290,7 +290,7 @@ var MSOE = new function() {
                     }
                     var InsVocBef = Act.X;
                     var delind = (InsVocBef)?abcindex:(abcindex+1);
-                    strs = strs.slice(0, delind).concat(strs.slice(delind + 1))
+                    strs = strs.slice(0, delind).concat(strs.slice(delind + 1));
                     clef = clef.slice(0, delind).concat(clef.slice(delind + 1));
                     voicename = voicename.slice(0, delind).concat(voicename.slice(delind + 1));
                     if(!InsVocBef){
@@ -483,23 +483,23 @@ var MSOE = new function() {
         $(".mCSB_container").css("overflow","visible");
         $(".v_num").click(function(){
             if(ChgVocMd){
-                VicChgB_(parseInt($(this).html()) - 1);
+                VicChgB_(parseInt($(this).html(), 10) - 1);
             }else{
-                vicchga = parseInt($(this).html()) - 1;
+                vicchga = parseInt($(this).html(), 10) - 1;
                 $(this).css("background","rgba(0, 0, 0, 0.15)");
             }
             ChgVocMd = !ChgVocMd;
             MSOE.print();
         });
         $(".v_up").click(function(){
-            var vic = parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html()) - 1;
+            var vic = parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html(), 10) - 1;
             if(vic == 0) return;
             vicchga = vic;
             VicChgB_(vic - 1);
             MSOE.print();
         });
         $(".v_down").click(function(){
-            var vic = parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html()) - 1;
+            var vic = parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html(), 10) - 1;
             if(vic == clef.length - 1) return;
             vicchga = vic;
             VicChgB_(vic + 1);
@@ -507,7 +507,7 @@ var MSOE = new function() {
         });
         $(".v_div").click(function(){
             if(!ChgVocMd || vicchga === undefined) return; //if other voice not clicked before
-            var vic = parseInt($(this).attr("data-value"));
+            var vic = parseInt($(this).attr("data-value"), 10);
             if([vic, vic-1].includes(vicchga)){ //voices around divider can't be changed
                 ChgVocMd = false;
                 MSOE.printVoc();
@@ -517,7 +517,7 @@ var MSOE = new function() {
             clef.splice(vic, 0, clef[vicchga]);
             strs.splice(vic, 0, strs[vicchga]);
             voicename.splice(vic, 0, voicename[vicchga]);
-            var tmpvica = vicchga
+            var tmpvica = vicchga;
             if(vicchga > vic) vicchga++;
             strs = strs.slice(0, vicchga).concat(strs.slice(vicchga + 1));
             clef = clef.slice(0, vicchga).concat(clef.slice(vicchga + 1));
@@ -536,12 +536,12 @@ var MSOE = new function() {
             MSOE.print();
         });
         $(".dp_clef").click(function(){
-            var vic = parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html()) - 1;
-            MSOE.ClfOrVic(parseInt($(this).attr("data-value")) + 49, true, vic);
+            var vic = parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html(), 10) - 1;
+            MSOE.ClfOrVic(parseInt($(this).attr("data-value"), 10) + 49, true, vic);
             MSOE.print();
         });
         $(".v_name").click(function(){
-            SaveNLoad(parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html()) - 1);
+            SaveNLoad(parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html(), 10) - 1);
             MSOE.print();
         });
         UIhandler.help_voice();
@@ -562,7 +562,7 @@ var MSOE = new function() {
         });
         var DOM = $("<div class='ui inverted segment'></div>");
         DOM.css("height",$(".ui.dropdown .menu").height()+"px");
-        $("#voices .mCSB_container").append(DOM)
+        $("#voices .mCSB_container").append(DOM);
         this.regVocLstEvt();
     };
     //-----------------------------------------//for clef
@@ -662,7 +662,7 @@ var MSOE = new function() {
             pos = abcstr.indexOf("\n", pos) + 1;
         }
         return pos;
-    }
+    };
     var ForPrint = () => { //construct the string for ABCJS rendering
         var finalstr = "";
         for (var i = 0; i < clef.length; i++) {
@@ -800,7 +800,7 @@ var MSOE = new function() {
                         $(".right.menu a").hide();
                         $("#modaldiv1").modal("hide");
                         $("#modaldiv2").modal("hide");
-                        $("input").attr("disabled","disabled")
+                        $("input").attr("disabled","disabled");
                         Edit_const = true;
                         history.pushState({ title: "" }, "", host + "?!" + index);
                     }else if(key!=""){
@@ -858,7 +858,7 @@ var MSOE = new function() {
                 // infostrs[infoinputs[a.name]] = a.value;
         }
         this.print();
-    }
+    };
     var infoinputs = {
         "whoiseditor":"edtstr",
         "whoiscomposer":"cmpstr",
@@ -980,6 +980,7 @@ var MSOE = new function() {
         checkbar();
     };
     //-----------------------------------------//for note selector
+    var SelColor = "#2196f3";
     var SelNotes = []; // array of {pos:Number, sel:String}
     this.PartialSelNotes = (mode, guest) => {
         var mapfunc = n => n;
@@ -1001,7 +1002,7 @@ var MSOE = new function() {
         // if(Array.isArray(notes)){
         //     SelNotes = SelNotes.concat(notes);
         //     console.log(SelNotes);
-        //     this.SelNoteHighLight("HL", {color: "cyan", notes: this.PartialSelNotes("sel")});
+        //     this.SelNoteHighLight("HL", {color: "#2196f3", notes: this.PartialSelNotes("sel")});
         // }else{
         var index = this.SelNotesIndexOf(notes);
         if(index != -1){
@@ -1011,11 +1012,11 @@ var MSOE = new function() {
         }
         console.log(SelNotes);
         this.SelNoteHighLight("clear", {color:(UIhandler.night?"white":"#000000")});
-        this.SelNoteHighLight("HL", {color: "cyan", notes: this.PartialSelNotes("sel")});
+        this.SelNoteHighLight("HL", {color: SelColor, notes: this.PartialSelNotes("sel")});
         // }
     };
     this.SelNoteHighLight_ = () => {
-        this.SelNoteHighLight("HL", {color: "cyan", notes: this.PartialSelNotes("sel")});
+        this.SelNoteHighLight("HL", {color: SelColor, notes: this.PartialSelNotes("sel")});
     };
     this.SelNoteHighLight = (op, arg) => { //highlight selected notes or clear highlighting. op: "clear" or "HL", arg: color or notes.sels...
         switch (op) {
@@ -1025,7 +1026,7 @@ var MSOE = new function() {
             case "HL":
                 $(arg.notes.join(", ")).attr("fill", arg.color);
                 if(arg.notes.includes(this.getCssClass(this.chordPos()))){
-                    cursorBounce(this.getCssClass(this.chordPos()), "cyan");
+                    cursorBounce(this.getCssClass(this.chordPos()), SelColor);
                 }else{
                     cursorBounce(this.getCssClass(this.chordPos()), (UIhandler.night?"white":"#000000"));
                 }
@@ -1048,7 +1049,7 @@ var MSOE = new function() {
     };
     var tie_handler = (abcElem) => { //tie notes
         console.log("tie notes");
-    }
+    };
     //-----------------------------------------//for editing
     this.ChgDstate = (md) => { //change duration state
         switch (md) {
@@ -1192,19 +1193,19 @@ var MSOE = new function() {
     };
     this.chplclr = () => {
         abcstr = abcstr.replace(/\$\[\]/g, "");
-    }
+    };
     //-----------------------------------------//helpers
     var tonum = (str) => { //transform string representation of fraction to number
         var Dnmntr = 0; //denominator
         var Nmrtr = 0; //numerator
         for (var i = 0; i < str.length; i++) {
             if (str[i] == "/") {
-                Nmrtr = parseInt(str.substring(0, i));
-                Dnmntr = parseInt(str.substring(i + 1));
+                Nmrtr = parseInt(str.substring(0, i), 10);
+                Dnmntr = parseInt(str.substring(i + 1), 10);
                 return Nmrtr / Dnmntr;
             }
         }
-        return parseInt(str);
+        return parseInt(str, 10);
     };
     var checkbar = () => { //add bar automatically
         var SofD = 0; //sum of duration
@@ -1386,12 +1387,12 @@ var MSOE = new function() {
     };
     this.checkpause = () => { //check if the pause is legal
         return (Math.pow(2, Dstate % 10 - 5) * eval(Lstr) >= 2);
-    }
+    };
     this.getCssClass = (CrtPos_, abcindex_) => { //an interface for further possible proxy use
         CrtPos_ = (CrtPos_ == undefined)?CrtPos:CrtPos_;
         abcindex_ = (abcindex_ == undefined)?abcindex:abcindex_;
         return CrtPos_cssClass(CrtPos_, abcindex_);
-    }
+    };
     //convert CrtPos to or from a note's cssClass (selector) type: number <-> string
     //typeof from: number => CrtPos, abcindex -> cssClass, noteindex
     //typeof from: string => cssClass, noteindex -> CrtPos, abcindex
@@ -1500,7 +1501,7 @@ var MSOE = new function() {
                 }
             }
         }
-    }
+    };
     
     var bouncingID, previousSelector;
     var cursorBounce = (selector, color)=>{ //make certain element has bouncing effect to be a cursor
