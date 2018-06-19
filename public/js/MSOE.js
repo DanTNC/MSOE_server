@@ -965,19 +965,55 @@ var MSOE = new function() {
             this.copymode();
         }
     };
-    this.paste = () => { //paste copied or cutten string
+    this.paste = (cpStr) => { //paste copied or cutten string
+        cpStr = cpStr || CpStr;
         if (mvpos(1) == CrtPos) {
-            let Act = {inst: 1, param1: abcstr.length, param2: CpStr, X: abcstr.length + CpStr.length - 1};
+            let Act = {inst: 1, param1: abcstr.length, param2: cpStr, X: abcstr.length + cpStr.length - 1};
             act(Act);
             CrtPos = abcstr.length - 1;
             CrtPos = mvpos(0);
         } else {
-            let Act = {inst: 1, param1: mvpos(1), param2: CpStr, X: mvpos(1) + CpStr.length - 1};
+            let Act = {inst: 1, param1: mvpos(1), param2: cpStr, X: mvpos(1) + cpStr.length - 1};
             act(Act);
             CrtPos += CpStr.length;
             CrtPos = mvpos(0);
         }
         checkbar();
+    };
+    var arrangeSelNotes = () => {
+        return this.PartialSelNotes("pos", SelNotes.sort((a, b) => {
+            if (a.pos < b.pos){
+                return -1;
+            }else if (a.pos > b.pos){
+                return 1;
+            }else{
+                return 0;
+            }
+        }));
+    };
+    var posToNotes = (poses) => {
+        var res = [];
+        for (let pos of poses){
+            var tmp = CrtPos;
+            CrtPos = pos;
+            var End = (mvpos(1) == CrtPos)?abcstr.length:mvpos(1);
+            var str = abcstr.substring(pos, End);
+            if (str == "$") str = "\n$";
+            res.push(str);
+            CrtPos = tmp;
+        }
+        return res.join("");
+    };
+    var CpStr2 = "";
+    this.copy2 = () => {
+        var copiedNotes = arrangeSelNotes();
+        copiedNotes = posToNotes(copiedNotes);
+        console.log("copy: ", copiedNotes);
+        CpStr2 = copiedNotes;
+    };
+    this.paste2 = () => {
+        this.paste(CpStr2);
+        this.print();
     };
     //-----------------------------------------//for note selector
     var SelColor = "#2196f3";

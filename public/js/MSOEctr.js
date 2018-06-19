@@ -420,12 +420,12 @@ var move = () => { // some keys can't be detected in keypress
             break;
         case 36: //"home"
             UIhandler.pre_move();
-            MSOE.outmove(4);
+            MSOE.outmove2(4);
             UIhandler.post_move();
             break;
         case 35: //"end"
             UIhandler.pre_move();
-            MSOE.outmove(5);
+            MSOE.outmove2(5);
             UIhandler.post_move();
             break;
         case 8: //"backspace"
@@ -438,6 +438,16 @@ var move = () => { // some keys can't be detected in keypress
             break;
         case 17: //"ctrl" for add voice before
             MSOE.insvocbef(true);
+            break;
+        case 67: //"ctrl + C" for copy selected notes
+            if (MSOE.insvocbef()){
+                MSOE.copy2();
+            }
+            break;
+        case 86: //"ctrl + V" for paste copied notes (by key)
+            if (MSOE.insvocbef()){
+                MSOE.paste2();
+            }
             break;
     }
     console.log("keycode : "+event.keyCode);
