@@ -27,6 +27,15 @@ var StartHint = (show) => {
 };
 
 var UIhandler = new function(){
+    this.pre_move = () => {
+        MSOE.chmodeoff();
+    };
+    
+    this.post_move = () => {
+        MSOE.chmodeon();
+        MSOE.SelNoteClr();
+        MSOE.print();
+    };
     var help_ = false; //if help mode is on
     var help_content = { //<UI button selector>:<help message> pairs
         "#infohome":"Edit sheet info",
@@ -383,49 +392,39 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
     MSOE.print();
 };
 
-var pre_move = () => {
-    MSOE.chmodeoff();
-};
-
-var post_move = () => {
-    MSOE.chmodeon();
-    MSOE.SelNoteClr();
-    MSOE.print();
-};
-
 var move = () => { // some keys can't be detected in keypress
     if (checkinput()) return; //if inpus tags are focus, turn off key events
     if (!MSOE.Edit_()) return;
     //not using switch for speed(avoid looking up table)
     if (event.keyCode == 37) { //"left"
-        pre_move();
+        UIhandler.pre_move();
         MSOE.outmove(0);
-        post_move();
+        UIhandler.post_move();
     }
     if (event.keyCode == 39) { //"right"
-        pre_move();
+        UIhandler.pre_move();
         MSOE.outmove(1);
-        post_move();
+        UIhandler.post_move();
     }
     if (event.keyCode == 38) { //"up"
-        pre_move();
+        UIhandler.pre_move();
         MSOE.outmove(2);
-        post_move();
+        UIhandler.post_move();
     }
     if (event.keyCode == 40) { //"down"
-        pre_move();
+        UIhandler.pre_move();
         MSOE.outmove(3);
-        post_move();
+        UIhandler.post_move();
     }
     if (event.keyCode == 36) { //"home"
-        pre_move();
+        UIhandler.pre_move();
         MSOE.outmove(4);
-        post_move();
+        UIhandler.post_move();
     }
     if (event.keyCode == 35) { //"end"
-        pre_move();
+        UIhandler.pre_move();
         MSOE.outmove(5);
-        post_move();
+        UIhandler.post_move();
     }
     if (event.keyCode == 8) { //"backspace"
         MSOE.del();

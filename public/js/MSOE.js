@@ -721,6 +721,8 @@ var MSOE = new function() {
     var pos_handler = (abcElem) => { //update CrtPos when note is clicked
         console.log("move cursor");
         CrtPos = clicked_index(abcElem);
+        UIhandler.pre_move();
+        UIhandler.post_move();
         this.print();
     };
     //-----------------------------------------//for urlload and save
@@ -1434,7 +1436,7 @@ var MSOE = new function() {
         }else if((typeof from) == "string"){ //from cssClass to CrtPos
             //reserved
         }else{
-            console.warn("the type of argument is not supported");
+            console.warn("the type of argument is not supported: " + from);
         }
     };
     
@@ -1473,6 +1475,8 @@ var MSOE = new function() {
         console.log(abcElem);
         var ignsmbs = ["$", "#", "*"]; //symbols that won't be in the final abcstring
         var offset = abcElem.startChar - 19 - infostrs["ttlstr"].length - infostrs["tmpstr"].length - Lstr.length - infostrs["cmpstr"].length - bpmstr.length - GetStrOffset(abcindex);
+        var deloffset = (rmsmb(abcstr).substring(0, offset).match(/\[\]/g) || []).length * 2;
+        offset -= deloffset;
         console.log(offset);
         if ((isNaN(offset))){ //click on staff
             var line = abcElem.abselem.elemset[0].attrs.class.match(/l([^ ]*)/)[1];
@@ -1484,11 +1488,12 @@ var MSOE = new function() {
         if (offset == 0) {
             return 0;
         }
-        for (var i = 0; i < abcstr.length; i++) {
-            if (!ignsmbs.includes(abcstr[i])) {
+        var srchstr = abcstr.replace(/\$\[\]/g, "");
+        for (var i = 0; i < srchstr.length; i++) {
+            if (!ignsmbs.includes(srchstr[i])) {
                 if (offset != 1) {
                     offset--;
-                } else if (abcstr[i] != "[") {
+                } else if (srchstr[i] != "[") {
                     return i - 1;
                 } else { //for chord
                     return i - 2;
