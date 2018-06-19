@@ -33,7 +33,9 @@ var UIhandler = new function(){
     
     this.post_move = () => {
         MSOE.chmodeon();
-        MSOE.SelNoteClr();
+        if (!MSOE.insvocbef()){
+            MSOE.SelNoteClr();
+        }
         MSOE.print();
     };
     var help_ = false; //if help mode is on
@@ -395,47 +397,48 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
 var move = () => { // some keys can't be detected in keypress
     if (checkinput()) return; //if inpus tags are focus, turn off key events
     if (!MSOE.Edit_()) return;
-    //not using switch for speed(avoid looking up table)
-    if (event.keyCode == 37) { //"left"
-        UIhandler.pre_move();
-        MSOE.outmove(0);
-        UIhandler.post_move();
-    }
-    if (event.keyCode == 39) { //"right"
-        UIhandler.pre_move();
-        MSOE.outmove(1);
-        UIhandler.post_move();
-    }
-    if (event.keyCode == 38) { //"up"
-        UIhandler.pre_move();
-        MSOE.outmove(2);
-        UIhandler.post_move();
-    }
-    if (event.keyCode == 40) { //"down"
-        UIhandler.pre_move();
-        MSOE.outmove(3);
-        UIhandler.post_move();
-    }
-    if (event.keyCode == 36) { //"home"
-        UIhandler.pre_move();
-        MSOE.outmove(4);
-        UIhandler.post_move();
-    }
-    if (event.keyCode == 35) { //"end"
-        UIhandler.pre_move();
-        MSOE.outmove(5);
-        UIhandler.post_move();
-    }
-    if (event.keyCode == 8) { //"backspace"
-        MSOE.del();
-        MSOE.print();
-    }
-    if (event.keyCode == 16) { //"shift" for chord mode on
-        MSOE.chordmode(true);
-        MSOE.chmodeon();
-    }
-    if (event.keyCode == 17) { //"ctrl" for add voice before
-        MSOE.insvocbef(true);
+    switch(event.keyCode){
+        case 37: //"left"
+            UIhandler.pre_move();
+            MSOE.outmove(0);
+            UIhandler.post_move();
+            break;
+        case 39: //"right"
+            UIhandler.pre_move();
+            MSOE.outmove(1);
+            UIhandler.post_move();
+            break;
+        case 38: //"up"
+            UIhandler.pre_move();
+            MSOE.outmove(2);
+            UIhandler.post_move();
+            break;
+        case 40: //"down"
+            UIhandler.pre_move();
+            MSOE.outmove(3);
+            UIhandler.post_move();
+            break;
+        case 36: //"home"
+            UIhandler.pre_move();
+            MSOE.outmove(4);
+            UIhandler.post_move();
+            break;
+        case 35: //"end"
+            UIhandler.pre_move();
+            MSOE.outmove(5);
+            UIhandler.post_move();
+            break;
+        case 8: //"backspace"
+            MSOE.del();
+            MSOE.print();
+            break;
+        case 16: //"shift" for chord mode on
+            MSOE.chordmode(true);
+            MSOE.chmodeon();
+            break;
+        case 17: //"ctrl" for add voice before
+            MSOE.insvocbef(true);
+            break;
     }
     console.log("keycode : "+event.keyCode);
 };
@@ -443,12 +446,14 @@ var move = () => { // some keys can't be detected in keypress
 var chord = () => { //keyup event for chord mode
     if (checkinput()) return;
     if (!MSOE.Edit_()) return;
-    if (event.keyCode == 16) { //"shift" for chord mode off
-        MSOE.chordmode(false);
-        MSOE.chmodeoff();
-    }
-    if (event.keyCode == 17) { //"ctrl" for add voice before
-        MSOE.insvocbef(false);
+    switch(event.keyCode){
+        case 16: //"shift" for chord mode off
+            MSOE.chordmode(false);
+            MSOE.chmodeoff();
+            break;
+        case 17: //"ctrl" for add voice before
+            MSOE.insvocbef(false);
+            break;
     }
 };
 

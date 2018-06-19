@@ -1015,6 +1015,9 @@ var MSOE = new function() {
         this.SelNoteHighLight("HL", {color: SelColor, notes: this.PartialSelNotes("sel")});
         // }
     };
+    this.SelNotesCrt = () => {
+        this.SelNotesPush({pos: CrtPos, sel: this.getCssClass(this.chordPos())});
+    };
     this.SelNoteHighLight_ = () => {
         this.SelNoteHighLight("HL", {color: SelColor, notes: this.PartialSelNotes("sel")});
     };
@@ -1173,11 +1176,13 @@ var MSOE = new function() {
         }
     };
     this.chmodeon = () => { //chord mode on
-        if (this.chordmode()){
+        if (this.chordmode()){ //if shift pressed
             var InsBef = mvpos(1); //insert before
             if ((InsBef == CrtPos) || (abcstr[InsBef + 1] != "[")) {
                 insert("$[]", 1);
             }
+        }else if (this.insvocbef()){ //if ctrl pressed
+            this.SelNotesCrt();
         }
     };
     this.chmodeoff = () => { //chord mode off
