@@ -7,6 +7,9 @@ var edit_mode = () =>{
   $(".panel-group-preview").hide();
   $(".pre-but").hide();
   $(".edit-but").show();
+  if(!MSOE.unsave()){
+    $("#discard").hide();
+  }
   $("#edit").hide();
   $("#preview").show();
   MSOE.Edit_(true);

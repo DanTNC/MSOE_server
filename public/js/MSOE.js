@@ -47,6 +47,18 @@ var MSOE = new function() {
     
     
     //-----------------------------------------//for actions
+    var unsave = false;
+    this.unsave = (un) => {
+        if (un !== undefined){
+            unsave = un;
+        }
+        return unsave;
+    };
+    this.cleartemp = () => {
+        if (this.unsave()){
+            clear_temp();
+        }
+    };
     const CPU = [//edit the sheet according to the inst code and params (just like a CPU)
             function(Act){
             //inst 0:  insert <-> delete param: [insertPos, insertStr]

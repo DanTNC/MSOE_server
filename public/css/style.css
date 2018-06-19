@@ -296,7 +296,7 @@ img.logo{
   opacity: 0.5;
 }
 
-#preloader { 
+.fullscreen { 
   /*display: none; */
   position: fixed; 
   left: 0; 
@@ -318,10 +318,14 @@ img.logo{
   bottom: 0;
 }
 
-#preloader p {
+.fullscreen p {
   color: white;
   font-size: 2vw;
   margin-top: 59vh;
+}
+
+#forceupdatemes p {
+  margin-top: 2vh;
 }
 
 #mannual_window i:hover{
@@ -342,4 +346,29 @@ img.logo{
 .mannual_lan {
   cursor: pointer;
   margin-right: 2vw;
+}
+
+#forceupdateicon {
+  position: initial;
+  margin-top: 27vh;
+  color: gold;
+  pointer-events: none;
+}
+
+#forceupdatecheck {
+  position: initial;
+  cursor: pointer;
+}
+
+#discard:hover {
+  background-color: rgba(203, 20, 20, 0.51);
+  color: white;
+}
+
+#discardconfirm .content p {
+  font-size: 1vw;
+}
+
+#discardconfirm div {
+  border: none!important;
 }

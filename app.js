@@ -79,6 +79,12 @@ io.on("connection", function(socket){
           });
         }
       });
+      socket.on('cleartemp', function() {
+          tempsave(index, [], function() {
+              sheet_data[index] = [];
+          });
+          io.in(index).emit('forceupdate');
+      });
     });
   });
   socket.on('modify',function(data, index){

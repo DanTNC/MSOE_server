@@ -118,7 +118,21 @@ var UIhandler = new function(){
         }else{
             $("#preloader").hide();
         }
-    }
+    };
+    
+    this.forceupdate = (callback) => {
+        preview_mode();
+        $("#forceupdatemes").show();
+        $("#forceupdatecheck").click(function(){
+            callback();
+        });
+    };
+    
+    this.discardconfirm = (callback) => {
+        $("#discardconfirm").modal({
+            onApprove: callback
+        }).modal("show");
+    };
     
     var font_size = ["0.9vw", "0.7vw"];
     this.mannual_font = (index) => { //toggle mannual font size
@@ -518,6 +532,9 @@ $(document).ready(function(){
         if(m){
             $("#modaldiv1").modal('setting', 'transition', 'vertical flip').modal("show");
         }
+        if(!MSOE.unsave()){
+            $("#discard").hide();
+        }
     });
     $("input").change(function(){
         MSOE.chginfo(this);
@@ -526,6 +543,11 @@ $(document).ready(function(){
     document.onkeydown = move;
     document.onkeyup = chord;
     $("#save").click(function(e) { MSOE.save(e); });
+    $("#discard").click(function() {
+        UIhandler.discardconfirm(function(){
+            MSOE.cleartemp();
+        });
+    });
     $("#play").click(function(e) {
         if(MSOE.playing == false){
             MSOE.playing = true;

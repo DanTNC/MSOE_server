@@ -95,9 +95,35 @@
         </div>
     </div>
     <div class="pusher">
-        <div id="preloader">
+        <div class="fullscreen" id="preloader">
             <img id="loading" src="img/loading.gif"/>
             <p>The sheet is loading...</p>
+        </div>
+        <div class="fullscreen" id="forceupdatemes" style="display: none; text-aligned: center;">
+            <i id="forceupdateicon" class="massive exclamation triangle icon"></i>
+            <br>
+            <p>Someone cleared the temp data of this sheet,<br/>
+            and a forced reload is required!</p>
+            <button id="forceupdatecheck" class="ui inverted large button yellow">OK</button>
+        </div>
+        <div id="discardconfirm" class="ui basic modal">
+            <div class="ui icon header">
+                <i class="archive icon"></i>
+                Discard Unsaved Changes
+            </div>
+            <div class="content">
+                <p>This operation can't be reversed, and this would force every editor to rollback to saved sheet.</p>
+            </div>
+            <div class="actions">
+                <div class="ui red basic cancel inverted button">
+                    <i class="remove icon"></i>
+                    Cancel
+                </div>
+                <div class="ui green ok inverted button">
+                    <i class="checkmark icon"></i>
+                    Ok
+                </div>
+            </div>
         </div>
         <div id="modaldiv1" class="ui modal start">
             <h1 class="ui center aligned huge header"><img class="ui large circular image" src="img/logo.png"/>
@@ -146,6 +172,7 @@
             <a class="item help" id="mannualgo">Mannual</a>
             <a class="item" id="help">Help</a>
             <a class="item help edit-but" id="save">Save</a>
+            <a class="item help edit-but" id="discard">Discard Unsaved Changes</a>
             <a class="item help pre-but" id="play">Play</a>
             <a class="item help pre-but" id="print">Print</a>
             <a class="item help pre-but" id="share">Share</a>
