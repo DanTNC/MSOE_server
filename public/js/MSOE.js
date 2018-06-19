@@ -710,7 +710,7 @@ var MSOE = new function() {
         }
     };
     var click_handler = (abcElem) => {
-        if(this.insvocbef()){ //select notes
+        if(this.insvocbef() || this.chordmode()){ //select notes
             sel_handler(abcElem);
         }else if(this.tiemode()){ //tie notes
             tie_handler(abcElem);
@@ -1035,21 +1035,29 @@ var MSOE = new function() {
         return SelNotesPos.indexOf(notePos);
     };
     this.SelNotesPush = (notes) => { //add new notes to selected notes
-        // if(Array.isArray(notes)){
-        //     SelNotes = SelNotes.concat(notes);
-        //     console.log(SelNotes);
-        //     this.SelNoteHighLight("HL", {color: "#2196f3", notes: this.PartialSelNotes("sel")});
-        // }else{
-        var index = this.SelNotesIndexOf(notes);
-        if(index != -1){
-            SelNotes.splice(index, 1);   
+        if(Array.isArray(notes)){
+            for (let note of notes){
+                var index = this.SelNotesIndexOf(note);
+                if(index != -1){
+                    SelNotes.splice(index, 1);   
+                }else{
+                    SelNotes.push(note);
+                }    
+            }
+            console.log(SelNotes);
+            this.SelNoteHighLight("clear", {color:(UIhandler.night?"white":"#000000")});
+            this.SelNoteHighLight("HL", {color: SelColor, notes: this.PartialSelNotes("sel")});
         }else{
-            SelNotes.push(notes);
+            var index = this.SelNotesIndexOf(notes);
+            if(index != -1){
+                SelNotes.splice(index, 1);   
+            }else{
+                SelNotes.push(notes);
+            }
+            console.log(SelNotes);
+            this.SelNoteHighLight("clear", {color:(UIhandler.night?"white":"#000000")});
+            this.SelNoteHighLight("HL", {color: SelColor, notes: this.PartialSelNotes("sel")});
         }
-        console.log(SelNotes);
-        this.SelNoteHighLight("clear", {color:(UIhandler.night?"white":"#000000")});
-        this.SelNoteHighLight("HL", {color: SelColor, notes: this.PartialSelNotes("sel")});
-        // }
     };
     this.SelNotesCrt = () => {
         this.SelNotesPush({pos: CrtPos, sel: this.getCssClass(this.chordPos())});
@@ -1076,7 +1084,39 @@ var MSOE = new function() {
         console.log("select notes");
         var selected = clicked_index(abcElem);
         console.log("clicked on: " + selected);
-        this.SelNotesPush({pos: selected, sel: this.getCssClass(selected)});
+        if (this.insvocbef()){
+            this.SelNotesPush({pos: selected, sel: this.getCssClass(selected)});
+        }else{
+            if (selected > CrtPos){
+                var tmp = CrtPos;
+                var poses = [];
+                while (mvpos(1) != selected){
+                    poses.push(CrtPos);
+                    CrtPos = mvpos(1);
+                }
+                poses.push(CrtPos);
+                poses.push(mvpos(1));
+                CrtPos = tmp;
+                this.SelNotesPush(poses.map(n => {return {pos: n, sel: this.getCssClass(n)}}));
+            }else if (selected < CrtPos){
+                var tmp = CrtPos;
+                var poses = [];
+                while (mvpos(0) != selected){
+                    poses.push(CrtPos);
+                    CrtPos = mvpos(0);
+                }
+                poses.push(CrtPos);
+                poses.push(mvpos(0));
+                CrtPos = tmp;
+                this.SelNotesPush(poses.map(n => {return {pos: n, sel: this.getCssClass(n)}}));
+            }else{
+                this.SelNotesPush({pos: selected, sel: this.getCssClass(selected)});
+            }
+        }
+        this.chmodeoff();
+        CrtPos = selected;
+        this.chmodeon();
+        this.SelNoteHighLight_();
     };
     //-----------------------------------------//for tieing not joint notes
     var tiemode = false;
@@ -1132,6 +1172,7 @@ var MSOE = new function() {
         for (var i = mvpos(1) + 2; i < abcstr.length; i++) {
             if (abcstr[i] == "]") {
                 abcstr = abcstr.substring(0, i) + str + abcstr.substring(i);
+                this.SelNoteClr();
                 return;
             }
         }
@@ -1513,12 +1554,13 @@ var MSOE = new function() {
     };
     
     var clicked_index = (abcElem) => {
+        console.log(abcstr);
         var bpmstr = (infostrs["bpmstr"] == "")?"180":infostrs["bpmstr"];
         console.log(abcElem);
         var ignsmbs = ["$", "#", "*"]; //symbols that won't be in the final abcstring
         var offset = abcElem.startChar - 19 - infostrs["ttlstr"].length - infostrs["tmpstr"].length - Lstr.length - infostrs["cmpstr"].length - bpmstr.length - GetStrOffset(abcindex);
-        var deloffset = (rmsmb(abcstr).substring(0, offset).match(/\[\]/g) || []).length * 2;
-        offset -= deloffset;
+        // var deloffset = (rmsmb(abcstr).substring(0, offset).match(/\[\]/g) || []).length * 2;
+        // offset -= deloffset;
         console.log(offset);
         if ((isNaN(offset))){ //click on staff
             var line = abcElem.abselem.elemset[0].attrs.class.match(/l([^ ]*)/)[1];
