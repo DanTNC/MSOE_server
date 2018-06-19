@@ -338,3 +338,8 @@ img.logo{
   text-align: center;
   font-size: 1vw;
 }
+
+.mannual_lan {
+  cursor: pointer;
+  margin-right: 2vw;
+}
