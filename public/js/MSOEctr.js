@@ -41,7 +41,7 @@ var UIhandler = new function(){
     var help_ = false; //if help mode is on
     var help_content = { //<UI button selector>:<help message> pairs
         "#infohome":"Edit sheet info",
-        "#mannualgo":"Show mannual",
+        "#manualgo":"Show manual",
         "#save":"Save sheet",
         "#play":"Play music",
         "#print":"Print sheet",
@@ -135,23 +135,23 @@ var UIhandler = new function(){
     };
     
     var font_size = ["0.9vw", "0.7vw"];
-    this.mannual_font = (index) => { //toggle mannual font size
+    this.manual_font = (index) => { //toggle manual font size
         $(".font").removeClass("active");
         $("#font_" + index).addClass("active");
-        $(".mannual").css("font-size", font_size[index]);
+        $(".manual").css("font-size", font_size[index]);
     };
     
-    var mannual_widen = false;
-    this.mannual_width = () => { //toggle mannual width
-        mannual_widen = !mannual_widen;
-        if(mannual_widen){
+    var manual_widen = false;
+    this.manual_width = () => { //toggle manual width
+        manual_widen = !manual_widen;
+        if(manual_widen){
             // $("#sidebar").width("100vw");
             $("#sidebar").animate({"width":"100vw"});
-            $("#mannual_width").removeClass("left").addClass("right");
+            $("#manual_width").removeClass("left").addClass("right");
         }else{
             // $("#sidebar").width("260px");
             $("#sidebar").animate({"width":"260px"});
-            $("#mannual_width").removeClass("right").addClass("left");
+            $("#manual_width").removeClass("right").addClass("left");
         }
     };
     
@@ -165,15 +165,15 @@ var UIhandler = new function(){
             lan_files = file_set;
         }
     }
-    this.mannual_language = (lan) => { //change mannual language
+    this.manual_language = (lan) => { //change manual language
         if(lan_files[lan]){
             $.getJSON(lan_files[lan], function(json){
                 $("#mCSB_2_container .item:not(:first-child)").remove();
-                var man_json = json.mannual;
+                var man_json = json.manual;
                 for (let item of man_json){
                     $("<div class='item'/>")
                     .append($("<h2 class='ui header' style='color:white;'></h2>").text(item.header))
-                    .append($("<p class='mannual'></p>").html(item.content.join("<br>")+"<br><br>"))
+                    .append($("<p class='manual'></p>").html(item.content.join("<br>")+"<br><br>"))
                     .appendTo("#mCSB_2_container");
                 }
                 $("#font").text(json.font.title);
@@ -614,13 +614,13 @@ $(document).ready(function(){
         MSOE.print();
     });
     $(".font").click(function(){
-        UIhandler.mannual_font(parseInt($(this).attr("id").substring(5)));
+        UIhandler.manual_font(parseInt($(this).attr("id").substring(5)));
     });
-    $("#mannual_width").click(function(){
-        UIhandler.mannual_width();
+    $("#manual_width").click(function(){
+        UIhandler.manual_width();
     });
-    $("#mannual_new").click(function(){
-        window.open(window.location.origin + "/mannual", "_blank");
+    $("#manual_new").click(function(){
+        window.open(window.location.origin + "/manual", "_blank");
     });
     $("#lan").click(function(){
         var lan = $(this).attr("data-lan");
@@ -633,7 +633,7 @@ $(document).ready(function(){
         }else{
             return;
         }
-        UIhandler.mannual_language(lan);
+        UIhandler.manual_language(lan);
     });
     MIDI.setup({
         soundfontUrl: window.ABCJS.midi.soundfountUrl,

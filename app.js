@@ -10,7 +10,7 @@ var index = require('./routes/index');
 var load = require('./routes/load');
 var save = require('./routes/save');
 var auth = require('./routes/auth');
-var mannual = require('./routes/mannual');
+var manual = require('./routes/manual');
 var getCID = require('./routes/CID');
 var tempload = require('./db/tempload');
 var tempsave = require('./db/tempsave');
@@ -22,7 +22,7 @@ app.use(bodyParser.urlencoded({
 app.use(helmet());
 
 app.use('/', index);
-app.use('/mannual', mannual);
+app.use('/manual', manual);
 app.use('/load', load);
 app.use('/save', save);
 app.use('/auth',auth);

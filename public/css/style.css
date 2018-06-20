@@ -56,7 +56,7 @@ button{
   margin: 0px;
 }
 
-.mannual {
+.manual {
   font-size:0.9vw;
   color:white;
 }
@@ -328,7 +328,7 @@ img.logo{
   margin-top: 2vh;
 }
 
-#mannual_window i:hover{
+#manual_window i:hover{
   color: chocolate;
 }
 
@@ -343,7 +343,7 @@ img.logo{
   font-size: 1vw;
 }
 
-.mannual_lan {
+.manual_lan {
   cursor: pointer;
   margin-right: 2vw;
 }

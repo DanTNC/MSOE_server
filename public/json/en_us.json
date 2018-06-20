@@ -1,5 +1,5 @@
 {
-    "mannual":
+    "manual":
     [
         {
             "header":"cursor commands",
@@ -20,7 +20,7 @@
                 "Z~M :enter notes",
                 "shift+Z~M :chord mode",
                 "D :pause",
-                "| :add a bar mannually",
+                "| :add a bar manually",
                 "&lt&gt :tempo(/2 or *2)",
                 "shift+&lt&gt :add or remove dots",
                 "? :increase an octave :(C3 to C6)",

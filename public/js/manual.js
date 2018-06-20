@@ -3,10 +3,10 @@
 $(function(){
     var UI = new function(){
         var font_size = ["0.9vw", "0.7vw"];
-        this.mannual_font = (index) => { //toggle mannual font size
+        this.manual_font = (index) => { //toggle manual font size
             $(".font").removeClass("active");
             $("#font_" + index).addClass("active");
-            $(".mannual").css("font-size", font_size[index]);
+            $(".manual").css("font-size", font_size[index]);
         };
         var lan_files = {};
         this.lan_file_set = (file_set, update) => { //set language corresponding files
@@ -18,15 +18,15 @@ $(function(){
                 lan_files = file_set;
             }
         };
-        this.mannual_language = (lan) => { //change mannual language
+        this.manual_language = (lan) => { //change manual language
             if(lan_files[lan]){
                 $.getJSON(lan_files[lan], function(json){
                     $("#mCSB_1_container .item:not(:first-child)").remove();
-                    var man_json = json.mannual;
+                    var man_json = json.manual;
                     for (let item of man_json){
                         $("<div class='item'/>")
                         .append($("<h2 class='ui header' style='color:white;'></h2>").text(item.header))
-                        .append($("<p class='mannual'></p>").html(item.content.join("<br>")+"<br><br>"))
+                        .append($("<p class='manual'></p>").html(item.content.join("<br>")+"<br><br>"))
                         .appendTo("#mCSB_1_container");
                     }
                     $("#font").text(json.font.title);
@@ -48,7 +48,7 @@ $(function(){
         "en-US": "json/en_us.json"
     }, false);
     $(".font").click(function(){
-        UI.mannual_font(parseInt($(this).attr("id").substring(5)));
+        UI.manual_font(parseInt($(this).attr("id").substring(5)));
     });
     
     $("#lan").click(function(){
@@ -62,6 +62,6 @@ $(function(){
         }else{
             return;
         }
-        UI.mannual_language(lan);
+        UI.manual_language(lan);
     });
 });

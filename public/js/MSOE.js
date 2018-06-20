@@ -1099,10 +1099,11 @@ var MSOE = new function() {
         if (this.insvocbef()){
             this.SelNotesPush({pos: selected, sel: this.getCssClass(selected)});
         }else{
+            this.chmodeoff();
             if (selected > CrtPos){
                 var tmp = CrtPos;
                 var poses = [];
-                while (mvpos(1) != selected){
+                while (mvpos(1) != selected && mvpos(1) != CrtPos){
                     poses.push(CrtPos);
                     CrtPos = mvpos(1);
                 }
@@ -1113,7 +1114,7 @@ var MSOE = new function() {
             }else if (selected < CrtPos){
                 var tmp = CrtPos;
                 var poses = [];
-                while (mvpos(0) != selected){
+                while (mvpos(0) != selected && mvpos(0) != CrtPos){
                     poses.push(CrtPos);
                     CrtPos = mvpos(0);
                 }
@@ -1124,11 +1125,10 @@ var MSOE = new function() {
             }else{
                 this.SelNotesPush({pos: selected, sel: this.getCssClass(selected)});
             }
+            CrtPos = selected;
+            this.chmodeon();
+            this.SelNoteHighLight_();
         }
-        this.chmodeoff();
-        CrtPos = selected;
-        this.chmodeon();
-        this.SelNoteHighLight_();
     };
     //-----------------------------------------//for tieing not joint notes
     var tiemode = false;
