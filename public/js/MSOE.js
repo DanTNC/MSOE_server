@@ -348,7 +348,11 @@ var MSOE = new function() {
             },
             function(Act){
             //inst 8:  infostr param: [infoIndex, newVal] X: oldVal
-                infostrs[infoinputs[Act.param1]] = Act.param2;
+                if(Act.param1 == "whatistempo" && Act.param2 == ""){
+                    infostrs[infoinputs[Act.param1]] = "4/4";
+                }else{
+                    infostrs[infoinputs[Act.param1]] = Act.param2;
+                }
                 $("input[name=" + Act.param1 + "]").val(Act.param2);
                 Act.param2 = [Act.X, Act.X = Act.param2][0];
             },
@@ -849,26 +853,25 @@ var MSOE = new function() {
         "stlstr":"",
         "albstr":"",
         "artstr":"",
-        "tmpstr":"",
+        "tmpstr":"4/4",
         "bpmstr":""
     };
     this.chginfo = (a) => { //change info strings
         if ((!Edit && a.name!="whatisbpm")||(a.name === "")) return;
-        switch (a.name) {
-            case "whatistempo": //update tempo
-                if (a.value.length == 2) a.value = a.value[0] + "/" + a.value[1]; //if user is lazy and inputs, for example, 44 for 4/4, add "/" for the lazy guy
-                for (var i = 0; i < infostrs["tmpstr"].length; i++) {
-                    if (infostrs["tmpstr"][i] == "/") {
-                        Lstr = "1/" + infostrs["tmpstr"].substring(i + 1);
-                        break;
-                    }
+        if (a.name == "whatistempo"){ //update tempo preprocessing
+            if (a.value.length == 2) a.value = a.value[0] + "/" + a.value[1]; //if user is lazy and inputs, for example, 44 for 4/4, add "/" for the lazy guy
+            for (var i = 0; i < infostrs["tmpstr"].length; i++) {
+                if (infostrs["tmpstr"][i] == "/") {
+                    Lstr = "1/" + infostrs["tmpstr"].substring(i + 1);
+                    break;
                 }
-                if (a.value == "") Lstr = "1/4";
-            default: //update infos
-                let Act = {inst: 8, param1: a.name, param2: a.value, X: infostrs[infoinputs[a.name]]};
-                act(Act);
-                // infostrs[infoinputs[a.name]] = a.value;
+            }
+            if (a.value == ""){
+                Lstr = "1/4";
+            }
         }
+        let Act = {inst: 8, param1: a.name, param2: a.value, X: infostrs[infoinputs[a.name]]};
+        act(Act);
         this.print();
     };
     var infoinputs = {
