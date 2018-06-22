@@ -693,8 +693,9 @@ var MSOE = new function() {
     this.print = () => { //output svg
         StartHint(allstr_empty());
         var bpmstr = (infostrs["bpmstr"] == "")?"180":infostrs["bpmstr"];
+        updateLstr();
         var SS = "T: " + infostrs["ttlstr"] + "\nM: " + infostrs["tmpstr"] + "\nL: " + Lstr + "\nC: " + infostrs["cmpstr"] + "\nQ: " + bpmstr + "\n" + ForPrint();
-        // console.log("entire abcstr:", SS);
+        console.log("entire abcstr:", SS);
         tune_ = abcjs.renderAbc('boo', SS, {}, {
             add_classes: true,
             editable: true,
@@ -858,21 +859,20 @@ var MSOE = new function() {
     };
     this.chginfo = (a) => { //change info strings
         if ((!Edit && a.name!="whatisbpm")||(a.name === "")) return;
-        if (a.name == "whatistempo"){ //update tempo preprocessing
-            if (a.value.length == 2) a.value = a.value[0] + "/" + a.value[1]; //if user is lazy and inputs, for example, 44 for 4/4, add "/" for the lazy guy
-            for (var i = 0; i < infostrs["tmpstr"].length; i++) {
-                if (infostrs["tmpstr"][i] == "/") {
-                    Lstr = "1/" + infostrs["tmpstr"].substring(i + 1);
-                    break;
-                }
-            }
-            if (a.value == ""){
-                Lstr = "1/4";
-            }
+        if (a.name == "whatistempo" && a.value.length == 2){ //update tempo preprocessing
+            a.value = a.value[0] + "/" + a.value[1]; //if user is lazy and inputs, for example, 44 for 4/4, add "/" for the lazy guy
         }
         let Act = {inst: 8, param1: a.name, param2: a.value, X: infostrs[infoinputs[a.name]]};
         act(Act);
         this.print();
+    };
+    var updateLstr = () => { //calculate Lstr from infostrs['tmpstr']
+        for (var i = 0; i < infostrs["tmpstr"].length; i++) {
+            if (infostrs["tmpstr"][i] == "/") {
+                Lstr = "1/" + infostrs["tmpstr"].substring(i + 1);
+                break;
+            }
+        }
     };
     var infoinputs = {
         "whoiseditor":"edtstr",
