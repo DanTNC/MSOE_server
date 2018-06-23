@@ -440,8 +440,16 @@ var MSOE = new function() {
     clef[0] = "treble"; //default value
     voicename[0] = undefined; //default value
     var InsVocBef = false; //insert before or after certain voice
+    var CtrlPos = -1;
+    this.ctrl_pos = () => { //getter for CtrlPos
+        return CtrlPos;
+    }
     this.insvocbef = (v) => { //setter and getter for InsVocBef
-        return (InsVocBef = (v === undefined)?InsVocBef:v);
+        if (v !== undefined){
+            InsVocBef = v;
+            CtrlPos = (v)?CrtPos:-1;
+        }
+        return InsVocBef;
     };
     var SaveNLoad = (j) => { //save and load (j: jump to)
         if (j >= clef.length) return;
@@ -558,6 +566,7 @@ var MSOE = new function() {
         });
         $(".v_name").click(function(){
             SaveNLoad(parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html(), 10) - 1);
+            MSOE.SelNoteClr();
             MSOE.print();
         });
         UIhandler.help_voice();
@@ -614,6 +623,7 @@ var MSOE = new function() {
             act(Act);
         } else {
             SaveNLoad(kc - 49);
+            this.SelNoteClr();
         }
     };
     var RdClf = (s, e, Md)=> { //reduced name for clefs and modify UI due to this change s: full clef string, e: voice UI element, Md: mode(0: modify UI, 1: just return)
@@ -695,7 +705,7 @@ var MSOE = new function() {
         var bpmstr = (infostrs["bpmstr"] == "")?"180":infostrs["bpmstr"];
         updateLstr();
         var SS = "T: " + infostrs["ttlstr"] + "\nM: " + infostrs["tmpstr"] + "\nL: " + Lstr + "\nC: " + infostrs["cmpstr"] + "\nQ: " + bpmstr + "\n" + ForPrint();
-        console.log("entire abcstr:", SS);
+        // console.log("entire abcstr:", SS);
         tune_ = abcjs.renderAbc('boo', SS, {}, {
             add_classes: true,
             editable: true,
@@ -808,7 +818,7 @@ var MSOE = new function() {
                     abcstr = msg.sheet.abcstr;
                     abcindex = msg.sheet.abcindex;
                     Lstr = msg.sheet.Lstr;
-                    strs = msg.sheet.strs;
+                    strs = msg.sheet.strs || [];
                     clef = msg.sheet.clef;
                     voicename = msg.sheet.voicename || [];
 
@@ -1049,6 +1059,9 @@ var MSOE = new function() {
         var SelNotesPos = this.PartialSelNotes("pos");
         return SelNotesPos.indexOf(notePos);
     };
+    this.SelNotesIncludes = (notePos) => {
+        return SelNotes.some(function(note){return note.pos == notePos;})
+    };
     this.SelNotesPush = (notes) => { //add new notes to selected notes
         if(Array.isArray(notes)){
             for (let note of notes){
@@ -1076,6 +1089,9 @@ var MSOE = new function() {
     };
     this.SelNotesCrt = () => {
         this.SelNotesPush({pos: CrtPos, sel: this.getCssClass(this.chordPos())});
+    };
+    var SelNotesSelect = (pos) => {
+        this.SelNotesPush({pos: pos, sel: this.getCssClass(pos)});
     };
     this.SelNoteHighLight_ = () => {
         this.SelNoteHighLight("HL", {color: SelColor, notes: this.PartialSelNotes("sel")});
@@ -1273,8 +1289,6 @@ var MSOE = new function() {
             if ((InsBef == CrtPos) || (abcstr[InsBef + 1] != "[")) {
                 insert("$[]", 1);
             }
-        }else if (this.insvocbef()){ //if ctrl pressed
-            this.SelNotesCrt();
         }
     };
     this.chmodeoff = () => { //chord mode off
@@ -1558,11 +1572,11 @@ var MSOE = new function() {
             let str_ = (i == abcindex)?abcstr:str;
             if(str_ == "$"){
                 res.sum++;
-                console.log(res);
+                // console.log(res);
                 return res;
             }else{
                 res.count = false;
-                console.log(res);
+                // console.log(res);
                 return res;
             }
         }, {sum: 0, count: true}).sum;
@@ -1615,6 +1629,39 @@ var MSOE = new function() {
     var stopBounce = () => {
         clearInterval(bouncingID);
         $(previousSelector).attr("stroke","none");
+    };
+    
+    var movefrom;
+    this.pre_move = () => {
+        this.chmodeoff();
+        movefrom = CrtPos;
+    };
+    
+    this.post_move = () => {
+        if (this.insvocbef()){ //if ctrl pressed
+            if (!this.SelNotesIncludes(movefrom)){
+                if (!this.SelNotesIncludes(CrtPos)){
+                    SelNotesSelect(movefrom);
+                    SelNotesSelect(CrtPos);
+                }
+            }else{
+                if (!this.SelNotesIncludes(CrtPos)){
+                    SelNotesSelect(CrtPos);
+                }else{
+                    if (SelNotes.length == 2){
+                        SelNotesSelect(movefrom);
+                        SelNotesSelect(CrtPos);
+                    }else{
+                        SelNotesSelect(movefrom);
+                    }
+                }
+            }
+        }
+        this.chmodeon();
+        if (!this.insvocbef()){
+            this.SelNoteClr();
+        }
+        this.print();
     };
     
     var UIhandler;//UI handler from outside the object (would become critical argument of constructor in API version)

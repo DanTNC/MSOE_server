@@ -27,17 +27,6 @@ var StartHint = (show) => {
 };
 
 var UIhandler = new function(){
-    this.pre_move = () => {
-        MSOE.chmodeoff();
-    };
-    
-    this.post_move = () => {
-        MSOE.chmodeon();
-        if (!MSOE.insvocbef()){
-            MSOE.SelNoteClr();
-        }
-        MSOE.print();
-    };
     var help_ = false; //if help mode is on
     var help_content = { //<UI button selector>:<help message> pairs
         "#infohome":"Edit sheet info",
@@ -413,34 +402,34 @@ var move = () => { // some keys can't be detected in keypress
     if (!MSOE.Edit_()) return;
     switch(event.keyCode){
         case 37: //"left"
-            UIhandler.pre_move();
+            MSOE.pre_move();
             MSOE.outmove(0);
-            UIhandler.post_move();
+            MSOE.post_move();
             break;
         case 39: //"right"
-            UIhandler.pre_move();
+            MSOE.pre_move();
             MSOE.outmove(1);
-            UIhandler.post_move();
+            MSOE.post_move();
             break;
         case 38: //"up"
-            UIhandler.pre_move();
+            MSOE.pre_move();
             MSOE.outmove(2);
-            UIhandler.post_move();
+            MSOE.post_move();
             break;
         case 40: //"down"
-            UIhandler.pre_move();
+            MSOE.pre_move();
             MSOE.outmove(3);
-            UIhandler.post_move();
+            MSOE.post_move();
             break;
         case 36: //"home"
-            UIhandler.pre_move();
+            MSOE.pre_move();
             MSOE.outmove2(4);
-            UIhandler.post_move();
+            MSOE.post_move();
             break;
         case 35: //"end"
-            UIhandler.pre_move();
+            MSOE.pre_move();
             MSOE.outmove2(5);
-            UIhandler.post_move();
+            MSOE.post_move();
             break;
         case 8: //"backspace"
             MSOE.del();
