@@ -258,7 +258,7 @@ img.logo{
   left: 2vw;
 }
 #octave_{
-  bottom: 2vh;
+  margin-left: 1vw;
 }
 #meter_in{
   bottom: 7vh;
@@ -371,4 +371,9 @@ img.logo{
 
 #discardconfirm div {
   border: none!important;
+}
+
+#noteinfo {
+  position: fixed;
+  bottom: 3vh;
 }

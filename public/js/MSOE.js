@@ -706,6 +706,12 @@ var MSOE = new function() {
         updateLstr();
         var SS = "T: " + infostrs["ttlstr"] + "\nM: " + infostrs["tmpstr"] + "\nL: " + Lstr + "\nC: " + infostrs["cmpstr"] + "\nQ: " + bpmstr + "\n" + ForPrint();
         // console.log("entire abcstr:", SS);
+        var previewS = "M: " + infostrs["tmpstr"] + "\nL: " + Lstr + "\nV: 1 clef=" + clef[abcindex] + "\n" + toabcnote("G");
+        abcjs.renderAbc('booo', previewS, {}, {
+            listener: {
+                highlight: function(){MSOE.print();}
+            }
+        }, {});
         tune_ = abcjs.renderAbc('boo', SS, {}, {
             add_classes: true,
             editable: true,
@@ -729,7 +735,8 @@ var MSOE = new function() {
                 qpm: qpm_
             }
         }, {});
-        $("path, tspan").attr("fill", (UIhandler.night?"white":"#000000"));
+        $("#boo path, #boo tspan").attr("fill", (UIhandler.night?"white":"#000000"));
+        $("#booo path, #booo tspan").attr("fill", "white");
         if(Edit){
             this.SelNoteHighLight_();
         }else{
