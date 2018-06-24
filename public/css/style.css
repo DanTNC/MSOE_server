@@ -377,3 +377,7 @@ img.logo{
   position: fixed;
   bottom: 3vh;
 }
+
+#preview_label {
+  margin-left: 1vw;
+}

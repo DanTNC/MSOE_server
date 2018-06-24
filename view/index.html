@@ -130,7 +130,7 @@
                 <div class="ui center aligned large header">Music Sheet Online Editor
                     <div class="center aligned sub header ">線上樂譜編輯網</div>
                 </div>
-                <button class="ui center aligned large button" id="infomodal">START</button>
+                <div class="ui center aligned inverted red large button" id="infomodal">START</div>
             </h1>
         </div>
         <div id="modaldiv2" class="ui modal fill">
@@ -164,7 +164,7 @@
                         <input type="text" name="whoisartist" placeholder="Artist Name Here">
                     </div>
                 </div>
-                <div class="ui button" id="submit" tabindex="0"> 提交 Submit </div>
+                <div class="ui inverted green button" id="submit" tabindex="0"> 提交 Submit </div>
             </form>
         </div>
         <div class="ui top thin inverted menu" id="topbar">
@@ -238,7 +238,7 @@
             </div>
             <div class="nine wide column sheet" id="sheet">
                 <div class="boo" id="boo"></div>
-                <div class="ui orange message" style="display: none;" id="hint">
+                <div class="ui blue message" style="display: none;" id="hint">
 				    <div class="header">
 					    Start
 					</div>
@@ -290,6 +290,9 @@
     					</p>
     				</div>
     				<div class="ui inverted segment" id="noteinfo">
+    				    <div class="ui pointing below small label" id="preview_label">
+    				        Preview
+    				    </div>
         				<div id="booo">
         				</div>
         				<!--<div id="octave_">-->

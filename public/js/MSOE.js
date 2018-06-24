@@ -706,7 +706,7 @@ var MSOE = new function() {
         updateLstr();
         var SS = "T: " + infostrs["ttlstr"] + "\nM: " + infostrs["tmpstr"] + "\nL: " + Lstr + "\nC: " + infostrs["cmpstr"] + "\nQ: " + bpmstr + "\n" + ForPrint();
         // console.log("entire abcstr:", SS);
-        var previewS = "M: " + infostrs["tmpstr"] + "\nL: " + Lstr + "\nV: 1 clef=" + clef[abcindex] + "\n" + toabcnote("G");
+        var previewS = "M: " + infostrs["tmpstr"] + "\nL: " + Lstr + "\nV: 1 clef=" + clef[abcindex] + "\n" + toabcnote("G").replace("*", "");
         abcjs.renderAbc('booo', previewS, {}, {
             listener: {
                 highlight: function(){MSOE.print();}
