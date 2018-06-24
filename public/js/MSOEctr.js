@@ -452,6 +452,11 @@ var move = () => { // some keys can't be detected in keypress
                 MSOE.paste2();
             }
             break;
+        case 88: //"ctrl + X" for cut selected notes
+            if (MSOE.insvocbef()){
+                MSOE.cut2();
+            }
+            break;
     }
     console.log("keycode : "+event.keyCode);
 };

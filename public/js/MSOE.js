@@ -748,8 +748,8 @@ var MSOE = new function() {
     var pos_handler = (abcElem) => { //update CrtPos when note is clicked
         console.log("move cursor");
         CrtPos = clicked_index(abcElem);
-        UIhandler.pre_move();
-        UIhandler.post_move();
+        this.pre_move();
+        this.post_move();
         this.print();
     };
     //-----------------------------------------//for urlload and save
@@ -1040,6 +1040,22 @@ var MSOE = new function() {
         this.paste(CpStr2);
         this.print();
     };
+    this.cut2 = () => {
+        var copiedNotes = arrangeSelNotes();
+        var CtStP = copiedNotes[0];
+        var tmp = CrtPos;
+        CrtPos = copiedNotes[copiedNotes.length - 1];
+        var CtEdP = mvpos(1);
+        if (CtEdP == CrtPos){
+            CtEdP = abcstr.length;
+        }
+        CrtPos = tmp;
+        copiedNotes = posToNotes(copiedNotes);
+        console.log("cut: ", copiedNotes);
+        CpStr2 = copiedNotes;
+        act({inst:0, param1: CtStP, param2: CpStr2, X: CtEdP});
+        this.print();
+    };
     //-----------------------------------------//for note selector
     var SelColor = "#2196f3";
     var SelNotes = []; // array of {pos:Number, sel:String}
@@ -1060,32 +1076,48 @@ var MSOE = new function() {
         return SelNotesPos.indexOf(notePos);
     };
     this.SelNotesIncludes = (notePos) => {
-        return SelNotes.some(function(note){return note.pos == notePos;})
+        return SelNotes.some(function(note){return note.pos == notePos;});
+    };
+    this.SelNoteCheck = (note) => {
+        var poses = arrangeSelNotes();
+        var in_ = poses.includes(note.pos);
+        var min = poses[0], max = poses[poses.length - 1];
+        if (in_){//2: on border => unselect, 3: inside => clear and select new one
+            return (note.pos == min || note.pos == max)? 2: 3;
+        }else{//0: alone => clear and select new one, 1: beside border => concate
+            var tmp = CrtPos;
+            CrtPos = min;
+            min = mvpos(0);
+            CrtPos = max;
+            max = mvpos(1);
+            CrtPos = tmp;
+            return (note.pos == min || note.pos == max)? 1: 0;
+        }
     };
     this.SelNotesPush = (notes) => { //add new notes to selected notes
-        if(Array.isArray(notes)){
-            for (let note of notes){
-                var index = this.SelNotesIndexOf(note);
-                if(index != -1){
-                    SelNotes.splice(index, 1);   
-                }else{
-                    SelNotes.push(note);
-                }    
-            }
-            console.log(SelNotes);
-            this.SelNoteHighLight("clear", {color:(UIhandler.night?"white":"#000000")});
-            this.SelNoteHighLight("HL", {color: SelColor, notes: this.PartialSelNotes("sel")});
-        }else{
-            var index = this.SelNotesIndexOf(notes);
-            if(index != -1){
-                SelNotes.splice(index, 1);   
-            }else{
-                SelNotes.push(notes);
-            }
-            console.log(SelNotes);
-            this.SelNoteHighLight("clear", {color:(UIhandler.night?"white":"#000000")});
-            this.SelNoteHighLight("HL", {color: SelColor, notes: this.PartialSelNotes("sel")});
+        if(!Array.isArray(notes)){
+            notes = [notes];
         }
+        for (let note of notes){
+            var check = this.SelNoteCheck(note);
+            switch(check){
+                case 0:
+                    SelNotes = [note];
+                    break;
+                case 1:
+                    SelNotes.push(note);
+                    break;
+                case 2:
+                    SelNotes.splice(this.SelNotesIndexOf(note), 1);
+                    break;
+                case 3:
+                    SelNotes = [note];
+                    break;
+            }
+        }
+        console.log(SelNotes);
+        this.SelNoteHighLight("clear", {color:(UIhandler.night?"white":"#000000")});
+        this.SelNoteHighLight("HL", {color: SelColor, notes: this.PartialSelNotes("sel")});
     };
     this.SelNotesCrt = () => {
         this.SelNotesPush({pos: CrtPos, sel: this.getCssClass(this.chordPos())});
@@ -1248,26 +1280,40 @@ var MSOE = new function() {
             insert("\n$", 1);
         }
     };
-    this.del = () => { //delete note
-        if (CrtPos != 0) { //if not the start of abcstring
-            if (abcstr[CrtPos - 1] != "\n") { //deleting notes
-                var DelEnd = mvpos(1); //delete end
-                if (DelEnd != CrtPos) { //if not the last note
-                    if (abcstr[DelEnd - 1] == "\n") //if on the position before a "\n", keep "\n" in Latter
-                        DelEnd--;
-                }else{
-                    DelEnd = abcstr.length;
+    this.del = () => { //delete note or selected notes
+        if (SelNotes.length == 0){
+            if (CrtPos != 0) { //if not the start of abcstring
+                if (abcstr[CrtPos - 1] != "\n") { //deleting notes
+                    var DelEnd = mvpos(1); //delete end
+                    if (DelEnd != CrtPos) { //if not the last note
+                        if (abcstr[DelEnd - 1] == "\n") //if on the position before a "\n", keep "\n" in Latter
+                            DelEnd--;
+                    }else{
+                        DelEnd = abcstr.length;
+                    }
+                    var Content = abcstr.substring(CrtPos, DelEnd);
+                    let Act = {inst: 0, param1: CrtPos, param2: Content};
+                    act(Act);
+                } else { //deleting "\n"
+                    let Act = {inst: 0, param1: CrtPos - 1, param2: "\n$"};
+                    act(Act);
                 }
-                var Content = abcstr.substring(CrtPos, DelEnd);
-                let Act = {inst: 0, param1: CrtPos, param2: Content};
-                act(Act);
-            } else { //deleting "\n"
-                let Act = {inst: 0, param1: CrtPos - 1, param2: "\n$"};
-                act(Act);
             }
+            console.log(CrtPos);
+            console.log(abcstr);
+        }else{
+            var copiedNotes = arrangeSelNotes();
+            var CtStP = copiedNotes[0];
+            var tmp = CrtPos;
+            CrtPos = copiedNotes[copiedNotes.length - 1];
+            var CtEdP = mvpos(1);
+            if (CtEdP == CrtPos){
+                CtEdP = abcstr.length;
+            }
+            CrtPos = tmp;
+            copiedNotes = posToNotes(copiedNotes);
+            act({inst:0, param1: CtStP, param2: copiedNotes, X: CtEdP});
         }
-        console.log(CrtPos);
-        console.log(abcstr);
     };
     var chordmode = false;
     this.chordmode = (ch) => {
@@ -1326,7 +1372,7 @@ var MSOE = new function() {
 
         for (var i = 0; i < infostrs["tmpstr"].length; i++) {
             if (infostrs["tmpstr"][i] == "/") {
-                MaxD = parseInt(infostrs["tmpstr"].substring(0, i));
+                MaxD = parseInt(infostrs["tmpstr"].substring(0, i), 10);
                 break;
             }
         }
@@ -1638,7 +1684,7 @@ var MSOE = new function() {
     };
     
     this.post_move = () => {
-        if (this.insvocbef()){ //if ctrl pressed
+        if (this.insvocbef() && movefrom != CrtPos){ //if ctrl pressed
             if (!this.SelNotesIncludes(movefrom)){
                 if (!this.SelNotesIncludes(CrtPos)){
                     SelNotesSelect(movefrom);
