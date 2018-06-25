@@ -1138,7 +1138,7 @@ var MSOE = new function() {
     this.SelNoteHighLight = (op, arg) => { //highlight selected notes or clear highlighting. op: "clear" or "HL", arg: color or notes.sels...
         switch (op) {
             case "clear":
-                $("path, tspan").attr("fill", arg.color);
+                $("#boo path, #boo tspan").attr("fill", arg.color);
                 break;
             case "HL":
                 $(arg.notes.join(", ")).attr("fill", arg.color);
@@ -1597,7 +1597,7 @@ var MSOE = new function() {
                 }
                 note = ":eq(" + noteindex + ")";
             }
-            return "path" + type + L + M + V + note;
+            return "#boo path" + type + L + M + V + note;
         }else if((typeof from) == "string"){ //from cssClass to CrtPos
             //reserved
         }else{
