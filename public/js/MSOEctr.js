@@ -332,20 +332,20 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
             MSOE.newline();
             break;
             // ----------New Line---------------
-        case 70: //"shift+f" turn on and off copy mode
+        case 70: //"shift+F" turn on and off copy mode
             MSOE.copymode();
             break;
-        case 104: //"h" turn off copy mode(cut)
+        case 104: //"H" turn off copy mode(cut)
             MSOE.cutmode();
             break;
-        case 102: //"f" cancel copy mode(when it's on)
+        case 102: //"F" cancel copy mode(when it's on)
             MSOE.copycancel();
             break;
-        case 103: //"g" paste
+        case 103: //"G" paste
             MSOE.paste();
             break;
             // ----------Copy Mode--------------
-        case 113: //"q" toggle clef setting mode
+        case 113: //"Q" toggle clef setting mode
             MSOE.ClfMdTgl();
             break;
         case 49: //"1" set clef to treble or jump to 1st voice
@@ -366,13 +366,13 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
         case 54: //"6" jump to 6th voice
             MSOE.ClfOrVic(54);
             break;
-        case 119: //"w" add a voice
+        case 119: //"W" add a voice
             MSOE.AddVoice();
             break;
-        case 101: //"e" delete current voice
+        case 101: //"E" delete current voice
             MSOE.DelVoice();
             break;
-        case 114: //"r" swap two voices (mark current voice to be one of them)
+        case 114: //"R" swap two voices (mark current voice to be one of them)
             MSOE.VicChgA();
             break;
         case 82: //"shift+r" swap two voices (swap current voice and the one marked before)
@@ -386,17 +386,23 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
             MSOE.untie();
             break;
             // ----------Tie and Untie-----------
-        case 26://"ctrl+z" undo
+        case 26://"ctrl+Z" undo
             MSOE.undo();
             break;
             // ----------Undo--------------------
-        case 2://"ctrl+b" redo
+        case 2://"ctrl+B" redo
             MSOE.redo();
             break;
-        case 83://"shift+s" save
+        case 83://"shift+S" save
             MSOE.save();
             break;
             // ----------Save--------------------
+        case 116://"T" triplet
+            MSOE.triplet();
+            break;
+        case 121://"Y" untriplet
+            MSOE.untriplet();
+            break;
         default:
     }
     console.log("keycode : "+event.keyCode);

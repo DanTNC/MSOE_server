@@ -110,6 +110,9 @@ var MSOE = new function() {
                     if (abcstr[A_DPos - 1] != " ") {
                         abcstr = abcstr.substring(0, A_DPos) + " " + abcstr.substring(A_DPos);
                         CrtPos = A_DPos + 1;
+                    }else{
+                        console.error("already seperated");
+                        return 1;
                     }
                     Act.param2 = 1;
                     Act.param1++;
@@ -117,6 +120,9 @@ var MSOE = new function() {
                     if (abcstr[A_DPos - 1] == " ") {
                         abcstr = abcstr.substring(0, A_DPos - 1) + abcstr.substring(A_DPos);
                         CrtPos = A_DPos - 1;
+                    }else{
+                        console.error("not seperated");
+                        return 1;
                     }
                     Act.param2 = 0;
                     Act.param1--;
@@ -327,6 +333,9 @@ var MSOE = new function() {
                     if (abcstr[T_UPos - 1] != "-") {
                         abcstr = abcstr.substring(0, T_UPos) + "-" + abcstr.substring(T_UPos);
                         CrtPos = T_UPos + 1;
+                    }else{
+                        console.error("already tied");
+                        return 1;
                     }
                     Act.param2 = 1;
                     Act.param1++;
@@ -334,6 +343,9 @@ var MSOE = new function() {
                     if (abcstr[T_UPos - 1] == "-") {
                         abcstr = abcstr.substring(0, T_UPos - 1) + abcstr.substring(T_UPos);
                         CrtPos = T_UPos - 1;
+                    }else{
+                        console.error("not tied");
+                        return 1;
                     }
                     Act.param2 = 0;
                     Act.param1--;
@@ -431,6 +443,38 @@ var MSOE = new function() {
             //inst 10:  replace param: [stP, newContent] X:oldContent
                 abcstr = abcstr.substring(0, Act.param1) + Act.param2 + abcstr.substring(Act.param1 + Act.X.length);
                 Act.param2 = [Act.X, Act.X = Act.param2][0];
+            },
+            function(Act){
+            //inst 11:  untriplet <-> triplet param: [T_UPos, direct]
+                var T_UPos = Act.param1;
+                if (T_UPos == 0 || abcstr[T_UPos - 1] == "\n"){
+                    console.log("warning: illegal position for inst: 11");
+                    return 1;
+                }
+                if (Act.param2 == 0){
+                    if (abcstr.substring(T_UPos - 2, T_UPos) != "(3") {
+                        abcstr = abcstr.substring(0, T_UPos) + "(3" + abcstr.substring(T_UPos);
+                        CrtPos = T_UPos + 2;
+                    }else{
+                        console.error("already triplet here");
+                        return 1;
+                    }
+                    Act.param2 = 1;
+                    Act.param1+=2;
+                }else if(Act.param2 == 1){
+                    if (abcstr.substring(T_UPos - 2, T_UPos) == "(3") {
+                        abcstr = abcstr.substring(0, T_UPos - 2) + abcstr.substring(T_UPos);
+                        CrtPos = T_UPos - 2;
+                    }else{
+                        console.error("no triplet here");
+                        return 1;
+                    }
+                    Act.param2 = 0;
+                    Act.param1-=2;
+                }else{
+                    console.error("invalid direction of inst: 11");
+                    return 1;
+                }
             }
         ];
 
@@ -1395,6 +1439,14 @@ var MSOE = new function() {
     };
     this.untie = () => { //untie tied notes
         let Act = {inst: 4, param1: CrtPos, param2: 1};
+        act(Act);
+    };
+    this.triplet = () => { //triplet following notes
+        let Act = {inst: 11, param1: CrtPos, param2: 0};
+        act(Act);
+    };
+    this.untriplet = () => { //untriplet following notes
+        let Act = {inst: 11, param1: CrtPos, param2: 1};
         act(Act);
     };
     this.accidental = (md) => { //add or delete accidental (# or b)
