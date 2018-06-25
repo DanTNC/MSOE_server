@@ -457,6 +457,26 @@ var move = () => { // some keys can't be detected in keypress
                 MSOE.cut2();
             }
             break;
+        case 188: //"ctrl + <" or "ctrl + shift + <" for change Dstate in place (down)
+            if (MSOE.insvocbef()){
+                if(MSOE.chordmode()){
+                    MSOE.ChgDstateInPlace(2);
+                }else{
+                    MSOE.ChgDstateInPlace(0);
+                }
+                MSOE.print();
+            }
+            break;
+        case 190: //"ctrl + >" or "ctrl + shift + >" for change Dstate in place (up)
+            if (MSOE.insvocbef()){
+                if(MSOE.chordmode()){
+                    MSOE.ChgDstateInPlace(3);
+                }else{
+                    MSOE.ChgDstateInPlace(1);
+                }
+                MSOE.print();
+            }
+            break;
     }
     console.log("keycode : "+event.keyCode);
 };

@@ -361,6 +361,11 @@ var MSOE = new function() {
                 clef[Act.param1] = Act.param2;
                 Act.param2 = [Act.X, Act.X = Act.param2][0];
                 MSOE.printVoc();
+            },
+            function(Act){
+            //inst 10:  replace param: [stP, newContent] X:oldContent
+                abcstr = abcstr.substring(0, Act.param1) + Act.param2 + abcstr.substring(Act.param1 + Act.X.length);
+                Act.param2 = [Act.X, Act.X = Act.param2][0];
             }
         ];
 
@@ -1217,6 +1222,55 @@ var MSOE = new function() {
                 break;
             default:
         }
+    };
+    this.ChgDstateInPlace = (md) => { //change duration state in place
+        var edP = mvpos(1);
+        if (edP == CrtPos){
+            edP = abcstr.length;
+        }
+        var oldContent = abcstr.substring(CrtPos, edP);
+        var dFrom = undefined;
+        for (var i = oldContent.length - 1; i > 0; i--){
+            if (oldContent[i] == "*"){
+                dFrom = i;
+                break;
+            }
+        }
+        var oldD = oldContent.substring(dFrom + 1).replace("]", "");
+        if (oldD == ""){
+            oldD = "1";
+        }
+        var D = eval(oldD);
+        var ceil = 1/16;
+        for (; ceil <= 8; ceil*=2){
+            if (D < ceil){
+                break;
+            }
+        }
+        var base = ceil/2;
+        var n = Math.log2(1/(1-D/(2*base)));
+        switch (md) {
+            case 0:
+                base = (base == 1/32)? 8: base/2;
+                break;
+            case 1:
+                base = (base == 8)? 1/32: base*2;
+                break;
+            case 2:
+                if (n == 1) return;
+                n--;
+                break;
+            case 3:
+                n++;
+                break;
+            default:
+                return;
+        }
+        var newD = numtostr(2 * base * (1 - Math.pow(1/2, n)));
+        if (newD == "1") newD = "";
+        if(oldD == "1") oldD = "";
+        var newContent = oldContent.replace(new RegExp("\\*" + oldD, "g"), "*" + newD);
+        act({inst: 10, param1: CrtPos, param2: newContent, X: oldContent});
     };
     this.ChgTstate = (md) => { //change octave state
         if (md == 0) Tstate = (Tstate == 3) ? 0 : Tstate + 1;
