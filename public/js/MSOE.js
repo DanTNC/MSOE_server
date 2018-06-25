@@ -126,7 +126,7 @@ var MSOE = new function() {
                 }
             },
             function(Act){
-            //inst 3:  # <-> b param: [accidentialPos, md]
+            //inst 3:  # <-> b param: [accidentialPos, md] X:oldAcc (only for natural)
                 CrtPos = Act.param1;
                 var md = Act.param2;
                 if (md == 0) {
@@ -249,6 +249,71 @@ var MSOE = new function() {
                         console.log("warning: only allow 2 bs");
                         return 1;
                     }
+                } else if (md == 4) {
+                    var NtChs = ["a", "b", "c", "d", "e", "f", "g", "A", "B", "C", "D", "E", "F", "G"]; //possible note chars
+                    if (CrtPos != 0 && abcstr[CrtPos - 1] != "\n" && abcstr[CrtPos + 1] != "|" && abcstr[CrtPos + 1] != "#") {
+                        var accP;
+                        for (var i = CrtPos; i < (mvpos(1) == CrtPos)?abcstr.length:mvpos(1); i++){
+                            if (NtChs.includes(abcstr[i])){
+                                accP = i;
+                                break;
+                            }
+                        }
+                        if (abcstr[accP - 1] == "="){
+                            if (Act.X === undefined){
+                                abcstr = abcstr.substring(0, CrtPos + 1) + abcstr.substring(accP);
+                            }else{
+                                abcstr = abcstr.substring(0, CrtPos + 1) + Act.X + abcstr.substring(accP);
+                                Act.X = undefined;
+                            }
+                        }else{
+                            Act.X = abcstr.substring(CrtPos + 1, accP);
+                            abcstr = abcstr.substring(0, CrtPos + 1) + "=" + abcstr.substring(accP);
+                        }
+                    }else{
+                        console.log("warning: illegal position for inst: 3, md: 4");
+                        return 1;
+                    }
+                } else if (md == 5) {
+                    var ChEnd; //chord end
+                    var LstNt; //last note of this chord
+                    var NtChs = ["a", "b", "c", "d", "e", "f", "g", "A", "B", "C", "D", "E", "F", "G"]; //possible note chars
+                    var SecLstNt; //second last note of thies chord (or maybe [)
+                    for (var i = mvpos(1) + 2; i < abcstr.length; i++) {
+                        if (abcstr[i] == "]") {
+                            ChEnd = i;
+                            break;
+                        }
+                        if (i == abcstr.length - 1){
+                            console.error("can't find end of chord");
+                            return 1;
+                        }
+                    }
+                    for (var i = ChEnd - 1; i > mvpos(1); i--) {
+                        if (NtChs.includes(abcstr[i])) {
+                            LstNt = i;
+                            break;
+                        }
+                        if (i == mvpos(1) + 1){
+                            console.error("can't find last note of this chord");
+                            return 1;
+                        }
+                    }
+                    for (var i = LstNt; i > mvpos(1); i--){
+                        if (abcstr[i] == "*" || abcstr[i] == "[" || !isNaN(parseInt(abcstr[i], 10))){
+                            SecLstNt = i;
+                            break;
+                        }
+                    }
+                    if (abcstr[LstNt - 1] == "="){
+                        abcstr = abcstr.substring(0, SecLstNt + 1) + abcstr.substring(LstNt);
+                    }else{
+                        abcstr = abcstr.substring(0, SecLstNt + 1) + "=" + abcstr.substring(LstNt);
+                    }
+                    return 1;//chord mode records whole string at once, so this action should not be recorded
+                } else {
+                    console.error("unsuppored mode");
+                    return 1;
                 }
             },
             function(Act){

@@ -292,6 +292,12 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
         case 123: //"shift+]" for b(chord mode)
             MSOE.accidental(3);
             break;
+        case 112: //"P" for natural
+            MSOE.accidental(4);
+            break;
+        case 80: //"shift+P" for natural(chord mode)
+            MSOE.accidental(5);
+            break;
             // ----------Accidental-------------
         case 90: //"shift+Z"
             MSOE.outinsertch("C");
