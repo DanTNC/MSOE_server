@@ -106,9 +106,12 @@ var MSOE = new function() {
                     console.log("warning: illegal position for inst: 2");
                     return 1;
                 }
+                var noteEnd = noteendbefore(A_DPos) + 1;
+                var prefix = abcstr.substring(noteEnd, A_DPos);
+                var delPos = prefix.indexOf(" ");
                 if (Act.param2 == 0){
-                    if (abcstr[A_DPos - 1] != " ") {
-                        abcstr = abcstr.substring(0, A_DPos) + " " + abcstr.substring(A_DPos);
+                    if (delPos == -1) {
+                        abcstr = abcstr.substring(0, noteEnd) + " " + abcstr.substring(noteEnd);
                         CrtPos = A_DPos + 1;
                     }else{
                         console.error("already seperated");
@@ -117,8 +120,8 @@ var MSOE = new function() {
                     Act.param2 = 1;
                     Act.param1++;
                 }else if(Act.param2 == 1){
-                    if (abcstr[A_DPos - 1] == " ") {
-                        abcstr = abcstr.substring(0, A_DPos - 1) + abcstr.substring(A_DPos);
+                    if (delPos != -1) {
+                        abcstr = abcstr.substring(0, delPos + noteEnd) + abcstr.substring(delPos + noteEnd + 1);
                         CrtPos = A_DPos - 1;
                     }else{
                         console.error("not seperated");
@@ -305,12 +308,7 @@ var MSOE = new function() {
                             return 1;
                         }
                     }
-                    for (var i = LstNt; i > mvpos(1); i--){
-                        if (abcstr[i] == "*" || abcstr[i] == "[" || !isNaN(parseInt(abcstr[i], 10))){
-                            SecLstNt = i;
-                            break;
-                        }
-                    }
+                    SecLstNt = noteendbefore(LstNt, mvpos(1));
                     if (abcstr[LstNt - 1] == "="){
                         abcstr = abcstr.substring(0, SecLstNt + 1) + abcstr.substring(LstNt);
                     }else{
@@ -329,9 +327,17 @@ var MSOE = new function() {
                     console.log("warning: illegal position for inst: 4");
                     return 1;
                 }
+                var noteEnd = noteendbefore(T_UPos) + 1;
+                var prefix = abcstr.substring(noteEnd, T_UPos);
+                var delPos = prefix.indexOf("-");
                 if (Act.param2 == 0){
-                    if (abcstr[T_UPos - 1] != "-") {
-                        abcstr = abcstr.substring(0, T_UPos) + "-" + abcstr.substring(T_UPos);
+                    if (delPos == -1) {
+                        var insPos = prefix.indexOf(" ");
+                        if (insPos == -1){
+                            abcstr = abcstr.substring(0, noteEnd) + "-" + abcstr.substring(noteEnd);
+                        }else{
+                            abcstr = abcstr.substring(0, insPos + noteEnd + 1) + "-" + abcstr.substring(insPos + noteEnd + 1);
+                        }
                         CrtPos = T_UPos + 1;
                     }else{
                         console.error("already tied");
@@ -340,8 +346,8 @@ var MSOE = new function() {
                     Act.param2 = 1;
                     Act.param1++;
                 }else if(Act.param2 == 1){
-                    if (abcstr[T_UPos - 1] == "-") {
-                        abcstr = abcstr.substring(0, T_UPos - 1) + abcstr.substring(T_UPos);
+                    if (delPos != -1) {
+                        abcstr = abcstr.substring(0, delPos + noteEnd) + abcstr.substring(delPos + noteEnd + 1);
                         CrtPos = T_UPos - 1;
                     }else{
                         console.error("not tied");
@@ -451,8 +457,11 @@ var MSOE = new function() {
                     console.log("warning: illegal position for inst: 11");
                     return 1;
                 }
+                var noteEnd = noteendbefore(T_UPos) + 1;
+                var prefix = abcstr.substring(noteEnd, T_UPos);
+                var delPos = prefix.indexOf("(3");
                 if (Act.param2 == 0){
-                    if (abcstr.substring(T_UPos - 2, T_UPos) != "(3") {
+                    if (delPos == -1) {
                         abcstr = abcstr.substring(0, T_UPos) + "(3" + abcstr.substring(T_UPos);
                         CrtPos = T_UPos + 2;
                     }else{
@@ -462,8 +471,8 @@ var MSOE = new function() {
                     Act.param2 = 1;
                     Act.param1+=2;
                 }else if(Act.param2 == 1){
-                    if (abcstr.substring(T_UPos - 2, T_UPos) == "(3") {
-                        abcstr = abcstr.substring(0, T_UPos - 2) + abcstr.substring(T_UPos);
+                    if (delPos != -1) {
+                        abcstr = abcstr.substring(0, delPos + noteEnd) + abcstr.substring(delPos + noteEnd + 2);
                         CrtPos = T_UPos - 2;
                     }else{
                         console.error("no triplet here");
@@ -533,7 +542,10 @@ var MSOE = new function() {
                 A.inst = 0;
                 break;
             case 3:
-                A.param2 = [1, 0, 3, 2][A.param2];
+                A.param2 = [1, 0, 3, 2, 4, 5][A.param2];
+                if (A.param2 == 4){
+                    A.X = undefined;
+                }
                 break;
             case 6:
                 A.param2 = [A.param1, A.param1 = A.param2][0];//swap A.param1 and A.param2
@@ -541,6 +553,7 @@ var MSOE = new function() {
             case 7:
             case 8:
             case 9:
+            case 10:
                 A.param2 = [A.X, A.X = A.param2][0];//swap A.X and A.param2
                 break;
             default:
@@ -785,7 +798,7 @@ var MSOE = new function() {
     //-----------------------------------------//for print
     var rmsmb = (str) => { //remove symbols should not be in the final abcstring
         console.log("after rmsmb:" + str);
-        return str.replace(/[*$#]/g, "");
+        return str.replace(/[*$#@]/g, "");
     };
     var GetStrOffset = (ix) => { //get the length before the voice for highlight listener (ix: index)
         var sum = 0;
@@ -842,9 +855,9 @@ var MSOE = new function() {
                 }
             },
             animate: {
-                listener: (svgElems)=>{
-                    console.log(svgElems);
-                },
+                // listener: (svgElems)=>{
+                //     console.log(svgElems);
+                // },
                 target: tune_[0],
                 qpm: qpm_
             }
@@ -1717,7 +1730,7 @@ var MSOE = new function() {
                              2
         */
         //for duration
-        ch = ch + "*" + numtostr(Math.pow(2, Dstate % 10 - 4) * (1 - Math.pow(1 / 2, Math.floor(Dstate / 10) + 1)));
+        ch = ch + "*" + numtostr(Math.pow(2, Dstate % 10 - 4) * (1 - Math.pow(1 / 2, Math.floor(Dstate / 10) + 1))) + "@";
         return ch;
     };
     this.checkpause = () => { //check if the pause is legal
@@ -1837,6 +1850,16 @@ var MSOE = new function() {
                 }
             }
         }
+    };
+    
+    var noteendbefore = (pos, after) => {
+        after = after || 0;
+        for (var i = pos; i > after; i--){
+            if (abcstr[i] == "@"){
+                return i;
+            }
+        }
+        console.error("can't find note end in the given interval.");
     };
     
     var bouncingID, previousSelector;
