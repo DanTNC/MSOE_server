@@ -1358,7 +1358,9 @@ var MSOE = new function() {
                 break;
             }
         }
-        var oldD = oldContent.substring(dFrom + 1).replace("]", "");
+        var dTo = noteendbefore(edP);
+        var oldD = oldContent.substring(dFrom + 1, dTo - CrtPos);
+        console.log(oldD);
         if (oldD == ""){
             oldD = "1";
         }
@@ -1854,7 +1856,7 @@ var MSOE = new function() {
     
     var noteendbefore = (pos, after) => {
         after = after || 0;
-        for (var i = pos; i > after; i--){
+        for (var i = pos - 1; i > after; i--){
             if (abcstr[i] == "@"){
                 return i;
             }
