@@ -189,11 +189,6 @@ var MSOE = new function() {
                         return 1;
                     }
                 } else if (md == 2) {
-                    if(abcstr[CrtPos + 1] == "#"){
-                        console.error("can't edit the accidental of a completed chord");
-                        ErrorMes("You can't edit the accidental of a completed chord")
-                        return 1;
-                    }
                     var ChEnd; //chord end
                     var LstNt; //last note of this chord
                     var NtChs = ["a", "b", "c", "d", "e", "f", "g", "A", "B", "C", "D", "E", "F", "G"]; //possible note chars
@@ -233,11 +228,6 @@ var MSOE = new function() {
                         return 1;
                     }
                 } else if (md == 3) {
-                    if(abcstr[CrtPos + 1] == "#"){
-                        console.error("can't edit the accidental of a completed chord");
-                        ErrorMes("You can't edit the accidental of a completed chord")
-                        return 1;
-                    }
                     var ChEnd; //chord end
                     var LstNt; //last note of this chord
                     var NtChs = ["a", "b", "c", "d", "e", "f", "g", "A", "B", "C", "D", "E", "F", "G"]; //possible note chars
@@ -306,11 +296,6 @@ var MSOE = new function() {
                         return 1;
                     }
                 } else if (md == 5) {
-                    if(abcstr[CrtPos + 1] == "#"){
-                        console.error("can't edit the accidental of a completed chord");
-                        ErrorMes("You can't edit the accidental of a completed chord")
-                        return 1;
-                    }
                     var ChEnd; //chord end
                     var LstNt; //last note of this chord
                     var NtChs = ["a", "b", "c", "d", "e", "f", "g", "A", "B", "C", "D", "E", "F", "G"]; //possible note chars
@@ -355,9 +340,9 @@ var MSOE = new function() {
                     return 1;
                 }
                 var noteEnd = noteendbefore(T_UPos) + 1;
-                if (abcstr[noteEnd - 1] == "]"){
-                    console.error("adjacent tie not supported for chord");
-                    ErrorMes("Adjacent tie is not supported for chord");
+                if (abcstr[noteEnd - 1] == "]" && abcstr[T_UPos + 1] != "#"){
+                    console.error("adjacent tie not supported for chord with single note");
+                    ErrorMes("Adjacent tie is not supported for chord  with single note");
                     return 1;
                 }
                 var prefix = abcstr.substring(noteEnd, T_UPos);
