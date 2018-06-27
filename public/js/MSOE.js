@@ -155,6 +155,10 @@ var MSOE = new function() {
                             console.log("warning: only allow two #s");
                             return 1;
                         }
+                    }else if(abcstr[CrtPos + 1] == "#"){
+                        console.error("can't edit the accidental of a completed chord");
+                        ErrorMes("You can't edit the accidental of a completed chord")
+                        return 1;
                     }else{
                         console.log("warning: illegal position for inst: 3, md: 0");
                         return 1;
@@ -176,11 +180,20 @@ var MSOE = new function() {
                             console.log("warning: only allow two bs");
                             return 1;
                         }
+                    }else if(abcstr[CrtPos + 1] == "#"){
+                        console.error("can't edit the accidental of a completed chord");
+                        ErrorMes("You can't edit the accidental of a completed chord")
+                        return 1;
                     }else{
                         console.log("warning: illegal position for inst: 3, md: 1");
                         return 1;
                     }
                 } else if (md == 2) {
+                    if(abcstr[CrtPos + 1] == "#"){
+                        console.error("can't edit the accidental of a completed chord");
+                        ErrorMes("You can't edit the accidental of a completed chord")
+                        return 1;
+                    }
                     var ChEnd; //chord end
                     var LstNt; //last note of this chord
                     var NtChs = ["a", "b", "c", "d", "e", "f", "g", "A", "B", "C", "D", "E", "F", "G"]; //possible note chars
@@ -220,6 +233,11 @@ var MSOE = new function() {
                         return 1;
                     }
                 } else if (md == 3) {
+                    if(abcstr[CrtPos + 1] == "#"){
+                        console.error("can't edit the accidental of a completed chord");
+                        ErrorMes("You can't edit the accidental of a completed chord")
+                        return 1;
+                    }
                     var ChEnd; //chord end
                     var LstNt; //last note of this chord
                     var NtChs = ["a", "b", "c", "d", "e", "f", "g", "A", "B", "C", "D", "E", "F", "G"]; //possible note chars
@@ -279,11 +297,20 @@ var MSOE = new function() {
                             Act.X = abcstr.substring(CrtPos + 1, accP);
                             abcstr = abcstr.substring(0, CrtPos + 1) + "=" + abcstr.substring(accP);
                         }
+                    }else if(abcstr[CrtPos + 1] == "#"){
+                        console.error("can't edit the accidental of a completed chord");
+                        ErrorMes("You can't edit the accidental of a completed chord")
+                        return 1;
                     }else{
                         console.log("warning: illegal position for inst: 3, md: 4");
                         return 1;
                     }
                 } else if (md == 5) {
+                    if(abcstr[CrtPos + 1] == "#"){
+                        console.error("can't edit the accidental of a completed chord");
+                        ErrorMes("You can't edit the accidental of a completed chord")
+                        return 1;
+                    }
                     var ChEnd; //chord end
                     var LstNt; //last note of this chord
                     var NtChs = ["a", "b", "c", "d", "e", "f", "g", "A", "B", "C", "D", "E", "F", "G"]; //possible note chars
@@ -328,6 +355,11 @@ var MSOE = new function() {
                     return 1;
                 }
                 var noteEnd = noteendbefore(T_UPos) + 1;
+                if (abcstr[noteEnd - 1] == "]"){
+                    console.error("adjacent tie not supported for chord");
+                    ErrorMes("Adjacent tie is not supported for chord");
+                    return 1;
+                }
                 var prefix = abcstr.substring(noteEnd, T_UPos);
                 var delPos = prefix.indexOf("-");
                 if (Act.param2 == 0){
@@ -1857,7 +1889,7 @@ var MSOE = new function() {
     var noteendbefore = (pos, after) => {
         after = after || 0;
         for (var i = pos - 1; i > after; i--){
-            if (abcstr[i] == "@"){
+            if (abcstr[i] == "@" || abcstr[i] == "]"){
                 return i;
             }
         }
