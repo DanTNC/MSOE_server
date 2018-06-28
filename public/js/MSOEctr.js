@@ -123,6 +123,10 @@ var UIhandler = new function(){
         }).modal("show");
     };
     
+    this.hide_discard = () => {
+        $("#discard").hide();
+    };
+    
     var font_size = ["0.9vw", "0.7vw"];
     this.manual_font = (index) => { //toggle manual font size
         $(".font").removeClass("active");

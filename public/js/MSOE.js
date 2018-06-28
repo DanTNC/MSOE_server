@@ -939,6 +939,7 @@ var MSOE = new function() {
                     suscribe(index, false);
                     console.log(msg.status.msg);
                     SuccessMes("Successfully saved.");
+                    UIhandler.hide_discard();
                     if (push) {
                         history.pushState({ title: "" }, "", host + "?!" + index + "!" + key);
                     }
