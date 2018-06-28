@@ -470,7 +470,11 @@ var MSOE = new function() {
             function(Act){
             //inst 11:  untriplet <-> triplet param: [T_UPos, direct]
                 var T_UPos = Act.param1;
-                if (T_UPos == 0 || abcstr[T_UPos - 1] == "\n"){
+                var tmp = CrtPos;
+                CrtPos = T_UPos;
+                CrtPos = mvpos(1);
+                if (T_UPos == 0 || abcstr[T_UPos - 1] == "\n" || abcstr.substring(T_UPos, mvpos(1)).indexOf("(3") != -1){
+                    CrtPos = tmp;
                     console.log("warning: illegal position for inst: 11");
                     return 1;
                 }
@@ -478,11 +482,21 @@ var MSOE = new function() {
                 var prefix = abcstr.substring(noteEnd, T_UPos);
                 var delPos = prefix.indexOf("(3");
                 if (Act.param2 == 0){
-                    if (delPos == -1) {
+                    var checkStP = 0;
+                    CrtPos = T_UPos;
+                    for (var i = 0; i < 3; i++){
+                        checkStP = mvpos(0);
+                        if (checkStP == 0 || abcstr[checkStP - 1] == "\n"){ //if at line start
+                            break;
+                        }
+                        CrtPos = checkStP;
+                    }
+                    CrtPos = tmp;
+                    if (abcstr.substring(checkStP, T_UPos).indexOf("(3") == -1){
                         abcstr = abcstr.substring(0, T_UPos) + "(3" + abcstr.substring(T_UPos);
                         CrtPos = T_UPos + 2;
                     }else{
-                        console.error("already triplet here");
+                        console.error("already exists triplet in valid range");
                         return 1;
                     }
                     Act.param2 = 1;
@@ -1376,7 +1390,7 @@ var MSOE = new function() {
                 break;
             }
         }
-        var dTo = noteendbefore(edP);
+        var dTo = noteendbefore(edP) - 1;
         var oldD = oldContent.substring(dFrom + 1, dTo - CrtPos);
         console.log(oldD);
         if (oldD == ""){
@@ -1872,8 +1886,8 @@ var MSOE = new function() {
     
     var noteendbefore = (pos, after) => {
         after = after || 0;
-        for (var i = pos - 1; i > after; i--){
-            if (abcstr[i] == "@" || abcstr[i] == "]"){
+        for (var i = pos - 1; i >= after; i--){
+            if (abcstr[i] == "@" || abcstr[i] == "]" || abcstr[i] == "$"){
                 return i;
             }
         }
