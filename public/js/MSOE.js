@@ -1597,7 +1597,7 @@ var MSOE = new function() {
         var Cntin = true; //counting
         for (var i = ChFm - 1; i > 0; i--) {
             if (abcstr[i] == "|") break;
-            if (abcstr[i] == "\n" || abcstr[i] == "]" || abcstr[i] == "[") continue;
+            if (abcstr[i] == "\n" || abcstr[i] == "]" || abcstr[i] == "[" || abcstr[i] == "@") continue;
             if (abcstr[i] == "$") {
                 if (abcstr[i - 1] == "\n") { //the beginning of a line(not the first line)
                     break;
@@ -1842,10 +1842,8 @@ var MSOE = new function() {
         console.log(abcstr);
         var bpmstr = (infostrs["bpmstr"] == "")?"180":infostrs["bpmstr"];
         console.log(abcElem);
-        var ignsmbs = ["$", "#", "*"]; //symbols that won't be in the final abcstring
+        var ignsmbs = ["$", "#", "*", "@"]; //symbols that won't be in the final abcstring
         var offset = abcElem.startChar - 19 - infostrs["ttlstr"].length - infostrs["tmpstr"].length - Lstr.length - infostrs["cmpstr"].length - bpmstr.length - GetStrOffset(abcindex);
-        // var deloffset = (rmsmb(abcstr).substring(0, offset).match(/\[\]/g) || []).length * 2;
-        // offset -= deloffset;
         console.log(offset);
         if ((isNaN(offset))){ //click on staff
             var line = abcElem.abselem.elemset[0].attrs.class.match(/l([^ ]*)/)[1];
