@@ -438,11 +438,13 @@ var move = () => { // some keys can't be detected in keypress
             MSOE.post_move();
             break;
         case 36: //"home"
+            event.preventDefault();
             MSOE.pre_move();
             MSOE.outmove2(4);
             MSOE.post_move();
             break;
         case 35: //"end"
+            event.preventDefault();
             MSOE.pre_move();
             MSOE.outmove2(5);
             MSOE.post_move();
