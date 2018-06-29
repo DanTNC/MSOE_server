@@ -572,6 +572,11 @@ $(document).ready(function(){
     document.onkeypress = key;
     document.onkeydown = move;
     document.onkeyup = chord;
+    
+    $(document).dbKeypress(17, function(e){
+        MSOE.SelNotesCrt();
+    });
+    
     $("#save").click(function(e) { MSOE.save(e); });
     $("#discard").click(function() {
         UIhandler.discardconfirm(function(){
