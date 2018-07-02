@@ -439,15 +439,15 @@ var move = () => { // some keys can't be detected in keypress
             break;
         case 36: //"home"
             event.preventDefault();
-            MSOE.pre_move();
+            MSOE.pre_move_edge();
             MSOE.outmove2(4);
-            MSOE.post_move();
+            MSOE.post_move_edge();
             break;
         case 35: //"end"
             event.preventDefault();
-            MSOE.pre_move();
+            MSOE.pre_move_edge();
             MSOE.outmove2(5);
-            MSOE.post_move();
+            MSOE.post_move_edge();
             break;
         case 8: //"backspace"
             MSOE.del();

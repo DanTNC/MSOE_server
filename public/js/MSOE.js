@@ -1677,12 +1677,14 @@ var MSOE = new function() {
         if (md == 4) { //4: move to the first note of this line
             while (CrtPos != 0 && abcstr[CrtPos - 1] != "\n") {
                 CrtPos = mvpos(0);
+                this.SelNotesCrt();
             }
             return;
         }
         if (md == 5) { //5: move to the last note of this line
             while (mvpos(1) != CrtPos && abcstr[mvpos(1) - 1] != "\n") {
                 CrtPos = mvpos(1);
+                this.SelNotesCrt();
             }
             return;
         }
@@ -1915,6 +1917,13 @@ var MSOE = new function() {
         this.chmodeoff();
         movefrom = CrtPos;
     };
+    this.pre_move_edge = () => {
+        this.chmodeoff();
+        if(this.insvocbef()){
+            this.SelNotesCrt();
+        }
+        movefrom = CrtPos;
+    };
     
     this.post_move = () => {
         if (this.insvocbef() && movefrom != CrtPos){ //if ctrl pressed
@@ -1936,6 +1945,13 @@ var MSOE = new function() {
                 }
             }
         }
+        this.chmodeon();
+        if (!this.insvocbef()){
+            this.SelNoteClr();
+        }
+        this.print();
+    };
+    this.post_move_edge = () => {
         this.chmodeon();
         if (!this.insvocbef()){
             this.SelNoteClr();
