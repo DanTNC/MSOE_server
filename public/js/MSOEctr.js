@@ -46,6 +46,7 @@ var UIhandler = new function(){
         "#minus":"Delete current voice",
         "#check":"Replace current voicename with the text on the left",
         "#remove":"Replace current voicename with default value",
+        "#tool":"Toggle toolbox",
         ".v_num:eq(0)":"Select this voice/Switch position with selected voice",
         ".v_clef:eq(0)":"Change the clef of this voice",
         ".v_name:eq(0)":"Move cursor to this voice",
