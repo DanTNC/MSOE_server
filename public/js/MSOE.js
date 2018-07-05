@@ -1540,6 +1540,16 @@ var MSOE = new function() {
             act({inst:0, param1: CtStP, param2: copiedNotes, X: CtEdP});
         }
     };
+    this.insertchsnippet = (sci) => {
+        check = toabcnote2(Tonal.Chord.notes(sci));
+        if (check == 1){
+            ErrorMes("Chord not illegal");
+        }
+        if (check == 2){
+            ErrorMes("Chord out of range");
+        }
+        this.print();
+    };
     var chordmode = false;
     this.chordmode = (ch) => {
         if (ch !== undefined){
@@ -1745,9 +1755,10 @@ var MSOE = new function() {
         }
         return num;
     };
-    var toabcnote = (ch) => { //generate a string for a note in ABC format
+    var toabcnote = (ch, Tst) => { //generate a string for a note in ABC format
+        Tst = (Tst === undefined)? Tstate: Tst;
         if (ch != "z") { //pause has no tune
-            switch (Tstate) { //for tunes
+            switch (Tst) { //for tunes
                 case 0:
                     ch = ch + ",";
                     break;
@@ -1769,6 +1780,29 @@ var MSOE = new function() {
         ch = ch + "*" + numtostr(Math.pow(2, Dstate % 10 - 4) * (1 - Math.pow(1 / 2, Math.floor(Dstate / 10) + 1))) + "@";
         return ch;
     };
+    var NOTECHAR = ["C", "D", "E", "F", "G", "A", "B"];
+    var toabcnote2 = (chs) => {
+        if (chs.length == 0) return 1;
+        var first = NOTECHAR.indexOf(chs[0][0]);
+        var Tst = Tstate;
+        var abcchord = "#[";
+        for (let ch of chs){
+            let lttr = ch[0], accd = ch.substring(1);
+            var idx = NOTECHAR.indexOf(lttr);
+            if (idx < first){
+                if (Tst == 3){
+                    return 2;
+                }else{
+                    Tst++;
+                }
+                first = idx;
+            }
+            accd = accd.replace(/b/g, "_").replace(/#/g, "^");
+            var abcch = toabcnote(lttr, Tst);
+            abcchord = abcchord + accd + abcch;
+        }
+        insert(abcchord + "]");
+    }
     this.checkpause = () => { //check if the pause is legal
         return (Math.pow(2, Dstate % 10 - 5) * eval(Lstr) >= 2);
     };

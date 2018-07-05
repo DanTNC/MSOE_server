@@ -673,6 +673,9 @@ $(document).ready(function(){
         }
         UIhandler.manual_language(lan);
     });
+    $("#chordgen").click(function(){
+       MSOE.insertchsnippet($("#chordsym").val());
+    });
     MIDI.setup({
         soundfontUrl: window.ABCJS.midi.soundfountUrl,
         instruments: window.ABCJS.midi.instruments
