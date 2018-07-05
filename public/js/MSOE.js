@@ -1219,7 +1219,15 @@ var MSOE = new function() {
         copiedNotes = posToNotes(copiedNotes);
         console.log("cut: ", copiedNotes);
         CpStr2 = copiedNotes;
-        act({inst:0, param1: CtStP, param2: CpStr2, X: CtEdP});
+        if (copiedNotes[0] == "\n"){
+            if (CtStP == 0){
+                copiedNotes = copiedNotes.substring(2);
+                CtStP++;
+            }else{
+                CtStP--;
+            }
+        }
+        act({inst:0, param1: CtStP, param2: copiedNotes, X: CtEdP});
         this.print();
     };
     //-----------------------------------------//for note selector
