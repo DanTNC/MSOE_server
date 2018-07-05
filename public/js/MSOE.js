@@ -1791,20 +1791,20 @@ var MSOE = new function() {
     var NOTECHAR = ["C", "D", "E", "F", "G", "A", "B"];
     var toabcnote2 = (chs) => {
         if (chs.length == 0) return 1;
-        var first = NOTECHAR.indexOf(chs[0][0]);
+        var last = NOTECHAR.indexOf(chs[0][0]);
         var Tst = Tstate;
         var abcchord = "#[";
         for (let ch of chs){
             let lttr = ch[0], accd = ch.substring(1);
             var idx = NOTECHAR.indexOf(lttr);
-            if (idx < first){
+            if (idx < last){
                 if (Tst == 3){
                     return 2;
                 }else{
                     Tst++;
                 }
-                first = idx;
             }
+            last = idx;
             accd = accd.replace(/b/g, "_").replace(/#/g, "^");
             var abcch = toabcnote(lttr, Tst);
             abcchord = abcchord + accd + abcch;
