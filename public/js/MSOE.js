@@ -1790,7 +1790,7 @@ var MSOE = new function() {
     };
     var NOTECHAR = ["C", "D", "E", "F", "G", "A", "B"];
     var toabcnote2 = (chs) => {
-        if (chs.length == 0) return 1;
+        if (chs.length == 0 || chs[0] == null) return 1;
         var last = NOTECHAR.indexOf(chs[0][0]);
         var Tst = Tstate;
         var abcchord = "#[";
