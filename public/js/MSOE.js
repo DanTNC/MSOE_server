@@ -1,4 +1,4 @@
-/* global $, history, location, printJS, MIDI */
+/* global $, history, location, printJS, MIDI, Tonal */
 
 /** dependencies:
  *      socketio.js:
@@ -1551,11 +1551,46 @@ var MSOE = new function() {
     this.insertchsnippet = (sci) => {
         check = toabcnote2(Tonal.Chord.notes(sci));
         if (check == 1){
-            ErrorMes("Chord not illegal");
+            ErrorMes("Chord not legal");
         }
         if (check == 2){
             ErrorMes("Chord out of range");
         }
+        this.print();
+    };
+    var VALID_ROOT = ["C", "C#", "Db", "D", "D#", "Eb", "E", "F", "F#", "Gb", "G", "G#", "Ab", "A", "A#", "Bb", "B", "B#", "Cb"];
+    this.insertchformula = (root, numbers) => {
+        if (!VALID_ROOT.includes(root)){
+            ErrorMes("Invalid root");
+            return;
+        }
+        var scale = Tonal.Scale.notes(root, "major");
+        numbers = numbers.split(",");
+        var notes = [], octs = [];
+        for (let num of numbers){
+            var m = num.match(/^([b#])?([0-9])+/);
+            if (m == null){
+                ErrorMes("Formula not legal");
+                return;
+            }else{
+                var idx, nth, octoff;
+                if (m[1] != undefined){
+                    var accd = m[1];
+                    idx = parseInt(num.substring(1), 10) - 1;
+                    nth = idx % 7;
+                    octoff = (idx + NOTECHAR.indexOf(root[0])) / 7;
+                    notes.push(accdnote(scale[nth], accd, root[1]));
+                    octs.push(Math.floor(octoff));
+                }else{
+                    idx = parseInt(num, 10) - 1;
+                    nth = idx % 7;
+                    octoff = (idx + NOTECHAR.indexOf(root[0])) / 7;
+                    notes.push(scale[nth]);
+                    octs.push(Math.floor(octoff));
+                }
+            }
+        }
+        toabcnote2(notes, octs);
         this.print();
     };
     var chordmode = false;
@@ -1746,6 +1781,17 @@ var MSOE = new function() {
         MIDI.noteOff(0, 48 + (Tstate) * 12 + temnum, 0.75);
         return 48 + (Tstate) * 12 + temnum;
     };
+    var accdnote = (note, accd, rootlimit) => {
+        if (accd != "#" && accd != "b"){
+            console.error("something's wrong with the code");
+            return;
+        }
+        note = note + "5";
+        accd = (accd == "#")?1:-1;
+        var useSharpen = (rootlimit !== undefined)?(rootlimit == "#"):(accd == 1);
+        var res = Tonal.Note.fromMidi(Tonal.midi(note)+accd, useSharpen);
+        return res.substr(0, res.length-1);
+    };
     var numtostr = (num) => { //transform a float to a string in fraction form(for duration of a note)
         if (!Number.isInteger(num)) { //if num is a integer, return it and it will be transformed to string automatically
             var Dnmntr = 0; //denominator
@@ -1789,22 +1835,31 @@ var MSOE = new function() {
         return ch;
     };
     var NOTECHAR = ["C", "D", "E", "F", "G", "A", "B"];
-    var toabcnote2 = (chs) => {
+    var toabcnote2 = (chs, octs) => {
         if (chs.length == 0 || chs[0] == null) return 1;
         var last = NOTECHAR.indexOf(chs[0][0]);
         var Tst = Tstate;
         var abcchord = "#[";
+        var i = 0;
         for (let ch of chs){
             let lttr = ch[0], accd = ch.substring(1);
             var idx = NOTECHAR.indexOf(lttr);
-            if (idx < last){
-                if (Tst == 3){
-                    return 2;
-                }else{
-                    Tst++;
+            if (octs == undefined){
+                if (idx < last){
+                    if (Tst == 3){
+                        return 2;
+                    }else{
+                        Tst++;
+                    }
                 }
+                last = idx;
+            }else{
+                Tst = Tstate + octs[i];
+                if (Tst > 3){
+                    return 2;
+                }
+                i++;
             }
-            last = idx;
             accd = accd.replace(/b/g, "_").replace(/#/g, "^");
             var abcch = toabcnote(lttr, Tst);
             abcchord = abcchord + accd + abcch;

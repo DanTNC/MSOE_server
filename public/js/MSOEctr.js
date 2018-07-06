@@ -674,7 +674,10 @@ $(document).ready(function(){
         UIhandler.manual_language(lan);
     });
     $("#chordgen").click(function(){
-       MSOE.insertchsnippet($("#chordsym").val());
+        MSOE.insertchsnippet($("#chordsym").val());
+    });
+    $("#chordforgen").click(function(){
+        MSOE.insertchformula($("#chordroot").val(), $("#chordform").val());
     });
     MIDI.setup({
         soundfontUrl: window.ABCJS.midi.soundfountUrl,
