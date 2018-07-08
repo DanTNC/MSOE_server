@@ -204,6 +204,8 @@ var checkinput = () => { //if input tags are focused, turn off key events
 
 var key = () => { // only keypress can tell if "shift" is pressed at the same time
     if ($("#voicename").is(":focus") && (event.keyCode == 13)) $("#check").click();
+    if ($("#chordsym").is(":focus") && (event.keyCode == 13)) $("#chordgen").click();
+    if ($("#chordform").is(":focus") && (event.keyCode == 13)) $("#chordforgen").click();
     if (checkinput()) return;
     if (!MSOE.Edit_()) return;
     switch (event.keyCode) {
