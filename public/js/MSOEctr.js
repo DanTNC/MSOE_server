@@ -520,18 +520,12 @@ var chord = () => { //keyup event for chord mode
 
 var highlight = (a) => {
     $(a).css('background-color', 'rgba(255,0,0,0.5)');
-    setTimeout("clean()", '700');
-}
+    setTimeout(function(){clean(a)}, '700');
+};
 
-var clean = () => {
-    $('#C').css('background-color', 'white');
-    $('#D').css('background-color', 'white');
-    $('#E').css('background-color', 'white');
-    $('#F').css('background-color', 'white');
-    $('#G').css('background-color', 'white');
-    $('#A').css('background-color', 'white');
-    $('#B').css('background-color', 'white');
-}
+var clean = (a) => {
+    $(a).css('background-color', 'white');
+};
 
 var btn = (a) => { //buttons for notes
     MSOE.outinsert(a.id, 1, 0, 1);
