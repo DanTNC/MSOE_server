@@ -52,9 +52,11 @@ var UIhandler = new function(){
         ".v_name:eq(0)":"Move cursor to this voice",
         ".v_div:eq(0)":"Move selected voice here",
         ".v_up:eq(0)":"Switch place with upper voice",
-        ".v_down:eq(0)":"Switch place with lower voice"
+        ".v_down:eq(0)":"Switch place with lower voice",
+        "#logo":"Return to homepage"
     };
     var help_right = ["#paste", "#clef", "#check", "#remove", ".v_up:eq(0)", ".v_down:eq(0)", "#edit", "#preview", "#night"];
+    var help_center = [".v_div:eq(0)", "#logo"]
     //elements whose popups should expand to the right
     this.help_voice = () => { //set help popups for voice list
         if(!help_) return;
@@ -62,7 +64,7 @@ var UIhandler = new function(){
             $(key).popup({
                 content: value,
                 on: "hover",
-                position: (key==".v_div:eq(0)")?"bottom center":((help_right.includes(key))?"bottom right":"bottom left"),
+                position: (help_center.includes(key))?"bottom center":((help_right.includes(key))?"bottom right":"bottom left"),
                 variation: "basic mini",
                 delay: {
                     show:30
@@ -570,6 +572,9 @@ $(document).ready(function(){
         if(!MSOE.unsave()){
             $("#discard").hide();
         }
+    });
+    $("#logo").click(function(){
+        window.location = "/";
     });
     $("input").change(function(){
         MSOE.chginfo(this);

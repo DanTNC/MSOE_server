@@ -250,6 +250,9 @@ img.logo{
   width: 17vh;
   margin-left: 28%;
 }
+#logo{
+  cursor: pointer;
+}
 #voices{
   height: 40vh;
 }

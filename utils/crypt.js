@@ -11,8 +11,8 @@ var crypt = new function () {
 
 module.exports = crypt;
 
-if (require.main === module){
-    for(var i = 0;i<10;i++){
-        console.log(crypt.randomIndex());
-    }
-}
+// if (require.main === module){
+//     for(var i = 0;i<10;i++){
+//         console.log(crypt.randomIndex());
+//     }
+// }
