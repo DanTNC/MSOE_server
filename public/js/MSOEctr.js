@@ -204,7 +204,7 @@ var checkinput = () => { //if input tags are focused, turn off key events
         return false;
 };
 
-var key = () => { // only keypress can tell if "shift" is pressed at the same time
+var key = (event) => { // only keypress can tell if "shift" is pressed at the same time
     if ($("#voicename").is(":focus") && (event.keyCode == 13)) $("#check").click();
     if ($("#chordsym").is(":focus") && (event.keyCode == 13)) $("#chordgen").click();
     if ($("#chordform").is(":focus") && (event.keyCode == 13)) $("#chordforgen").click();
@@ -388,13 +388,17 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
             MSOE.VicChgB();
             break;
             // ----------Clef and Voice----------
-        case 45: //"-" tie two notes
-            MSOE.tie();
-            break;
-        case 61: //"=" untie
-            MSOE.untie();
-            break;
+        // case 45: //"-" tie two notes
+        //     MSOE.tie();
+        //     break;
+        // case 61: //"=" untie
+        //     MSOE.untie();
+        //     break;
             // ----------Tie and Untie-----------
+        case 45://"-" add slur on ends of selected notes
+            MSOE.outslur();
+            break;
+            // ----------Slur--------------------
         case 26://"ctrl+Z" undo
             MSOE.undo();
             break;
@@ -402,10 +406,7 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
         case 2://"ctrl+B" redo
             MSOE.redo();
             break;
-        case 83://"shift+S" save
-            MSOE.save();
-            break;
-            // ----------Save--------------------
+            // ----------Redo--------------------
         case 116://"T" triplet
             MSOE.triplet();
             break;
@@ -418,7 +419,7 @@ var key = () => { // only keypress can tell if "shift" is pressed at the same ti
     MSOE.print();
 };
 
-var move = () => { // some keys can't be detected in keypress
+var move = (event) => { // some keys can't be detected in keypress
     if (checkinput()) return; //if inpus tags are focus, turn off key events
     if (!MSOE.Edit_()) return;
     switch(event.keyCode){
@@ -465,6 +466,11 @@ var move = () => { // some keys can't be detected in keypress
         case 17: //"ctrl" for add voice before
             MSOE.insvocbef(true);
             break;
+        case 83: //"ctrl + S" for save
+            if (MSOE.insvocbef()){
+                event.preventDefault();
+                MSOE.save();
+            }
         case 67: //"ctrl + C" for copy selected notes
             if (MSOE.insvocbef()){
                 MSOE.copy2();
@@ -504,7 +510,7 @@ var move = () => { // some keys can't be detected in keypress
     console.log("keycode : "+event.keyCode);
 };
 
-var chord = () => { //keyup event for chord mode
+var chord = (event) => { //keyup event for chord mode
     if (checkinput()) return;
     if (!MSOE.Edit_()) return;
     switch(event.keyCode){
@@ -622,11 +628,16 @@ $(document).ready(function(){
         MSOE.print();
     });
     $("#tie").click(function(){
-        if(MSOE.tiemode(true)){
-            $("#tie").css("color","#b5cc18");
-        }else{
+        // if(MSOE.tiemode(true)){
+        //     $("#tie").css("color","#b5cc18");
+        // }else{
+        //     $("#tie").css("color","");
+        // }
+        $("#tie").css("color","#b5cc18");
+        MSOE.outslur();
+        setTimeout(function() {
             $("#tie").css("color","");
-        }
+        }, 500);
     });
     $("#clef").click(function(){
         MSOE.ClfMdTgl();

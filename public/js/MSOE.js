@@ -111,8 +111,14 @@ var MSOE = new function() {
                 var delPos = prefix.indexOf(" ");
                 if (Act.param2 == 0){
                     if (delPos == -1) {
-                        abcstr = abcstr.substring(0, noteEnd) + " " + abcstr.substring(noteEnd);
-                        CrtPos = A_DPos + 1;
+                        let insPos = prefix.indexOf("&)");
+                        if (insPos == -1){
+                            abcstr = abcstr.substring(0, noteEnd) + " " + abcstr.substring(noteEnd);
+                            CrtPos = A_DPos + 1;
+                        }else{
+                            abcstr = abcstr.substring(0, insPos + 2) + " " + abcstr.substring(insPos + 2);
+                            CrtPos = A_DPos + 1;
+                        }
                     }else{
                         console.error("already seperated");
                         return 1;
@@ -333,49 +339,50 @@ var MSOE = new function() {
                 }
             },
             function(Act){
-            //inst 4:  untie <-> tie param: [T_UPos, direct]
-                var T_UPos = Act.param1;
-                if (T_UPos == 0 || abcstr[T_UPos - 1] == "\n" || T_UPos == 1 || abcstr[T_UPos - 1] == "$"){
-                    console.log("warning: illegal position for inst: 4");
-                    return 1;
-                }
-                var noteEnd = noteendbefore(T_UPos) + 1;
-                if (abcstr[noteEnd - 1] == "]" && abcstr[T_UPos + 1] != "#"){
-                    console.error("adjacent tie not supported for chord with single note");
-                    ErrorMes("Adjacent tie is not supported for chord  with single note");
-                    return 1;
-                }
-                var prefix = abcstr.substring(noteEnd, T_UPos);
-                var delPos = prefix.indexOf("-");
-                if (Act.param2 == 0){
-                    if (delPos == -1) {
-                        var insPos = prefix.indexOf(" ");
-                        if (insPos == -1){
-                            abcstr = abcstr.substring(0, noteEnd) + "-" + abcstr.substring(noteEnd);
-                        }else{
-                            abcstr = abcstr.substring(0, insPos + noteEnd + 1) + "-" + abcstr.substring(insPos + noteEnd + 1);
-                        }
-                        CrtPos = T_UPos + 1;
-                    }else{
-                        console.error("already tied");
-                        return 1;
-                    }
-                    Act.param2 = 1;
-                    Act.param1++;
-                }else if(Act.param2 == 1){
-                    if (delPos != -1) {
-                        abcstr = abcstr.substring(0, delPos + noteEnd) + abcstr.substring(delPos + noteEnd + 1);
-                        CrtPos = T_UPos - 1;
-                    }else{
-                        console.error("not tied");
-                        return 1;
-                    }
-                    Act.param2 = 0;
-                    Act.param1--;
-                }else{
-                    console.error("invalid direction of inst: 4");
-                    return 1;
-                }
+            //inst 4:  slur param: [left, right]
+                // var T_UPos = Act.param1;
+                // if (T_UPos == 0 || abcstr[T_UPos - 1] == "\n" || T_UPos == 1 || abcstr[T_UPos - 1] == "$"){
+                //     console.log("warning: illegal position for inst: 4");
+                //     return 1;
+                // }
+                // var noteEnd = noteendbefore(T_UPos) + 1;
+                // if (abcstr[noteEnd - 1] == "]" && abcstr[T_UPos + 1] != "#"){
+                //     console.error("adjacent tie not supported for chord with single note");
+                //     ErrorMes("Adjacent tie is not supported for chord  with single note");
+                //     return 1;
+                // }
+                // var prefix = abcstr.substring(noteEnd, T_UPos);
+                // var delPos = prefix.indexOf("-");
+                // if (Act.param2 == 0){
+                //     if (delPos == -1) {
+                //         var insPos = prefix.indexOf(" ");
+                //         if (insPos == -1){
+                //             abcstr = abcstr.substring(0, noteEnd) + "-" + abcstr.substring(noteEnd);
+                //         }else{
+                //             abcstr = abcstr.substring(0, insPos + noteEnd + 1) + "-" + abcstr.substring(insPos + noteEnd + 1);
+                //         }
+                //         CrtPos = T_UPos + 1;
+                //     }else{
+                //         console.error("already tied");
+                //         return 1;
+                //     }
+                //     Act.param2 = 1;
+                //     Act.param1++;
+                // }else if(Act.param2 == 1){
+                //     if (delPos != -1) {
+                //         abcstr = abcstr.substring(0, delPos + noteEnd) + abcstr.substring(delPos + noteEnd + 1);
+                //         CrtPos = T_UPos - 1;
+                //     }else{
+                //         console.error("not tied");
+                //         return 1;
+                //     }
+                //     Act.param2 = 0;
+                //     Act.param1--;
+                // }else{
+                //     console.error("invalid direction of inst: 4");
+                //     return 1;
+                // }
+                // after inserting () jump to right + 2
             },
             function(Act){
             //inst 5:  addVoice <-> delVoice param: [Restore, direct] X: InsVocBef
@@ -493,8 +500,14 @@ var MSOE = new function() {
                     }
                     CrtPos = tmp;
                     if (abcstr.substring(checkStP, T_UPos).indexOf("(3") == -1){
-                        abcstr = abcstr.substring(0, T_UPos) + "(3" + abcstr.substring(T_UPos);
-                        CrtPos = T_UPos + 2;
+                        let insPos = prefix.indexOf("&(");
+                        if (insPos == -1){
+                            abcstr = abcstr.substring(0, T_UPos) + "(3" + abcstr.substring(T_UPos);
+                            CrtPos = T_UPos + 2;
+                        }else{
+                            abcstr = abcstr.substring(0, insPos) + "(3" + abcstr.substring(insPos);
+                            CrtPos = T_UPos + 2;
+                        }
                     }else{
                         console.error("already exists triplet in valid range");
                         return 1;
@@ -829,7 +842,7 @@ var MSOE = new function() {
     //-----------------------------------------//for print
     var rmsmb = (str) => { //remove symbols should not be in the final abcstring
         console.log("after rmsmb:" + str);
-        return str.replace(/[*$#@]/g, "");
+        return str.replace(new RegExp(`[${ignsmbs.join("")}]`, "g"), "");
     };
     var GetStrOffset = (ix) => { //get the length before the voice for highlight listener (ix: index)
         var sum = 0;
@@ -904,8 +917,6 @@ var MSOE = new function() {
     var click_handler = (abcElem) => {
         if(this.insvocbef() || this.chordmode()){ //select notes
             sel_handler(abcElem);
-        }else if(this.tiemode()){ //tie notes
-            tie_handler(abcElem);
         }else{
             pos_handler(abcElem);
         }
@@ -1355,17 +1366,6 @@ var MSOE = new function() {
             this.SelNoteHighLight_();
         }
     };
-    //-----------------------------------------//for tieing not joint notes
-    var tiemode = false;
-    this.tiemode = (toggle) => { //toggle tiemode and return it. toggle: toggle or not
-        if(toggle){
-            tiemode = !tiemode;
-        }
-        return tiemode;
-    };
-    var tie_handler = (abcElem) => { //tie notes
-        console.log("tie notes");
-    };
     //-----------------------------------------//for editing
     this.ChgDstate = (md) => { //change duration state
         switch (md) {
@@ -1547,6 +1547,14 @@ var MSOE = new function() {
             copiedNotes = posToNotes(copiedNotes);
             act({inst:0, param1: CtStP, param2: copiedNotes, X: CtEdP});
         }
+    };
+    this.outslur = () => {
+        if (SelNotes.length < 2){
+            ErrorMes("You have to select more than two notes first");
+        }
+    };
+    var slur = (left, right) => {
+        act({inst: 4, param1: left, param2: right});
     };
     this.insertchsnippet = (sci) => {
         check = toabcnote2(Tonal.Chord.notes(sci));
@@ -1958,11 +1966,12 @@ var MSOE = new function() {
         }, {sum: 0, count: true}).sum;
     };
     
+    var ignsmbs = ["$", "#", "*", "@", "&"]; //symbols that won't be in the final abcstring
+    
     var clicked_index = (abcElem) => {
         console.log(abcstr);
         var bpmstr = (infostrs["bpmstr"] == "")?"180":infostrs["bpmstr"];
         console.log(abcElem);
-        var ignsmbs = ["$", "#", "*", "@"]; //symbols that won't be in the final abcstring
         var offset = abcElem.startChar - 19 - infostrs["ttlstr"].length - infostrs["tmpstr"].length - Lstr.length - infostrs["cmpstr"].length - bpmstr.length - GetStrOffset(abcindex);
         console.log(offset);
         if ((isNaN(offset))){ //click on staff

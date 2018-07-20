@@ -35,7 +35,7 @@
 				"+ :untie from previous note",
 				"ctrl+Z :undo",
 				"ctrl+B :redo",
-				"shift+S :save sheet"
+				"ctrl+S :save sheet"
             ]
         },
         {
