@@ -2071,3 +2071,14 @@ var MSOE = new function() {
         UIhandler.loading(show);
     };
 };
+
+var MSOETest = new (function(target){
+    for (let func of Object.getOwnPropertyNames(target).filter(function(p){
+        return typeof target[p] === 'function';
+    })){
+        this[func] = function(...args){
+            target[func](...args);
+            target.print();
+        }
+    }
+})(MSOE);
