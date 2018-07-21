@@ -41,6 +41,7 @@ var UIhandler = new function(){
         "#copy":"(shift+F)Set copy cursor/Copy notes by clicking again",
         "#cut":"(H)Cut notes when copy is active",
         "#paste":"(G)Paste previous copied or cut notes",
+        "#slur":"(-)Add or remove tie or slur on selected notes",
         "#clef":"(Q)Set clef of current voice by using key 1 to 4",
         "#plus":"Add new voice after current voice(before current voice by holding (ctrl))",
         "#minus":"Delete current voice",
@@ -55,7 +56,7 @@ var UIhandler = new function(){
         ".v_down:eq(0)":"Switch place with lower voice",
         "#logo":"Return to homepage"
     };
-    var help_right = ["#paste", "#clef", "#check", "#remove", ".v_up:eq(0)", ".v_down:eq(0)", "#edit", "#preview", "#night"];
+    var help_right = ["#paste", "#slur", "#clef", "#check", "#remove", ".v_up:eq(0)", ".v_down:eq(0)", "#edit", "#preview", "#night"];
     var help_center = [".v_div:eq(0)", "#logo"]
     //elements whose popups should expand to the right
     this.help_voice = () => { //set help popups for voice list
@@ -659,12 +660,12 @@ $(document).ready(function(){
         MSOE.cutmode();
         MSOE.print();
     });
-    $("#tie").click(function(){
-        $("#tie").css("color","#b5cc18");
+    $("#slur").click(function(){
+        $("#slur").css("color","#b5cc18");
         MSOE.outslur();
         MSOE.print();
         setTimeout(function() {
-            $("#tie").css("color","");
+            $("#slur").css("color","");
         }, 500);
     });
     $("#clef").click(function(){
