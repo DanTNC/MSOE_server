@@ -49,3 +49,19 @@ var server_getCID = (callback) => {
         }
     });
 };
+/**
+ * @callback: a function executed after a good response is received
+ * */
+var server_feedback = (values, callback) => {
+    $.ajax({
+        url: "/feedback",
+        method: "POST",
+        data: values,
+        success: function(data) {
+            callback(data.status);
+        },
+        error: function() {
+            console.log("Ajax error when POST /feedback");
+        }
+    });
+};

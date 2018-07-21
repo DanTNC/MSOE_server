@@ -388,3 +388,7 @@ img.logo{
 .chordpart {
   width: 100%;
 }
+
+#textarea {
+  resize: none;
+}

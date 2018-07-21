@@ -182,6 +182,38 @@ var UIhandler = new function(){
             console.error("no such file corresponding to the language.");
         }
     };
+    this.feedback = () => {
+        var form = $("#feedbackform form:eq(0)");
+        var values = {
+            name: form.find("input[name=feedbackname]").val(),
+            email: form.find("input[name=feedbackemail]").val(),
+            type: form.find("#feedbacktype .item[class*=selected]").data("value"),
+            message: form.find("#textarea").val()
+        };
+        console.log(values);
+        var error = false;
+        if(values.email!="" && !values.email
+            .match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)){
+            console.error("invalid email");
+            $("input[name=feedbackemail]").parent(".field").addClass("error");
+            error = true;
+        }
+        if(values.type == undefined){
+            console.error("type needed");
+            $("#feedbacktype").addClass("error");
+            error = true;
+        }
+        if(values.message == ""){
+            console.error("message needed");
+            $("#textarea").parent(".field").addClass("error");
+            error = true;
+        }
+        if(error) return;
+        server_feedback(values, function(status){
+            console.log(status);
+        });
+        $("#feedbackform").modal("setting", "transition", "fade down").modal("hide");
+    };
     this.imported = (sheets) => { //display exported sheets on screen to let the user choose
         //TODO: implement
         console.log(sheets);
@@ -189,7 +221,9 @@ var UIhandler = new function(){
 };
 
 var checkinput = () => { //if input tags are focused, turn off key events
-    let myArray = Array.from(document.getElementsByTagName("input"));
+    let myArray = Array.from(document.getElementsByTagName("input")).concat(
+                Array.from(document.getElementsByTagName("textarea"))).concat(
+                Array.from(document.getElementsByTagName("select")));
     if (myArray.includes(document.activeElement))
         return true;
     else
@@ -678,6 +712,12 @@ $(document).ready(function(){
             return;
         }
         UIhandler.manual_language(lan);
+    });
+    $("#feedback").click(function(){
+        $("#feedbackform").modal('setting', 'transition', 'fade down').modal("show");
+    });
+    $("#feedbacksubmit").click(function(){
+        UIhandler.feedback();
     });
     $("#chordgen").click(function(){
         MSOE.insertchsnippet($("#chordsym").val());

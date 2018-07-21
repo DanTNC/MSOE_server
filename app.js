@@ -14,6 +14,7 @@ var manual = require('./routes/manual');
 var getCID = require('./routes/CID');
 var tempload = require('./db/tempload');
 var tempsave = require('./db/tempsave');
+var feedback = require('./routes/feedback');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -26,7 +27,8 @@ app.use('/manual', manual);
 app.use('/load', load);
 app.use('/save', save);
 app.use('/auth',auth);
-app.use('/CID',getCID);
+app.use('/CID', getCID);
+app.use('/feedback', feedback);
 
 app.use(express.static(path.resolve(__dirname, 'public')));
 

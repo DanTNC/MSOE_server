@@ -444,6 +444,10 @@ var MSOE = new function() {
             },
             function(Act){
             //inst 8:  infostr param: [infoIndex, newVal] X: oldVal
+                if(!(Act.param1 in infoinputs)){
+                    console.error("no such info inputname");
+                    return 1;
+                }
                 if(Act.param1 == "whatistempo" && Act.param2 == ""){
                     infostrs[infoinputs[Act.param1]] = "4/4";
                 }else{
