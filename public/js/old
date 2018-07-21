@@ -1,0 +1,43 @@
+// CPU inst 4 :=> tie
+                var T_UPos = Act.param1;
+                if (T_UPos == 0 || abcstr[T_UPos - 1] == "\n" || T_UPos == 1 || abcstr[T_UPos - 1] == "$"){
+                    console.log("warning: illegal position for inst: 4");
+                    return 1;
+                }
+                var noteEnd = noteendbefore(T_UPos) + 1;
+                if (abcstr[noteEnd - 1] == "]" && abcstr[T_UPos + 1] != "#"){
+                    console.error("adjacent tie not supported for chord with single note");
+                    ErrorMes("Adjacent tie is not supported for chord  with single note");
+                    return 1;
+                }
+                var prefix = abcstr.substring(noteEnd, T_UPos);
+                var delPos = prefix.indexOf("-");
+                if (Act.param2 == 0){
+                    if (delPos == -1) {
+                        var insPos = prefix.indexOf(" ");
+                        if (insPos == -1){
+                            abcstr = abcstr.substring(0, noteEnd) + "-" + abcstr.substring(noteEnd);
+                        }else{
+                            abcstr = abcstr.substring(0, insPos + noteEnd + 1) + "-" + abcstr.substring(insPos + noteEnd + 1);
+                        }
+                        CrtPos = T_UPos + 1;
+                    }else{
+                        console.error("already tied");
+                        return 1;
+                    }
+                    Act.param2 = 1;
+                    Act.param1++;
+                }else if(Act.param2 == 1){
+                    if (delPos != -1) {
+                        abcstr = abcstr.substring(0, delPos + noteEnd) + abcstr.substring(delPos + noteEnd + 1);
+                        CrtPos = T_UPos - 1;
+                    }else{
+                        console.error("not tied");
+                        return 1;
+                    }
+                    Act.param2 = 0;
+                    Act.param1--;
+                }else{
+                    console.error("invalid direction of inst: 4");
+                    return 1;
+                }

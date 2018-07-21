@@ -628,13 +628,9 @@ $(document).ready(function(){
         MSOE.print();
     });
     $("#tie").click(function(){
-        // if(MSOE.tiemode(true)){
-        //     $("#tie").css("color","#b5cc18");
-        // }else{
-        //     $("#tie").css("color","");
-        // }
         $("#tie").css("color","#b5cc18");
         MSOE.outslur();
+        MSOE.print();
         setTimeout(function() {
             $("#tie").css("color","");
         }, 500);

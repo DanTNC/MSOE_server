@@ -340,49 +340,38 @@ var MSOE = new function() {
             },
             function(Act){
             //inst 4:  slur param: [left, right]
-                // var T_UPos = Act.param1;
-                // if (T_UPos == 0 || abcstr[T_UPos - 1] == "\n" || T_UPos == 1 || abcstr[T_UPos - 1] == "$"){
-                //     console.log("warning: illegal position for inst: 4");
-                //     return 1;
-                // }
-                // var noteEnd = noteendbefore(T_UPos) + 1;
-                // if (abcstr[noteEnd - 1] == "]" && abcstr[T_UPos + 1] != "#"){
-                //     console.error("adjacent tie not supported for chord with single note");
-                //     ErrorMes("Adjacent tie is not supported for chord  with single note");
-                //     return 1;
-                // }
-                // var prefix = abcstr.substring(noteEnd, T_UPos);
-                // var delPos = prefix.indexOf("-");
-                // if (Act.param2 == 0){
-                //     if (delPos == -1) {
-                //         var insPos = prefix.indexOf(" ");
-                //         if (insPos == -1){
-                //             abcstr = abcstr.substring(0, noteEnd) + "-" + abcstr.substring(noteEnd);
-                //         }else{
-                //             abcstr = abcstr.substring(0, insPos + noteEnd + 1) + "-" + abcstr.substring(insPos + noteEnd + 1);
-                //         }
-                //         CrtPos = T_UPos + 1;
-                //     }else{
-                //         console.error("already tied");
-                //         return 1;
-                //     }
-                //     Act.param2 = 1;
-                //     Act.param1++;
-                // }else if(Act.param2 == 1){
-                //     if (delPos != -1) {
-                //         abcstr = abcstr.substring(0, delPos + noteEnd) + abcstr.substring(delPos + noteEnd + 1);
-                //         CrtPos = T_UPos - 1;
-                //     }else{
-                //         console.error("not tied");
-                //         return 1;
-                //     }
-                //     Act.param2 = 0;
-                //     Act.param1--;
-                // }else{
-                //     console.error("invalid direction of inst: 4");
-                //     return 1;
-                // }
-                // after inserting () jump to right + 2
+                console.log(Act.param1, Act.param2);
+                var left = Act.param1;
+                var right = Act.param2;
+                var left_noteEnd = noteendbefore(left) + 1;
+                var left_prefix = abcstr.substring(left_noteEnd, left);
+                var left_delPos = left_prefix.indexOf("&(");
+                CrtPos = right;
+                var right_ = mvpos(1);
+                if (right_ == CrtPos){
+                    right_ = abcstr.length;
+                }
+                var right_noteEnd = noteendbefore(right_) + 1;
+                var right_prefix = abcstr.substring(right_noteEnd, right_);
+                var right_delPos = right_prefix.indexOf("&)");
+                console.log(left_delPos, right_delPos);
+                if (left_delPos == -1 || right_delPos == -1){
+                    abcstr = abcstr.substring(0, left) + "&(" +
+                    abcstr.substring(left, right_noteEnd) + "&)" +
+                    abcstr.substring(right_noteEnd);
+                    CrtPos = right + 2;
+                    Act.param1 += 2;
+                    Act.param2 += 2;
+                    SelNotesShift(2);
+                }else{
+                    abcstr = abcstr.substring(0, left_noteEnd + left_delPos) +
+                            abcstr.substring(left_noteEnd + left_delPos + 2, right_noteEnd + right_delPos) +
+                            abcstr.substring(right_noteEnd + right_delPos + 2);
+                    CrtPos = right - 2;
+                    Act.param1 -= 2;
+                    Act.param2 -= 2;
+                    SelNotesShift(-2);
+                }
             },
             function(Act){
             //inst 5:  addVoice <-> delVoice param: [Restore, direct] X: InsVocBef
@@ -543,7 +532,9 @@ var MSOE = new function() {
     this.undo = ()=>{ //TODO: sync this
         var Act = actions.pop();
         if(!Act) return;
-        this.SelNoteClr();
+        if(Act.inst != 4){
+            this.SelNoteClr();
+        }
         sync_undo();
         console.log("undo :", Act.inst, Act.param1, Act.param2, Act.X);
         SaveNLoad(Act.index);
@@ -554,7 +545,9 @@ var MSOE = new function() {
     this.redo = ()=>{ //TODO: sync this
         var Act = re_actions.pop();
         if(!Act) return;
-        this.SelNoteClr();
+        if(Act.inst != 4){
+            this.SelNoteClr();
+        }
         sync_redo();
         console.log("redo :", Act.inst, Act.param1, Act.param2, Act.X);
         SaveNLoad(Act.index);
@@ -564,7 +557,9 @@ var MSOE = new function() {
 
     var act = (Act, chord) => { //record action and emit sheet change message for syncronization
         if(!Act) return;
-        this.SelNoteClr();
+        if(Act.inst != 4){
+            this.SelNoteClr();
+        }
         console.log("do :", Act.inst, Act.param1, Act.param2, Act.X);
         // console.log("actions:", actions);
         re_actions = [];
@@ -1304,6 +1299,9 @@ var MSOE = new function() {
         this.SelNoteHighLight("clear", {color:(UIhandler.night?"white":"#000000")});
         this.SelNoteHighLight("HL", {color: SelColor, notes: this.PartialSelNotes("sel")});
     };
+    var SelNotesShift = (amt) => {
+        SelNotes = SelNotes.map(x=>{return {pos: x.pos + amt, sel: x.sel}});
+    };
     this.SelNotesCrt = () => {
         this.SelNotesPush({pos: CrtPos, sel: this.getCssClass(this.chordPos())});
     };
@@ -1551,7 +1549,19 @@ var MSOE = new function() {
     this.outslur = () => {
         if (SelNotes.length < 2){
             ErrorMes("You have to select more than two notes first");
+            return;
         }
+        var poses = arrangeSelNotes();
+        var left = poses[0], right = poses[poses.length - 1];
+        if (!slurCheck(left, right)){
+            ErrorMes("Both ends need to be notes");
+            return;
+        }
+        slur(left, right);
+    };
+    var slurCheck = (l, r) => {
+        var illegalChars = ["z", "Z", "|", "$"];
+        return !(illegalChars.includes(abcstr[l + 1]) || illegalChars.includes(abcstr[r + 1]));
     };
     var slur = (left, right) => {
         act({inst: 4, param1: left, param2: right});
