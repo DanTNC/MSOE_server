@@ -45,7 +45,7 @@
 			<div class="ui inverted teal button chordpart" id="chordforgen">insert</div>
         </div>
     </div>
-    <div class="ui right sidebar inverted vertical menu mCustomScrollbar"  data-mcs-theme="minimal" data-mcs-axis="y" id="sidebar">
+    <div class="ui right sidebar inverted vertical menu" id="sidebar">
         <div class="item">
             <span id="manual_window">
                 <i class="large angle double left icon" id="manual_width"></i>
@@ -59,68 +59,13 @@
                 <button class="ui inverted teal button font" id="font_1">小</button>
             </div>
         </div>
-        <div class="item">
-            <h2 class="ui header" style="color:white;">游標指令</h2>
-            <p class="manual">
-                左 :向左移一格
-                <br> 右 :向右移一格
-                <br> 上 :移動到上一行最尾端
-                <br> 下 :移動到下一行最開始
-                <br> home :移動到此行最開始
-                <br> end :移動到此行最尾端
-                <br>
-                <br> </p>
-        </div>
-        <div class="item">
-            <h2 class="ui header" style="color:white;">編輯指令</h2>
-            <p class="manual">
-				Z~M :輸入音符
-                <br> shift+Z~M :和弦模式
-                <br> D :休止符
-                <br> | :手動加小節線
-                <br> &lt&gt :節拍(/2 or *2)
-                <br> shift+&lt&gt :增減附點
-                <br> ? :升八度 :(從C3到C6)
-                <br> ' :降八度 :(從C3到C6)
-                <br> Backspace :刪除
-                <br> ] :增加升音記號
-                <br> [ :增加降音記號
-                <br> S :將連在一起的音符分開
-                <br> A :將被分開的音符再次連起來
-				<br> Enter :換行
-                <br> - :與前一個音連音
-				<br> + :與前一個音解除連音
-				<br> ctrl+Z :復原
-				<br> ctrl+B :重做
-				<br> shift+S :存檔
-				<br> 
-                <br> </p>
-        </div>
-        <div class="item">
-            <h2 class="ui header" style="color:white;">複製指令</h2>
-            <p class="manual">
-				shift+F (普通模式下) :開啟複製/剪下模式並記錄此點為複製/剪下開始點
-                <br> shift+F (複製/剪下模式下) :以目前位置為複製結束點，記錄複製的東西並結束複製/剪下模式
-                <br> H (複製/剪下模式下) :以目前位置為剪下結束點，記錄剪下的東西並結束複製/剪下模式
-                <br> F (複製/剪下模式下) :取消複製/剪下
-                <br> G :貼上
-                <br>
-                <br> </p>
-        </div>
-        <div class="item">
-            <h2 class="ui header" style="color:white;">聲部指令</h2>
-            <p class="manual">
-				W :新增一個聲部
-                <br> E :刪除目前聲部 (只剩一個聲部時無法使用)
-                <br> R :紀錄此聲部為聲部A
-                <br> shift+R :將此聲部與聲部A交換位置
-                <br> Q :進入譜號設定模式
-				<br> 1~6 (普通模式下) :切換游標到聲部1~6
-				<br> 1~4 (譜號設定模式下) :設定譜號為 (treble alto tenor bass)
-				<br> 
-                <br> </p>
-        </div>
     </div>
+    <script type="text/javascript">
+	    $("#sidebar").mCustomScrollbar({
+	        theme: "minimal",
+	        axis: "y"
+	    });
+	</script>
     <div class="pusher">
         <div class="fullscreen" id="preloader">
             <img id="loading" src="img/loading.gif"/>

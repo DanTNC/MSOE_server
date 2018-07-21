@@ -21,13 +21,13 @@ $(function(){
         this.manual_language = (lan) => { //change manual language
             if(lan_files[lan]){
                 $.getJSON(lan_files[lan], function(json){
-                    $("#mCSB_1_container .item:not(:first-child)").remove();
+                    $("#sidebar_new .mCSB_container:eq(0) .item:not(:first-child)").remove();
                     var man_json = json.manual;
                     for (let item of man_json){
                         $("<div class='item'/>")
                         .append($("<h2 class='ui header' style='color:white;'></h2>").text(item.header))
                         .append($("<p class='manual'></p>").html(item.content.join("<br>")+"<br><br>"))
-                        .appendTo("#mCSB_1_container");
+                        .appendTo("#sidebar_new .mCSB_container:eq(0)");
                     }
                     $("#font").text(json.font.title);
                     $("#font_0").text(json.font.L);
@@ -64,4 +64,5 @@ $(function(){
         }
         UI.manual_language(lan);
     });
+    UI.manual_language("ch-TW");
 });

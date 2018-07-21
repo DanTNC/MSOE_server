@@ -31,8 +31,7 @@
                 "S :separate two linked notes",
                 "A :assemble two adjacent notes",
 				"Enter :break a line",
-                "- :tie with previous note",
-				"+ :untie from previous note",
+                "- :add or remove tie or slur on selected notes",
 				"ctrl+Z :undo",
 				"ctrl+B :redo",
 				"ctrl+S :save sheet"

@@ -141,11 +141,9 @@ var UIhandler = new function(){
     this.manual_width = () => { //toggle manual width
         manual_widen = !manual_widen;
         if(manual_widen){
-            // $("#sidebar").width("100vw");
             $("#sidebar").animate({"width":"100vw"});
             $("#manual_width").removeClass("left").addClass("right");
         }else{
-            // $("#sidebar").width("260px");
             $("#sidebar").animate({"width":"260px"});
             $("#manual_width").removeClass("right").addClass("left");
         }
@@ -164,13 +162,13 @@ var UIhandler = new function(){
     this.manual_language = (lan) => { //change manual language
         if(lan_files[lan]){
             $.getJSON(lan_files[lan], function(json){
-                $("#mCSB_2_container .item:not(:first-child)").remove();
+                $("#sidebar .mCSB_container:eq(0) .item:not(:first-child)").remove();
                 var man_json = json.manual;
                 for (let item of man_json){
                     $("<div class='item'/>")
                     .append($("<h2 class='ui header' style='color:white;'></h2>").text(item.header))
                     .append($("<p class='manual'></p>").html(item.content.join("<br>")+"<br><br>"))
-                    .appendTo("#mCSB_2_container");
+                    .appendTo("#sidebar .mCSB_container:eq(0)");
                 }
                 $("#font").text(json.font.title);
                 $("#font_0").text(json.font.L);
@@ -189,12 +187,6 @@ var UIhandler = new function(){
         console.log(sheets);
     };
 };
-
-MSOE.UIhandler(UIhandler); //register UIhandler
-UIhandler.lan_file_set({
-    "ch-TW": "json/ch_tw.json",
-    "en-US": "json/en_us.json"
-}, false);
 
 var checkinput = () => { //if input tags are focused, turn off key events
     let myArray = Array.from(document.getElementsByTagName("input"));
@@ -546,6 +538,11 @@ $(window).on("load", function(){
 });
 
 $(document).ready(function(){
+    MSOE.UIhandler(UIhandler); //register UIhandler
+    UIhandler.lan_file_set({
+        "ch-TW": "json/ch_tw.json",
+        "en-US": "json/en_us.json"
+    }, false);
     MSOE.urlload(function(m){
         MSOE.print();
         MSOE.printVoc();
@@ -572,6 +569,7 @@ $(document).ready(function(){
         if(!MSOE.unsave()){
             $("#discard").hide();
         }
+        UIhandler.manual_language("ch-TW");
     });
     $("#logo").click(function(){
         window.location = "/";
