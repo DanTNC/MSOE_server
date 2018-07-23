@@ -2043,12 +2043,17 @@ var MSOE = new function() {
         this.chmodeoff();
         movefrom = CrtPos;
     };
+    
     this.pre_move_edge = () => {
         this.chmodeoff();
         if(this.insvocbef()){
             this.SelNotesCrt();
         }
         movefrom = CrtPos;
+    };
+    
+    this.pre_move_line = () => {
+        this.pre_move_edge();
     };
     
     this.post_move = () => {
@@ -2077,10 +2082,32 @@ var MSOE = new function() {
         }
         this.print();
     };
+    
     this.post_move_edge = () => {
         this.chmodeon();
         if (!this.insvocbef()){
             this.SelNoteClr();
+        }
+        this.print();
+    };
+    
+    this.post_move_line = () => {
+        this.chmodeon();
+        if (!this.insvocbef()){
+            this.SelNoteClr();
+        }else{
+            if (CrtPos == movefrom){
+                this.SelNoteCrt();
+            }else{
+                let Goal = CrtPos;
+                CrtPos = movefrom;
+                if (CrtPos > Goal){
+                    mvpos(4);
+                }else{
+                    mvpos(5);
+                }
+                CrtPos = Goal;
+            }
         }
         this.print();
     };

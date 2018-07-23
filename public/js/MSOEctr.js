@@ -461,14 +461,14 @@ var move = (event) => { // some keys can't be detected in keypress
             MSOE.post_move();
             break;
         case 38: //"up"
-            MSOE.pre_move();
+            MSOE.pre_move_line();
             MSOE.outmove(2);
-            MSOE.post_move();
+            MSOE.post_move_line();
             break;
         case 40: //"down"
-            MSOE.pre_move();
+            MSOE.pre_move_line();
             MSOE.outmove(3);
-            MSOE.post_move();
+            MSOE.post_move_line();
             break;
         case 36: //"home"
             event.preventDefault();
