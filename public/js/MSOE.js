@@ -1342,7 +1342,16 @@ var MSOE = new function() {
     };
     var sel_handler = (abcElem) => { //select notes
         console.log("select notes");
+        var tmpC = CrtPos, tmpI = abcindex;
         var selected = clicked_index(abcElem);
+        if (tmpI != abcindex){
+            this.SelNoteClr();
+            CrtPos = selected;
+            this.print();
+        }else{
+            SaveNLoad(tmpI);
+            CrtPos = tmpC;
+        }
         console.log("clicked on: " + selected);
         if (this.insvocbef()){
             this.SelNotesPush({pos: selected, sel: this.getCssClass(selected)});
