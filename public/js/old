@@ -41,3 +41,13 @@
                     console.error("invalid direction of inst: 4");
                     return 1;
                 }
+// GetStrOffset
+    var GetStrOffset = (ix) => { //get the length before the voice for highlight listener (ix: index)
+        var sum = 0;
+        for (var i = 0; i < ix + 1; i++) {
+            sum += 18 + (Math.floor(Math.log10(i + 1)) + 1) + clef[i].length + ((voicename[i] === undefined)?RdClf(clef[i], undefined, 1):voicename[i]).length;
+            if (i != ix) sum += rmsmb(strs[i]).length + 2;
+        }
+        maxoffset = rmsmb(abcstr).length + 1;
+        return sum;
+    };

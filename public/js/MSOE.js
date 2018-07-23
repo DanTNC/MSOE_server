@@ -843,14 +843,24 @@ var MSOE = new function() {
         console.log("after rmsmb:" + str);
         return str.replace(new RegExp(`[${ignsmbs.join("")}]`, "g"), "");
     };
-    var GetStrOffset = (ix) => { //get the length before the voice for highlight listener (ix: index)
+    var GetStrOffset = (offset) => { //get the length before the voice and the clicked index for highlight listener
         var sum = 0;
-        for (var i = 0; i < ix + 1; i++) {
+        var res = {};
+        console.log(offset);
+        for (var i = 0; i < clef.length; i++) {
             sum += 18 + (Math.floor(Math.log10(i + 1)) + 1) + clef[i].length + ((voicename[i] === undefined)?RdClf(clef[i], undefined, 1):voicename[i]).length;
-            if (i != ix) sum += rmsmb(strs[i]).length + 2;
+            let str = (i == abcindex)?rmsmb(abcstr):rmsmb(strs[i]);
+            console.log(sum);
+            if (sum + str.length + 2 > offset){
+                res.offset = offset - sum;
+                res.ix = i;
+                break;
+            }
+            sum += str.length + 2;
+            console.log(sum);
         }
         maxoffset = rmsmb(abcstr).length + 1;
-        return sum;
+        return res;
     };
     var GetLineOffset = (line) => { //get the position of nth line's start
         var pos = 0;
@@ -875,7 +885,7 @@ var MSOE = new function() {
         var bpmstr = (infostrs["bpmstr"] == "")?"180":infostrs["bpmstr"];
         updateLstr();
         var SS = "T: " + infostrs["ttlstr"] + "\nM: " + infostrs["tmpstr"] + "\nL: " + Lstr + "\nC: " + infostrs["cmpstr"] + "\nQ: " + bpmstr + "\n" + ForPrint();
-        // console.log("entire abcstr:", SS);
+        console.log("entire abcstr:", SS);
         var previewS = "M: " + infostrs["tmpstr"] + "\nL: " + Lstr + "\nV: 1 clef=" + clef[abcindex] + "\n" + toabcnote("G").replace("*", "");
         abcjs.renderAbc('booo', previewS, {}, {
             listener: {
@@ -1986,12 +1996,19 @@ var MSOE = new function() {
         console.log(abcstr);
         var bpmstr = (infostrs["bpmstr"] == "")?"180":infostrs["bpmstr"];
         console.log(abcElem);
-        var offset = abcElem.startChar - 19 - infostrs["ttlstr"].length - infostrs["tmpstr"].length - Lstr.length - infostrs["cmpstr"].length - bpmstr.length - GetStrOffset(abcindex);
-        console.log(offset);
-        if ((isNaN(offset))){ //click on staff
-            var line = abcElem.abselem.elemset[0].attrs.class.match(/l([^ ]*)/)[1];
+        updateLstr();
+        if (abcElem.startChar == undefined){ //click on staff
+            var class_ = abcElem.abselem.elemset[0].attrs.class; 
+            var line = class_.match(/l([^ ]*)/)[1];
+            var voice = class_.match(/v([^ ]*)/)[1];
+            SaveNLoad(voice);
             return GetLineOffset(line);
         }
+        var stroffset = GetStrOffset(abcElem.startChar - 19 - infostrs["ttlstr"].length - infostrs["tmpstr"].length - Lstr.length - infostrs["cmpstr"].length - bpmstr.length);
+        var offset = stroffset.offset;
+        var moveix = stroffset.ix;
+        SaveNLoad(moveix);
+        console.log(offset);
         if ((offset < 0) || (offset > maxoffset)){ //illegal offset
             return CrtPos;
         }
