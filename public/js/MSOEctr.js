@@ -100,6 +100,11 @@ var UIhandler = new function(){
         }
     };
     
+    var toolbox = false;
+    this.toolbox_tog = () => {
+        toolbox = !toolbox;
+        return toolbox;
+    };
     
     this.printabc = () => { //print the sheet as PDF
         printJS("sheet", "html");
@@ -652,6 +657,15 @@ $(document).ready(function(){
     });
     $("#help").click(function(e){
         UIhandler.help();
+    });
+    $('#tool').click(function() {
+        $('#toolbox').sidebar({dimPage: false, closable: false, transition: "overlay"})
+        .sidebar('toggle');
+        if (UIhandler.toolbox_tog()){
+            $("#tool").css("color", "#51d8ea");
+        }else{
+            $("#tool").css("color", "");
+        }
     });
     $("#copy").click(function(){
         MSOE.copyui();
