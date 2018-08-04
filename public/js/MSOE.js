@@ -977,6 +977,7 @@ var MSOE = new function() {
                     if (push) {
                         history.pushState({ title: "" }, "", host + "?!" + index + "!" + key);
                     }
+                    UIhandler.displayurl("?!" + index + "!" + key);
                 } else {
                     console.log(msg.status.msg);
                 }
@@ -1040,6 +1041,20 @@ var MSOE = new function() {
         } else {
             func(true);
         }
+    };
+    
+    this.displayurl = () => {
+        if (index !== ""){
+            var ret_url = "?!" + index;
+            if (key !== ""){
+                ret_url += "!" + key;
+            }
+            UIhandler.displayurl(ret_url);
+        }
+    };
+    
+    this.host = () => {
+        return host;
     };
     //-----------------------------------------//for infos
     var Lstr = "1/4";

@@ -220,6 +220,11 @@ var UIhandler = new function(){
         });
         $("#feedbackform").modal("setting", "transition", "fade down").modal("hide");
     };
+    
+    this.displayurl = (url) => {
+        $("#save_url input").val(url);
+    };
+    
     this.imported = (sheets) => { //display exported sheets on screen to let the user choose
         //TODO: implement
         console.log(sheets);
@@ -610,6 +615,7 @@ $(document).ready(function(){
             $("#discard").hide();
         }
         UIhandler.manual_language("ch-TW");
+        MSOE.displayurl();
     });
     $("#logo").click(function(){
         window.location = "/";
@@ -727,6 +733,9 @@ $(document).ready(function(){
             return;
         }
         UIhandler.manual_language(lan);
+    });
+    $("#save_url button").click(function(){
+        window.location = MSOE.host() + $("#save_url input").val();
     });
     $("#feedback").click(function(){
         $("#feedbackform").modal('setting', 'transition', 'fade down').modal("show");

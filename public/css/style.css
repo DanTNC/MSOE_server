@@ -392,3 +392,12 @@ img.logo{
 #textarea {
   resize: none;
 }
+
+#save_url {
+  position: fixed;
+  bottom: 2vh;
+}
+
+#save_url button {
+  margin-left: 1vw;
+}
