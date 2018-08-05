@@ -436,10 +436,6 @@ var key = (event) => { // only keypress can tell if "shift" is pressed at the sa
             MSOE.outslur();
             break;
             // ----------Slur--------------------
-        case 26://"ctrl+Z" undo
-            MSOE.undo();
-            break;
-            // ----------Undo--------------------
         case 2://"ctrl+B" redo
             MSOE.redo();
             break;
@@ -503,11 +499,19 @@ var move = (event) => { // some keys can't be detected in keypress
         case 17: //"ctrl" for add voice before
             MSOE.insvocbef(true);
             break;
+        case 90: //"ctrl + Z" preventing default undo text input
+            if (MSOE.insvocbef()){
+                event.preventDefault();
+                MSOE.undo();
+                MSOE.print();
+            }
+            break;
         case 83: //"ctrl + S" for save
             if (MSOE.insvocbef()){
                 event.preventDefault();
                 MSOE.save();
             }
+            break;
         case 67: //"ctrl + C" for copy selected notes
             if (MSOE.insvocbef()){
                 MSOE.copy2();
