@@ -66,7 +66,7 @@ var MSOE = new function() {
                 for(var i = 0, len = Act.param2.length; i < len; i++){
                     if(abcstr[Act.param1+i]!=Act.param2[i]){
                         Delen = false;
-                        console.error("something's wrong with content");
+                        console.error("something's wrong with content :" + abcstr[Act.param1+i] + "/" + Act.param2[i]);
                         return 1;
                     }
                 }

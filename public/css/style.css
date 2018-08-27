@@ -257,7 +257,7 @@ img.logo{
   height: 40vh;
 }
 .footer_input, .footer_input.ui.input{
-  position:fixed;
+  position: absolute;
   left: 2vw;
 }
 #octave_{
@@ -313,18 +313,13 @@ img.logo{
 }
 
 #loading {
-  position: absolute;
-  margin: auto;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  margin-top: 45vh;
 }
 
 .fullscreen p {
   color: white;
   font-size: 2vw;
-  margin-top: 59vh;
+  margin-top: 2vh;
 }
 
 #forceupdatemes p {
@@ -377,7 +372,7 @@ img.logo{
 }
 
 #noteinfo {
-  position: fixed;
+  position: absolute;
   bottom: 3vh;
 }
 
@@ -394,8 +389,8 @@ img.logo{
 }
 
 #save_url {
-  position: fixed;
-  bottom: 2vh;
+  position: absolute;
+  bottom: 6vh;
 }
 
 #save_url button {
