@@ -1427,6 +1427,7 @@ var MSOE = new function() {
             edP = abcstr.length;
         }
         var oldContent = abcstr.substring(CrtPos, edP);
+        console.log(oldContent);
         var dFrom = undefined;
         for (var i = oldContent.length - 1; i > 0; i--){
             if (oldContent[i] == "*"){
@@ -1435,7 +1436,8 @@ var MSOE = new function() {
             }
         }
         var dTo = noteendbefore(edP) - 1;
-        var oldD = oldContent.substring(dFrom + 1, dTo - CrtPos);
+        console.log(dFrom, dTo);
+        var oldD = oldContent.substring(dFrom + 1, dTo - CrtPos + 1);
         console.log(oldD);
         if (oldD == ""){
             oldD = "1";
