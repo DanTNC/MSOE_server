@@ -85,6 +85,7 @@ var MSOE = new function() {
                     if(abcstr[Act.X]!="$"){
                         CrtPos = mvpos(0);
                     }
+                    console.log("CrtPos", CrtPos);
                     Act.inst = 0;
                     return;
                 }
@@ -1196,13 +1197,13 @@ var MSOE = new function() {
         if (mvpos(1) == CrtPos) {
             let Act = {inst: 1, param1: abcstr.length, param2: cpStr, X: abcstr.length + cpStr.length - 1};
             act(Act);
-            CrtPos = abcstr.length - 1;
-            CrtPos = mvpos(0);
+            // CrtPos = abcstr.length - 1;
+            // CrtPos = mvpos(0);
         } else {
             let Act = {inst: 1, param1: mvpos(1), param2: cpStr, X: mvpos(1) + cpStr.length - 1};
             act(Act);
-            CrtPos += CpStr.length;
-            CrtPos = mvpos(0);
+            // CrtPos += CpStr.length;
+            // CrtPos = mvpos(0);
         }
         checkbar();
     };
@@ -1219,15 +1220,19 @@ var MSOE = new function() {
     };
     var posToNotes = (poses) => {
         var res = [];
+        var tmp = CrtPos;
         for (let pos of poses){
-            var tmp = CrtPos;
             CrtPos = pos;
             var End = (mvpos(1) == CrtPos)?abcstr.length:mvpos(1);
+            if (abcstr[End - 1] == "\n"){
+                End--;
+            }
             var str = abcstr.substring(pos, End);
             if (str == "$") str = "\n$";
             res.push(str);
-            CrtPos = tmp;
         }
+        CrtPos = tmp;
+        console.log(res);
         return res.join("");
     };
     var CpStr2 = "";
@@ -1575,6 +1580,9 @@ var MSOE = new function() {
         }else{
             var copiedNotes = arrangeSelNotes();
             var CtStP = copiedNotes[0];
+            if (abcstr[CtStP - 1] == "\n"){
+                CtStP--;
+            }
             var tmp = CrtPos;
             CrtPos = copiedNotes[copiedNotes.length - 1];
             var CtEdP = mvpos(1);
