@@ -1426,6 +1426,13 @@ var MSOE = new function() {
             default:
         }
     };
+    var ChgInPlc = false;
+    this.chginplc = (val) => {
+        if (val != undefined){
+            ChgInPlc = val;
+        }
+        return ChgInPlc;
+    };
     this.ChgDstateInPlace = (md) => { //change duration state in place
         var edP = mvpos(1);
         if (edP == CrtPos){

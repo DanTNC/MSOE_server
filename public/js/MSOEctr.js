@@ -499,6 +499,9 @@ var move = (event) => { // some keys can't be detected in keypress
         case 17: //"ctrl" for add voice before
             MSOE.insvocbef(true);
             break;
+        case 18: //"alt" for change duration in place
+            MSOE.chginplc(true);
+            break;
         case 90: //"ctrl + Z" preventing default undo text input
             if (MSOE.insvocbef()){
                 event.preventDefault();
@@ -528,7 +531,7 @@ var move = (event) => { // some keys can't be detected in keypress
             }
             break;
         case 188: //"ctrl + <" or "ctrl + shift + <" for change Dstate in place (down)
-            if (MSOE.insvocbef()){
+            if (MSOE.chginplc()){
                 if(MSOE.chordmode()){
                     MSOE.ChgDstateInPlace(2);
                 }else{
@@ -538,7 +541,7 @@ var move = (event) => { // some keys can't be detected in keypress
             }
             break;
         case 190: //"ctrl + >" or "ctrl + shift + >" for change Dstate in place (up)
-            if (MSOE.insvocbef()){
+            if (MSOE.chginplc()){
                 if(MSOE.chordmode()){
                     MSOE.ChgDstateInPlace(3);
                 }else{
@@ -561,6 +564,9 @@ var chord = (event) => { //keyup event for chord mode
             break;
         case 17: //"ctrl" for add voice before
             MSOE.insvocbef(false);
+            break;
+        case 18: //"alt" for change duration in place
+            MSOE.chginplc(false);
             break;
     }
 };
