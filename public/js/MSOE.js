@@ -467,6 +467,7 @@ var MSOE = new function() {
             //inst 10:  replace param: [stP, newContent] X:oldContent
                 abcstr = abcstr.substring(0, Act.param1) + Act.param2 + abcstr.substring(Act.param1 + Act.X.length);
                 Act.param2 = [Act.X, Act.X = Act.param2][0];
+                CrtPos = Act.param1;
             },
             function(Act){
             //inst 11:  untriplet <-> triplet param: [T_UPos, direct]
@@ -562,7 +563,7 @@ var MSOE = new function() {
 
     var act = (Act, chord) => { //record action and emit sheet change message for syncronization
         if(!Act) return;
-        if(Act.inst != 4){
+        if(Act.inst != 4 && Act.noclr !== true){
             this.SelNoteClr();
         }
         console.log("do :", Act.inst, Act.param1, Act.param2, Act.X);
@@ -886,7 +887,7 @@ var MSOE = new function() {
         var bpmstr = (infostrs["bpmstr"] == "")?"180":infostrs["bpmstr"];
         updateLstr();
         var SS = "T: " + infostrs["ttlstr"] + "\nM: " + infostrs["tmpstr"] + "\nL: " + Lstr + "\nC: " + infostrs["cmpstr"] + "\nQ: " + bpmstr + "\n" + ForPrint();
-        console.log("entire abcstr:", SS);
+        // console.log("entire abcstr:", SS);
         var previewS = "M: " + infostrs["tmpstr"] + "\nL: " + Lstr + "\nV: 1 clef=" + clef[abcindex] + "\n" + toabcnote("G").replace("*", "");
         abcjs.renderAbc('booo', previewS, {}, {
             listener: {
@@ -1218,6 +1219,20 @@ var MSOE = new function() {
             }
         }));
     };
+    var updateSelPoses = (poses) => {
+        SelNotes = SelNotes.sort((a, b) => {
+            if (a.pos < b.pos){
+                return -1;
+            }else if (a.pos > b.pos){
+                return 1;
+            }else{
+                return 0;
+            }
+        });
+        for (let idx in SelNotes){
+            SelNotes[idx].pos = poses[idx];
+        }
+    };
     var posToNotes = (poses) => {
         var res = [];
         var tmp = CrtPos;
@@ -1426,35 +1441,21 @@ var MSOE = new function() {
             default:
         }
     };
-    var ChgInPlc = false;
-    this.chginplc = (val) => {
+    var ChgInPlc = false; // whether to change duration in place
+    this.chginplc = (val) => { // getter and setter for ChgInPlc
         if (val != undefined){
             ChgInPlc = val;
         }
         return ChgInPlc;
     };
-    this.ChgDstateInPlace = (md) => { //change duration state in place
-        var edP = mvpos(1);
-        if (edP == CrtPos){
-            edP = abcstr.length;
+    var newDFromoldD = (oldD, md) => { // caculate newD from oldD
+        var parts = oldD.split("/");
+        var D;
+        if (parts.length == 1) {
+            D = parts[0];
+        } else {
+            D = parts[0] / parts[1];
         }
-        var oldContent = abcstr.substring(CrtPos, edP);
-        console.log(oldContent);
-        var dFrom = undefined;
-        for (var i = oldContent.length - 1; i > 0; i--){
-            if (oldContent[i] == "*"){
-                dFrom = i;
-                break;
-            }
-        }
-        var dTo = noteendbefore(edP) - 1;
-        console.log(dFrom, dTo);
-        var oldD = oldContent.substring(dFrom + 1, dTo - CrtPos + 1);
-        console.log(oldD);
-        if (oldD == ""){
-            oldD = "1";
-        }
-        var D = eval(oldD);
         var ceil = 1/16;
         for (; ceil <= 8; ceil*=2){
             if (D < ceil){
@@ -1482,9 +1483,74 @@ var MSOE = new function() {
         }
         var newD = numtostr(2 * base * (1 - Math.pow(1/2, n)));
         if (newD == "1") newD = "";
-        if(oldD == "1") oldD = "";
+        if (oldD == "1") oldD = "";
+        return [newD, oldD];
+    };
+    var getoldDAt = (pos) => { // get oldD from substring for note at pos
+        var temp = CrtPos;
+        CrtPos = pos;
+        var edP = mvpos(1);
+        if (edP == CrtPos){
+            edP = abcstr.length;
+        }
+        var oldContent = abcstr.substring(CrtPos, edP);
+        if (oldContent.endsWith("\n")){
+            oldContent = oldContent.substring(0, oldContent.length - 1);
+        }
+        var dFrom = undefined;
+        for (var i = oldContent.length - 1; i > 0; i--){
+            if (oldContent[i] == "*"){
+                dFrom = i;
+                break;
+            }
+        }
+        var dTo = noteendbefore(edP) - 1;
+        var oldD = oldContent.substring(dFrom + 1, dTo - CrtPos + 1);
+        if (oldD == ""){
+            oldD = "1";
+        }
+        CrtPos = temp;
+        return [oldD, oldContent];
+    };
+    var ChgDstateInPlaceSingle = (md, pos, noclr) => {
+        var oldD, oldContent, newD;
+        [oldD, oldContent] = getoldDAt(pos);
+        if (oldContent.indexOf("*") == -1){
+            if (oldContent == "$" && pos != 0){
+                oldContent = "\n$";
+            }
+            return [0, oldContent, oldContent];
+        }
+        [newD, oldD] = newDFromoldD(oldD, md);
         var newContent = oldContent.replace(new RegExp("\\*" + oldD, "g"), "*" + newD);
-        act({inst: 10, param1: CrtPos, param2: newContent, X: oldContent});
+        if (!noclr){
+            act({inst: 10, param1: pos, param2: newContent, X: oldContent});
+        }
+        return [newD.length - oldD.length, oldContent, newContent];
+    };
+    var ChgDstateInPlaceSel = (md) => {
+        var offset = 0;
+        var newPoses = [];
+        var oldabcstring = "";
+        var newabcstring = "";
+        var firstPos = undefined;
+        for (let pos of arrangeSelNotes()){
+            if (firstPos === undefined) firstPos = pos;
+            newPoses.push(pos + offset);
+            var result = ChgDstateInPlaceSingle(md, pos, true);
+            offset += result[0];
+            oldabcstring += result[1];
+            newabcstring += result[2];
+        }
+        act({inst: 10, param1: firstPos, param2: newabcstring, X: oldabcstring, noclr: true});
+        updateSelPoses(newPoses);
+    };
+    this.ChgDstateInPlace = (md) => { //change duration state in place
+        if (SelNotes.length == 0){
+            ChgDstateInPlaceSingle(md, CrtPos);
+        } else {
+            ChgDstateInPlaceSel(md);
+        }
     };
     this.ChgTstate = (md) => { //change octave state
         if (md == 0) Tstate = (Tstate == 3) ? 0 : Tstate + 1;
@@ -1880,7 +1946,7 @@ var MSOE = new function() {
         if (num === 1) { //1 doesn't need to be noted in abcstring
             num = "";
         }
-        return num;
+        return String(num);
     };
     var toabcnote = (ch, Tst) => { //generate a string for a note in ABC format
         Tst = (Tst === undefined)? Tstate: Tst;
