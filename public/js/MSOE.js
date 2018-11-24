@@ -117,7 +117,7 @@ var MSOE = new function() {
                             abcstr = abcstr.substring(0, noteEnd) + " " + abcstr.substring(noteEnd);
                             CrtPos = A_DPos + 1;
                         }else{
-                            abcstr = abcstr.substring(0, insPos + 2) + " " + abcstr.substring(insPos + 2);
+                            abcstr = abcstr.substring(0, insPos + 2 + noteEnd) + " " + abcstr.substring(insPos + 2 + noteEnd);
                             CrtPos = A_DPos + 1;
                         }
                     }else{
@@ -500,7 +500,7 @@ var MSOE = new function() {
                             abcstr = abcstr.substring(0, T_UPos) + "(3" + abcstr.substring(T_UPos);
                             CrtPos = T_UPos + 2;
                         }else{
-                            abcstr = abcstr.substring(0, insPos) + "(3" + abcstr.substring(insPos);
+                            abcstr = abcstr.substring(0, insPos + noteEnd) + "(3" + abcstr.substring(insPos + noteEnd);
                             CrtPos = T_UPos + 2;
                         }
                     }else{
@@ -522,6 +522,37 @@ var MSOE = new function() {
                 }else{
                     console.error("invalid direction of inst: 11");
                     return 1;
+                }
+            },
+            function(Act){
+            //inst 11:  toggle tie param: [A_DPos]
+                var A_DPos = Act.param1;
+                if (A_DPos == 0 || abcstr[A_DPos - 1] == "\n" || A_DPos == 1 || abcstr[A_DPos - 1] == "$"){
+                    console.log("warning: illegal position for inst: 12");
+                    return 1;
+                }
+                var noteEnd = noteendbefore(A_DPos) + 1;
+                var prefix = abcstr.substring(noteEnd, A_DPos);
+                var delPos = prefix.indexOf("-");
+                if (delPos == -1){
+                    let insPos = prefix.indexOf(" ");
+                    if (insPos != -1){
+                        insPos += 1;
+                    }else{
+                        insPos = prefix.indexOf("&)");
+                        if (insPos != -1){
+                            insPos += 2;
+                        }else{
+                            insPos = 0;
+                        }
+                    }
+                    abcstr = abcstr.substring(0, insPos + noteEnd) + "-" + abcstr.substring(insPos + noteEnd);
+                    CrtPos = A_DPos + 1;
+                    Act.param1++;
+                }else{
+                    abcstr = abcstr.substring(0, delPos + noteEnd) + abcstr.substring(delPos + noteEnd + 1);
+                    CrtPos = A_DPos - 1;
+                    Act.param1--;
                 }
             }
         ];
@@ -884,6 +915,10 @@ var MSOE = new function() {
     };
     this.print = () => { //output svg
         StartHint(allstr_empty());
+        var noteEnd = noteendbefore(CrtPos) + 1;
+        var noteTail = mvpos(1);
+        if (noteTail == CrtPos) noteTail = abcstr.length;
+        UIhandler.showlabels(abcstr.substring(noteEnd, CrtPos), abcstr.substring(CrtPos, noteTail));
         var bpmstr = (infostrs["bpmstr"] == "")?"180":infostrs["bpmstr"];
         updateLstr();
         var SS = "T: " + infostrs["ttlstr"] + "\nM: " + infostrs["tmpstr"] + "\nL: " + Lstr + "\nC: " + infostrs["cmpstr"] + "\nQ: " + bpmstr + "\n" + ForPrint();
@@ -1604,8 +1639,8 @@ var MSOE = new function() {
         let Act = {inst: 2, param1: CrtPos, param2: 1};
         act(Act);
     };
-    this.tie = () => { //tie two joint notes TODO: tie not joint notes
-        let Act = {inst: 4, param1: CrtPos, param2: 0};
+    this.tie = () => { //tie two joint notes
+        let Act = {inst: 12, param1: CrtPos};
         act(Act);
     };
     this.untie = () => { //untie tied notes

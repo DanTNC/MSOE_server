@@ -225,6 +225,17 @@ var UIhandler = new function(){
         $("#save_url input").val(url);
     };
     
+    this.showlabels = (prefix, note) => {
+        if (prefix.includes("&(") || note.includes("&)")) $("#slur-icon").show();
+        else $("#slur-icon").hide();
+        if (prefix.includes("-") || note.includes("-")) $("#tie-icon").show();
+        else $("#tie-icon").hide();
+        if (prefix.includes(" ") || note.includes(" ")) $("#separate-icon").show();
+        else $("#separate-icon").hide();
+        if (prefix.includes("(3")) $("#triplet-icon").show();
+        else $("#triplet-icon").hide();
+    };
+    
     this.imported = (sheets) => { //display exported sheets on screen to let the user choose
         //TODO: implement
         console.log(sheets);
@@ -425,12 +436,9 @@ var key = (event) => { // only keypress can tell if "shift" is pressed at the sa
             MSOE.VicChgB();
             break;
             // ----------Clef and Voice----------
-        // case 45: //"-" tie two notes
-        //     MSOE.tie();
-        //     break;
-        // case 61: //"=" untie
-        //     MSOE.untie();
-        //     break;
+        case 61: //"=" toggle tie
+            MSOE.tie();
+            break;
             // ----------Tie and Untie-----------
         case 45://"-" add slur on ends of selected notes
             MSOE.outslur();
