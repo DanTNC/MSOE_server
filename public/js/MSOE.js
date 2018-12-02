@@ -557,7 +557,7 @@ var MSOE = new function() {
             }
         ];
 
-    var doAct = (Act) => { //edit the sheet according to the description in Act(TODO: interface for editing)
+    var doAct = (Act) => { //edit the sheet according to the description in Act
         if(Act.inst < CPU.length){
             return CPU[Act.inst](Act);
         }else{
@@ -953,6 +953,7 @@ var MSOE = new function() {
             }
         }, {});
         $("#boo path, #boo tspan").attr("fill", (UIhandler.night?"white":"#000000"));
+        $("#boo path.triplet").attr("stroke", (UIhandler.night?"white":"#000000"));
         $("#booo path, #booo tspan").attr("fill", "white");
         if(Edit){
             this.SelNoteHighLight_();
