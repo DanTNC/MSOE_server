@@ -915,10 +915,8 @@ var MSOE = new function() {
     };
     this.print = () => { //output svg
         StartHint(allstr_empty());
-        var noteEnd = noteendbefore(CrtPos) + 1;
-        var noteTail = mvpos(1);
-        if (noteTail == CrtPos) noteTail = abcstr.length;
-        UIhandler.showlabels(abcstr.substring(noteEnd, CrtPos), abcstr.substring(CrtPos, noteTail));
+        var [prefix, note] = prefix_note_of(CrtPos);
+        UIhandler.showlabels(prefix, note);
         var bpmstr = (infostrs["bpmstr"] == "")?"180":infostrs["bpmstr"];
         updateLstr();
         var SS = "T: " + infostrs["ttlstr"] + "\nM: " + infostrs["tmpstr"] + "\nL: " + Lstr + "\nC: " + infostrs["cmpstr"] + "\nQ: " + bpmstr + "\n" + ForPrint();
@@ -1677,8 +1675,12 @@ var MSOE = new function() {
                         DelEnd = abcstr.length;
                     }
                     var Content = abcstr.substring(CrtPos, DelEnd);
-                    let Act = {inst: 0, param1: CrtPos, param2: Content};
+                    var [prefix, _] = prefix_note_of(CrtPos);
+                    var new_prefix = union_symbol(has_symbol(prefix), has_symbol(Content)).join("");
+                    // let Act = {inst: 0, param1: CrtPos, param2: Content};
+                    let Act = {inst: 10, param1: CrtPos - prefix.length, param2: new_prefix, X: prefix + Content};
                     act(Act);
+                    CrtPos += new_prefix.length;
                 } else { //deleting "\n"
                     let Act = {inst: 0, param1: CrtPos - 1, param2: "\n$"};
                     act(Act);
@@ -1686,7 +1688,7 @@ var MSOE = new function() {
             }
             console.log(CrtPos);
             console.log(abcstr);
-        }else{
+        }else{// not complete yet BUGS!!!!!!!!!!!
             var copiedNotes = arrangeSelNotes();
             var CtStP = copiedNotes[0];
             if (abcstr[CtStP - 1] == "\n"){
@@ -1699,8 +1701,12 @@ var MSOE = new function() {
                 CtEdP = abcstr.length;
             }
             CrtPos = tmp;
+            var lastContent = abcstr.substring(copiedNotes[copiedNotes.length - 1], CtEdP);
+            var [prefix, _] = prefix_note_of(CtStP);
+            var new_prefix = union_symbol(has_symbol(prefix), has_symbol(lastContent)).join("");
             copiedNotes = posToNotes(copiedNotes);
-            act({inst:0, param1: CtStP, param2: copiedNotes, X: CtEdP});
+            // act({inst:0, param1: CtStP, param2: copiedNotes, X: CtEdP});
+            act({inst:10, param1: CtStP - prefix.length, param2: new_prefix, X: prefix + copiedNotes});
         }
     };
     this.outslur = () => {
@@ -2180,6 +2186,35 @@ var MSOE = new function() {
             }
         }
         console.error("can't find note end in the given interval.");
+    };
+    var prefix_note_of = (pos) => {
+        var noteEnd = noteendbefore(pos) + 1;
+        var temp = CrtPos;
+        CrtPos = pos;
+        var noteTail = mvpos(1);
+        if (noteTail == CrtPos) noteTail = abcstr.length;
+        CrtPos = temp;
+        return [abcstr.substring(noteEnd, pos), abcstr.substring(pos, noteTail)]
+    };
+    
+    var addon_symbols = ["&)", " ", "-", "(3", "&("];
+    var has_symbol = (str) => {//find the addon-symbols exist in str
+        var sym_set = [];
+        for (var sym of addon_symbols){
+            if (str.includes(sym)){
+                sym_set.push(sym);
+            }
+        }
+        return sym_set;
+    };
+    var union_symbol = (sym1, sym2) => {//return the union of two symbol sets
+        var sym_set = [];
+        for (var sym of addon_symbols){
+            if (sym1.includes(sym) || sym2.includes(sym)){
+                sym_set.push(sym);
+            }
+        }
+        return sym_set;
     };
     
     var bouncingID, previousSelector;

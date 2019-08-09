@@ -225,15 +225,14 @@ var UIhandler = new function(){
         $("#save_url input").val(url);
     };
     
+    this.hintlabels = ["#slur-icon", "#tie-icon", "#separate-icon", "#triplet-icon"];
+    
     this.showlabels = (prefix, note) => {
+        $(this.hintlabels.join(", ")).hide();
         if (prefix.includes("&(") || note.includes("&)")) $("#slur-icon").show();
-        else $("#slur-icon").hide();
         if (prefix.includes("-") || note.includes("-")) $("#tie-icon").show();
-        else $("#tie-icon").hide();
         if (prefix.includes(" ") || note.includes(" ")) $("#separate-icon").show();
-        else $("#separate-icon").hide();
         if (prefix.includes("(3")) $("#triplet-icon").show();
-        else $("#triplet-icon").hide();
     };
     
     this.imported = (sheets) => { //display exported sheets on screen to let the user choose

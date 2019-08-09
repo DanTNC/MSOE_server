@@ -26,7 +26,7 @@ app.use('/', index);
 app.use('/manual', manual);
 app.use('/load', load);
 app.use('/save', save);
-app.use('/auth',auth);
+app.use('/auth', auth);
 app.use('/CID', getCID);
 app.use('/feedback', feedback);
 
@@ -35,8 +35,8 @@ app.use(express.static(path.resolve(__dirname, 'public')));
 var port = process.env.PORT || 8080;
 
 http.listen(port, function () {
-  console.log('Example app listening on http://msoe-fad11204.c9users.io:'+port);
-  console.log('Example sheet on http://msoe-fad11204.c9users.io:'+port+'/?!WPR21F2BZT!FTBT+6SPTLB7BNCYJEYZ');
+  console.log('Example app listening on https://c37bb7a2781742aaaa9064c8f75964d5.vfs.cloud9.us-east-1.amazonaws.com:'+port);
+  console.log('Example sheet on https://c37bb7a2781742aaaa9064c8f75964d5.vfs.cloud9.us-east-1.amazonaws.com:'+port+'/?!WPR21F2BZT!FTBT+6SPTLB7BNCYJEYZ');
 });
 
 var sheet_data = {};
