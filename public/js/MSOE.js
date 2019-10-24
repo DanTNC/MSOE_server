@@ -528,7 +528,7 @@ var MSOE = new function() {
                 }
             },
             function(Act){
-            //inst 11:  toggle tie param: [A_DPos]
+            //inst 12:  toggle tie param: [A_DPos]
                 var A_DPos = Act.param1;
                 if (A_DPos == 0 || abcstr[A_DPos - 1] == "\n" || A_DPos == 1 || abcstr[A_DPos - 1] == "$"){
                     console.log("warning: illegal position for inst: 12");
@@ -1692,7 +1692,7 @@ var MSOE = new function() {
             }
             console.log(CrtPos);
             console.log(abcstr);
-        }else{// not complete yet BUGS!!!!!!!!!!!
+        }else{
             var copiedNotes = arrangeSelNotes();
             var CtStP = copiedNotes[0];
             if (abcstr[CtStP - 1] == "\n"){
