@@ -468,6 +468,9 @@ var MSOE = new function() {
                 abcstr = abcstr.substring(0, Act.param1) + Act.param2 + abcstr.substring(Act.param1 + Act.X.length);
                 Act.param2 = [Act.X, Act.X = Act.param2][0];
                 CrtPos = Act.param1;
+                if (Act.X == ""){
+                    CrtPos = mvpos(0);
+                }
             },
             function(Act){
             //inst 11:  untriplet <-> triplet param: [T_UPos, direct]
@@ -559,6 +562,7 @@ var MSOE = new function() {
 
     var doAct = (Act) => { //edit the sheet according to the description in Act
         if(Act.inst < CPU.length){
+            console.log(Act);
             return CPU[Act.inst](Act);
         }else{
             console.error("invalid instruction code");
@@ -2179,6 +2183,9 @@ var MSOE = new function() {
     };
     
     var noteendbefore = (pos, after) => {
+        if (pos == 0){
+            return -1;
+        }
         after = after || 0;
         for (var i = pos - 1; i >= after; i--){
             if (abcstr[i] == "@" || abcstr[i] == "]" || abcstr[i] == "$"){
