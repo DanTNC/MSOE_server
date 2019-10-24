@@ -1596,6 +1596,8 @@ var MSOE = new function() {
         return Tstate;
     };
     var insert = (str, md) => { //insert string in the right position. mode=1 for notations not occupying a position
+        if (str == "|")
+            str += "@";
         var InsBef = mvpos(1); //insert before
         var finalstr = (md != 1 ? "$" : "") + str;
         if (InsBef != CrtPos) { //not the last note
@@ -1681,6 +1683,10 @@ var MSOE = new function() {
                     var Content = abcstr.substring(CrtPos, DelEnd);
                     var [prefix, _] = prefix_note_of(CrtPos);
                     var new_prefix = union_symbol(has_symbol(prefix), has_symbol(Content)).join("");
+                    if (prefix.includes("&(") || Content.includes("&)")){
+                        ErrorMes("cannot delete notes on one of slur ends");
+                        return;
+                    }
                     // let Act = {inst: 0, param1: CrtPos, param2: Content};
                     let Act = {inst: 10, param1: CrtPos - prefix.length, param2: new_prefix, X: prefix + Content};
                     act(Act);
@@ -1708,6 +1714,9 @@ var MSOE = new function() {
             var lastContent = abcstr.substring(copiedNotes[copiedNotes.length - 1], CtEdP);
             var [prefix, _] = prefix_note_of(CtStP);
             var new_prefix = union_symbol(has_symbol(prefix), has_symbol(lastContent)).join("");
+            if (new_prefix == "&)&("){
+                new_prefix = "";
+            }
             copiedNotes = posToNotes(copiedNotes);
             // act({inst:0, param1: CtStP, param2: copiedNotes, X: CtEdP});
             act({inst:10, param1: CtStP - prefix.length, param2: new_prefix, X: prefix + copiedNotes});
