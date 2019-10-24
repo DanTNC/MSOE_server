@@ -1717,6 +1717,10 @@ var MSOE = new function() {
             if (new_prefix == "&)&("){
                 new_prefix = "";
             }
+            if (prefix.includes("&(") || lastContent.includes("&)")){
+                ErrorMes("cannot delete notes on one of slur ends");
+                return;
+            }
             copiedNotes = posToNotes(copiedNotes);
             // act({inst:0, param1: CtStP, param2: copiedNotes, X: CtEdP});
             act({inst:10, param1: CtStP - prefix.length, param2: new_prefix, X: prefix + copiedNotes});
