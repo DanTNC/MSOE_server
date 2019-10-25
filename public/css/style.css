@@ -391,6 +391,7 @@ img.logo{
 #save_url {
   position: absolute;
   bottom: 6vh;
+  left: 1vw;
 }
 
 #save_url button {
@@ -399,4 +400,21 @@ img.logo{
 
 #sheet {
   height: 95vh;
+}
+
+.volume {
+  width: 16vw;
+}
+
+.volume-up {
+  position: absolute;
+  right: 2vw;
+}
+
+.ui.progress .bar {
+  min-width: 0 !important;
+}
+
+.ui.active.progress .bar {
+  min-width: 0 !important;
 }

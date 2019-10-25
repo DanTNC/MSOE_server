@@ -875,6 +875,25 @@ var MSOE = new function() {
     this.bpm = () => { //return bpm of the sheet
         return (infostrs["bpmstr"] == "")?180:Number(infostrs["bpmstr"]);
     };
+    var volume = 10;
+    this.increVolume = () => {
+        if (volume < 10){
+            volume++;
+        }
+        this.adjustvolume();
+    };
+    this.decreVolume = () => {
+        if (volume > 0){
+            volume--;
+        }
+        this.adjustvolume();
+    };
+    this.adjustvolume = () => {
+        UIhandler.adjustvolume(volume * 10);
+    }
+    this.setmidivolume = () => {
+        MIDI.volume = 0 + 0.01 * volume * volume;
+    }
     //-----------------------------------------//for print
     var rmsmb = (str) => { //remove symbols should not be in the final abcstring
         console.log("after rmsmb:" + str);
@@ -940,7 +959,7 @@ var MSOE = new function() {
         });
         let qpm_ = Number(infostrs["bpmstr"]);
         abcjs.renderMidi("midi", SS, {}, { generateDownload: true, generateInline: true, qpm: qpm_, listener: (midiElem, midiEvent)=>{
-                MIDI.volume = 3;
+                this.setmidivolume();
                 if(midiEvent.progress == 1){
                     $("#play").text("Play");
                     this.playing = false;
@@ -1975,6 +1994,7 @@ var MSOE = new function() {
                 break;
         }
         console.log("miditone : ", 48 + (Tstate) * 12 + temnum);
+        this.setmidivolume();
         MIDI.noteOn(0, 48 + (Tstate) * 12 + temnum, 127, 0);
         MIDI.noteOff(0, 48 + (Tstate) * 12 + temnum, 0.75);
         return 48 + (Tstate) * 12 + temnum;

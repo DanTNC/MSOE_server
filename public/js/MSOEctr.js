@@ -235,6 +235,14 @@ var UIhandler = new function(){
         if (prefix.includes("(3")) $("#triplet-icon").show();
     };
     
+    this.adjustvolume = (volume) => {
+        $(".volume").progress({
+            percent: volume,
+            autoSuccess: false,
+            showActivity: false
+        });
+    }
+    
     this.imported = (sheets) => { //display exported sheets on screen to let the user choose
         //TODO: implement
         console.log(sheets);
@@ -633,6 +641,7 @@ $(document).ready(function(){
         }
         UIhandler.manual_language("ch-TW");
         MSOE.displayurl();
+        MSOE.adjustvolume();
     });
     $("#logo").click(function(){
         window.location = "/";
@@ -657,7 +666,7 @@ $(document).ready(function(){
     $("#play").click(function(e) {
         if(MSOE.playing == false){
             MSOE.playing = true;
-            MIDI.volume = 3;
+            MSOE.setmidivolume();
             $(".abcjs-midi-reset").click();
             $(".abcjs-midi-start").click();
             $("#play").text("Stop");
@@ -765,6 +774,12 @@ $(document).ready(function(){
     });
     $("#chordforgen").click(function(){
         MSOE.insertchformula($("#chordroot").val(), $("#chordform").val());
+    });
+    $(".volume-down").click(function(){
+        MSOE.decreVolume();
+    });
+    $(".volume-up").click(function(){
+        MSOE.increVolume();
     });
     MIDI.setup({
         soundfontUrl: window.ABCJS.midi.soundfountUrl,
