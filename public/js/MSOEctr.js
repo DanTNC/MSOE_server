@@ -587,7 +587,7 @@ var chord = (event) => { //keyup event for chord mode
 };
 
 var highlight = (a) => {
-    $(a).css('background-color', 'rgba(255,0,0,0.5)');
+    $(a).css('background-color', '#66ced3');
     setTimeout(function(){clean(a)}, '700');
 };
 
