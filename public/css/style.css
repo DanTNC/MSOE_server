@@ -418,3 +418,7 @@ img.logo{
 .ui.active.progress .bar {
   min-width: 0 !important;
 }
+
+#note-props {
+  margin-top: 2vh;
+}
