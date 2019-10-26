@@ -713,6 +713,7 @@ var MSOE = new function() {
         $(".ui.dropdown").dropdown({silent:true});
         $(".mCSB_container").css("overflow","visible");
         $(".v_num").click(function(){
+            if (!Edit) return;
             if(ChgVocMd){
                 VicChgB_(parseInt($(this).html(), 10) - 1);
             }else{
@@ -723,6 +724,7 @@ var MSOE = new function() {
             MSOE.print();
         });
         $(".v_up").click(function(){
+            if (!Edit) return;
             var vic = parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html(), 10) - 1;
             if(vic == 0) return;
             vicchga = vic;
@@ -730,6 +732,7 @@ var MSOE = new function() {
             MSOE.print();
         });
         $(".v_down").click(function(){
+            if (!Edit) return;
             var vic = parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html(), 10) - 1;
             if(vic == clef.length - 1) return;
             vicchga = vic;
@@ -737,6 +740,7 @@ var MSOE = new function() {
             MSOE.print();
         });
         $(".v_div").click(function(){
+            if (!Edit) return;
             if(!ChgVocMd || vicchga === undefined) return; //if other voice not clicked before
             var vic = parseInt($(this).attr("data-value"), 10);
             if([vic, vic-1].includes(vicchga)){ //voices around divider can't be changed
@@ -767,11 +771,13 @@ var MSOE = new function() {
             MSOE.print();
         });
         $(".dp_clef").click(function(){
+            if (!Edit) return;
             var vic = parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html(), 10) - 1;
             MSOE.ClfOrVic(parseInt($(this).attr("data-value"), 10) + 49, true, vic);
             MSOE.print();
         });
         $(".v_name").click(function(){
+            if (!Edit) return;
             SaveNLoad(parseInt($(this).parents(".ui.inverted.menu").find(".v_num").html(), 10) - 1);
             MSOE.SelNoteClr();
             MSOE.print();
@@ -1070,10 +1076,11 @@ var MSOE = new function() {
 
                     Edit = msg.status.edit;
                     if(!Edit){
-                        $(".right.menu a").hide();
                         $("#modaldiv1").modal("hide");
                         $("#modaldiv2").modal("hide");
                         $("input").attr("disabled","disabled");
+                        $("#save_url input").removeAttr("disabled");
+                        $(".left a.item").addClass("disabled");
                         Edit_const = true;
                         history.pushState({ title: "" }, "", host + "?!" + index);
                     }else if(key!=""){
@@ -1081,13 +1088,13 @@ var MSOE = new function() {
                         $("#modaldiv2").modal("hide");
                     }
                     updateinfo();
-                    suscribe(index, true);
+                    suscribe(index, true, func);
                     console.log(msg.status.msg);
                 } else {
                     console.log(msg.status.msg);
                     window.location.replace(host);
+                    func();
                 }
-                func();
             },
             index, key);
         } else if (location.href !== host) { // redirect to main page

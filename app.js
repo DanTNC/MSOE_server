@@ -47,13 +47,13 @@ io.on("connection", function(socket){
   socket.on('disconnect', function(){
     console.log('user disconnected');
   });
-  socket.on('sync', function(index, update){
+  socket.on('sync', function(index, update, callback){
     socket_count[index] = (socket_count[index] || 0) + 1;
     if(socket_count[index] == 1){//first save or connect
       if(update){//first connect (load temp data)
         tempload(index, function(temp_data){
           sheet_data[index] = temp_data;
-          socket.emit("update", sheet_data[index]);
+          socket.emit("update", sheet_data[index], callback);
         });
       }else{//first save
         sheet_data[index] = [];
@@ -61,7 +61,7 @@ io.on("connection", function(socket){
     }else{//sync with already connected others
       if(update){//update with other guys
         sheet_data[index] = sheet_data[index] || [];
-        socket.emit("update", sheet_data[index]);
+        socket.emit("update", sheet_data[index], callback);
       }else{//save temp data
         sheet_data[index] = [];
       }

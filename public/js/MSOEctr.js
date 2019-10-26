@@ -550,7 +550,7 @@ var move = (event) => { // some keys can't be detected in keypress
                 MSOE.cut2();
             }
             break;
-        case 188: //"ctrl + <" or "ctrl + shift + <" for change Dstate in place (down)
+        case 188: //"alt + <" or "alt + shift + <" for change Dstate in place (down)
             if (MSOE.chginplc()){
                 if(MSOE.chordmode()){
                     MSOE.ChgDstateInPlace(2);
@@ -560,7 +560,7 @@ var move = (event) => { // some keys can't be detected in keypress
                 MSOE.print();
             }
             break;
-        case 190: //"ctrl + >" or "ctrl + shift + >" for change Dstate in place (up)
+        case 190: //"alt + >" or "alt + shift + >" for change Dstate in place (up)
             if (MSOE.chginplc()){
                 if(MSOE.chordmode()){
                     MSOE.ChgDstateInPlace(3);
@@ -601,6 +601,7 @@ var clean = (a) => {
 };
 
 var btn = (a) => { //buttons for notes
+    if (!MSOE.Edit_()) return;
     MSOE.outinsert(a.id, 1, 0, 1);
     MSOE.miditone(a.id, 0);
     MSOE.print();
@@ -625,10 +626,8 @@ $(document).ready(function(){
             $("#edit").hide();
             $(".pre-but").hide();
         }else{
-            $("#night").show();
             $(".edit-but").hide();
-            $(".left").hide();
-            $(".panel-group").hide();
+            $(".panel-group-preview").hide();
         }
         $('#modaldiv1')
             .modal({
@@ -641,7 +640,7 @@ $(document).ready(function(){
         if(m){
             $("#modaldiv1").modal('setting', 'transition', 'vertical flip').modal("show");
         }
-        if(!MSOE.unsave()){
+        if(!MSOE.unsave() || !MSOE.Edit_()){
             $("#discard").hide();
         }
         UIhandler.manual_language("ch-TW");
@@ -664,11 +663,13 @@ $(document).ready(function(){
     
     $("#save").click(function(e) { MSOE.save(e); });
     $("#discard").click(function() {
+        if (!MSOE.Edit_()) return;
         UIhandler.discardconfirm(function(){
             MSOE.cleartemp();
         });
     });
     $("#play").click(function(e) {
+        if (MSOE.Edit_()) return;
         if(MSOE.playing == false){
             MSOE.playing = true;
             MSOE.setmidivolume();
@@ -705,13 +706,16 @@ $(document).ready(function(){
         }
     });
     $("#copy").click(function(){
+        if (!MSOE.Edit_()) return;
         MSOE.copyui();
     });
     $("#cut").click(function(){
+        if (!MSOE.Edit_()) return;
         MSOE.cutmode();
         MSOE.print();
     });
     $("#slur").click(function(){
+        if (!MSOE.Edit_()) return;
         $("#slur").css("color","#b5cc18");
         MSOE.outslur();
         MSOE.print();
@@ -720,26 +724,32 @@ $(document).ready(function(){
         }, 500);
     });
     $("#clef").click(function(){
+        if (!MSOE.Edit_()) return;
         MSOE.ClfMdTgl();
     });
     $("#paste").click(function(){
+        if (!MSOE.Edit_()) return;
         MSOE.paste();
         MSOE.print();
     });
     $("#plus").click(function(){
+        if (!MSOE.Edit_()) return;
         MSOE.AddVoice();
         MSOE.print();
     });
     $("#minus").click(function(){
+        if (!MSOE.Edit_()) return;
         MSOE.DelVoice();
         MSOE.print();
     });
     $("#check").click(function(){
+        if (!MSOE.Edit_()) return;
         MSOE.ChgVicName($("#voicename").val());
         $("#voicename").val("");
         MSOE.print();
     });
     $("#remove").click(function(){
+        if (!MSOE.Edit_()) return;
         MSOE.ClrVicName();
         MSOE.print();
     });
