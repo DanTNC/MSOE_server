@@ -897,8 +897,13 @@ var MSOE = new function() {
     this.adjustvolume = () => {
         UIhandler.adjustvolume(volume * 10);
     }
-    this.setmidivolume = () => {
-        MIDI.volume = 0 + 0.01 * volume * volume;
+    this.setmidivolume = (note) => {
+        if (note === undefined) note = false;
+        if (note){
+            MIDI.volume = 0 + 0.001 * volume * volume;
+        }else{
+            MIDI.volume = 0 + 0.01 * volume * volume;
+        }
     }
     //-----------------------------------------//for print
     var rmsmb = (str) => { //remove symbols should not be in the final abcstring
@@ -2001,7 +2006,7 @@ var MSOE = new function() {
                 break;
         }
         console.log("miditone : ", 48 + (Tstate) * 12 + temnum);
-        this.setmidivolume();
+        this.setmidivolume(true);
         MIDI.noteOn(0, 48 + (Tstate) * 12 + temnum, 127, 0);
         MIDI.noteOff(0, 48 + (Tstate) * 12 + temnum, 0.75);
         return 48 + (Tstate) * 12 + temnum;
