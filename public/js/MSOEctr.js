@@ -54,9 +54,14 @@ var UIhandler = new function(){
         ".v_div:eq(0)":"Move selected voice here",
         ".v_up:eq(0)":"Switch place with upper voice",
         ".v_down:eq(0)":"Switch place with lower voice",
-        "#logo":"Return to homepage"
+        "#logo":"Return to homepage",
+        "#lan":"Change language of manual",
+        "#feedback":"Popup up form for providing feedback",
+        ".volume-down":"Decrease the volume",
+        ".volume-up":"Increase the volume",
+        "#load_url":"Reload page for the given sheet uri"
     };
-    var help_right = ["#paste", "#slur", "#clef", "#check", "#remove", ".v_up:eq(0)", ".v_down:eq(0)", "#edit", "#preview", "#night"];
+    var help_right = ["#paste", "#slur", "#clef", "#check", "#remove", ".v_up:eq(0)", ".v_down:eq(0)", "#edit", "#preview", "#night", "#lan", "#feedback", ".volume-up", "#load_url"];
     var help_center = [".v_div:eq(0)", "#logo"]
     //elements whose popups should expand to the right
     this.help_voice = () => { //set help popups for voice list
