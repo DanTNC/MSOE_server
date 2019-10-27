@@ -248,6 +248,21 @@ var UIhandler = new function(){
         });
     }
     
+    this.isInView = (elem) => {
+        console.log(elem);
+        var docViewTop = $("#sheet").offset().top;
+        var docViewBottom = docViewTop + $("#sheet").height();
+    
+        var elemTop = $(elem).offset().top;
+        var elemBottom = elemTop + $(elem).height();
+    
+        return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+    };
+    
+    this.scrollSheetTo = (elem) => {
+        $("#sheet").mCustomScrollbar("scrollTo", elem);
+    };
+    
     this.imported = (sheets) => { //display exported sheets on screen to let the user choose
         //TODO: implement
         console.log(sheets);

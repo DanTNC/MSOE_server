@@ -994,6 +994,9 @@ var MSOE = new function() {
         }
     };
     var click_handler = (abcElem) => {
+        $("#boo path, #boo tspan").attr("fill", (UIhandler.night?"white":"#000000"));
+        $("#boo path.triplet").attr("stroke", (UIhandler.night?"white":"#000000"));
+        $("#booo path, #booo tspan").attr("fill", "white");
         if(this.insvocbef() || this.chordmode()){ //select notes
             sel_handler(abcElem);
         }else{
@@ -2117,7 +2120,7 @@ var MSOE = new function() {
         //cssClass: "path.note.lX.mX.vX:eq(X)" or "path.staff-extra.lX.vX" or "path.bar.lX.mX.vX"
         if ((typeof from) == "number"){ //from CrtPos to cssClass
             //do 
-            var L = "", M = "", V = "", note = "", type = "";
+            var L = "", M = "", V = "", note = ":eq(0)", type = "";
             V = ".v" + (index - empty_strs_count());
             if(from == 0 || abcstr[from-1] == "\n"){ //start of a line
                 type = ".staff-extra";
@@ -2271,6 +2274,9 @@ var MSOE = new function() {
     
     var bouncingID, previousSelector;
     var cursorBounce = (selector, color)=>{ //make certain element has bouncing effect to be a cursor
+        if ($(selector).length != 0 && !UIhandler.isInView(selector)){
+            UIhandler.scrollSheetTo(selector);
+        }
         var a = true;
         stopBounce();
         if(allstr_empty(abcindex + 1)) return;
@@ -2372,10 +2378,10 @@ var MSOE = new function() {
 var MSOETest = new (function(target){
     for (let func of Object.getOwnPropertyNames(target).filter(function(p){
         return typeof target[p] === 'function';
-    })){
+    })) {
         this[func] = function(...args){
             target[func](...args);
             target.print();
-        }
+        };
     }
 })(MSOE);
