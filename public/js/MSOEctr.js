@@ -249,7 +249,6 @@ var UIhandler = new function(){
     }
     
     this.isInView = (elem) => {
-        console.log(elem);
         var docViewTop = $("#sheet").offset().top;
         var docViewBottom = docViewTop + $("#sheet").height();
     

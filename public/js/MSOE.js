@@ -664,6 +664,7 @@ var MSOE = new function() {
         abcstr = strs[j];
         abcindex = j;
         CrtPos = 0;
+        maxoffset = rmsmb(abcstr).length + 1;
     };
     this.ChgVicName = (vn) => { //change voice name
         if(vn.indexOf("\"") != -1){
@@ -1006,6 +1007,7 @@ var MSOE = new function() {
     var pos_handler = (abcElem) => { //update CrtPos when note is clicked
         console.log("move cursor");
         CrtPos = clicked_index(abcElem);
+        console.log(CrtPos);
         this.pre_move();
         this.post_move();
         this.print();
@@ -2118,7 +2120,7 @@ var MSOE = new function() {
     //typeof from: number => CrtPos, abcindex -> cssClass, noteindex
     //typeof from: string => cssClass, noteindex -> CrtPos, abcindex
     var CrtPos_cssClass = (from, index) => {
-        //cssClass: "path.note.lX.mX.vX:eq(X)" or "path.staff-extra.lX.vX" or "path.bar.lX.mX.vX"
+        //cssClass: "path.note.lX.mX.vX:eq(X)" or "path.staff-extra.lX.vX:eq(0)" or "path.bar.lX.mX.vX:eq(0)"
         if ((typeof from) == "number"){ //from CrtPos to cssClass
             //do 
             var L = "", M = "", V = "", note = ":eq(0)", type = "";
@@ -2140,9 +2142,17 @@ var MSOE = new function() {
             L = ".l" + line;
             if(type != ".staff-extra"){
                 var measure = 0;
+                var start_with_bar = false;
+                if(substr.substr(start, 2) == "$|"){
+                    measure = -1;
+                    start_with_bar = true;
+                }
                 while(substr.indexOf("$|", start) != -1){
                     start = substr.indexOf("$|", start) + 2;
                     measure++;
+                }
+                if(start_with_bar && measure == 0 && type == ".bar"){
+                    note = ":eq(1)";
                 }
                 M = ".m" + measure;
             }
@@ -2210,7 +2220,6 @@ var MSOE = new function() {
         var offset = stroffset.offset;
         var moveix = stroffset.ix;
         SaveNLoad(moveix);
-        console.log(offset);
         if ((offset < 0) || (offset > maxoffset)){ //illegal offset
             return CrtPos;
         }
@@ -2275,6 +2284,7 @@ var MSOE = new function() {
     
     var bouncingID, previousSelector;
     var cursorBounce = (selector, color)=>{ //make certain element has bouncing effect to be a cursor
+        console.log(selector);
         if ($(selector).length != 0 && !UIhandler.isInView(selector)){
             UIhandler.scrollSheetTo(selector);
         }
