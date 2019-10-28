@@ -624,10 +624,10 @@ var MSOE = new function() {
             case 2:
                 if (A.param2 == 1){
                     A.param2 = 0;
-                    A.param1++;
+                    A.param1--;
                 }else{
                     A.param2 = 1;
-                    A.param1--;
+                    A.param1++;
                 }
                 break;
             case 3:
