@@ -1091,6 +1091,7 @@ var MSOE = new function() {
                         $(".left a.item").addClass("disabled");
                         Edit_const = true;
                         history.pushState({ title: "" }, "", host + "?!" + index);
+                        key = "";
                     }else if(key!=""){
                         $("#modaldiv1").modal("hide");
                         $("#modaldiv2").modal("hide");

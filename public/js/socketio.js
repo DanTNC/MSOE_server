@@ -33,11 +33,11 @@ socket.on("update", (actions, callback)=>{
         MSOE.unsave(false);
     }
     MSOE.loading(true);
-    // preview_mode();
+    preview_mode();
     for (let Act of actions){
         MSOE.sync(Act);
     }
-    // edit_mode();
+    edit_mode();
     MSOE.loading(false);
     callback();
 });
