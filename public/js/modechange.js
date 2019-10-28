@@ -9,12 +9,12 @@ var edit_mode = () => {
   $(".panel-group-preview").hide();
   $(".pre-but").hide();
   $(".edit-but").show();
-  if(!MSOE.unsave() || !MSOE.Edit_()){
-    $("#discard").hide();
-  }
   $("#edit").hide();
   $("#preview").show();
   MSOE.Edit_(true);
+  if(!MSOE.unsave() || !MSOE.Edit_()){
+    $("#discard").hide();
+  }
   MSOE.print();
 };
 var preview_mode = () => {
