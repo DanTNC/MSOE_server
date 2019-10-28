@@ -621,10 +621,43 @@ var MSOE = new function() {
             case 1:
                 A.inst = 0;
                 break;
+            case 2:
+                if (A.param2 == 1){
+                    A.param2 = 0;
+                    A.param1++;
+                }else{
+                    A.param2 = 1;
+                    A.param1--;
+                }
+                break;
             case 3:
                 A.param2 = [1, 0, 3, 2, 4, 5][A.param2];
                 if (A.param2 == 4){
                     A.X = undefined;
+                }
+                break;
+            case 4:
+                var left = A.param1;
+                var right = A.param2;
+                var left_noteEnd = noteendbefore(left) + 1;
+                var left_prefix = abcstr.substring(left_noteEnd, left);
+                var left_delPos = left_prefix.indexOf("&(");
+                var temp = CrtPos;
+                CrtPos = right;
+                var right_ = mvpos(1);
+                if (right_ == CrtPos){
+                    right_ = abcstr.length;
+                }
+                temp = CrtPos;
+                var right_noteEnd = noteendbefore(right_) + 1;
+                var right_prefix = abcstr.substring(right_noteEnd, right_);
+                var right_delPos = right_prefix.indexOf("&)");
+                if (left_delPos == -1 || right_delPos == -1){
+                    A.param1 -= 2;
+                    A.param2 -= 2;
+                }else{
+                    A.param1 += 2;
+                    A.param2 += 2;
                 }
                 break;
             case 6:
@@ -636,9 +669,30 @@ var MSOE = new function() {
             case 10:
                 A.param2 = [A.X, A.X = A.param2][0];//swap A.X and A.param2
                 break;
+            case 11:
+                if (A.param2 == 1){
+                    A.param1-=2;
+                    A.param2 = 0;
+                }else{
+                    A.param1+=2;
+                    A.param2 = 1;
+                }
+                break;
+            case 12:
+                var A_DPos = A.param1;
+                var noteEnd = noteendbefore(A_DPos) + 1;
+                var prefix = abcstr.substring(noteEnd, A_DPos);
+                var delPos = prefix.indexOf("-");
+                if (delPos == -1){
+                    A.param1--;
+                }else{
+                    A.param1++;
+                }
+                break;
             default:
                 A.param2 = (A.param2 == 0)? 1: 0;
         }
+        SaveNLoad(A.index);
         doAct(A);
         actions.push(A);
         this.print();
