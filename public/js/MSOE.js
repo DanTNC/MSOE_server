@@ -2231,10 +2231,13 @@ var MSOE = new function() {
             if (!ignsmbs.includes(srchstr[i])) {
                 if (offset != 1) {
                     offset--;
-                } else if (srchstr[i] != "[") {
-                    return i - 1;
-                } else { //for chord
+                } else if (srchstr[i] == "[") { //for chord
                     return i - 2;
+                } else if (srchstr[i] == "(" && srchstr[i-1] == "&") { //for slur start
+                    CrtPos = i;
+                    return mvpos(1);
+                } else {
+                    return i - 1;
                 }
             }
         }
