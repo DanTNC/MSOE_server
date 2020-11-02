@@ -15,6 +15,13 @@ var edit_mode = () => {
   if(!MSOE.unsave() || !MSOE.Edit_()){
     $("#discard").hide();
   }
+  if(MSOE.playing == true){
+    $(".abcjs-midi-reset").click();
+    $(".abcjs-midi-start").click();
+    ABCJS.stopAnimation();
+    $("#play").text("Play");
+    MSOE.playing == false;
+  }
   MSOE.print();
 };
 var preview_mode = () => {
