@@ -1615,7 +1615,8 @@ var MSOE = new function() {
         if (oldD == "1") oldD = "";
         return [newD, oldD];
     };
-    var getoldDAt = (pos) => { // get oldD from substring for note at pos
+    var getoldDAt = (pos, isChord) => { // get oldD from substring for note at pos
+        isChord = isChord || false;
         var temp = CrtPos;
         CrtPos = pos;
         var edP = mvpos(1);
@@ -1634,6 +1635,9 @@ var MSOE = new function() {
             }
         }
         var dTo = noteendbefore(edP) - 1;
+        if (isChord){
+            dTo = noteendbefore(dTo + 1) - 1;
+        }
         var oldD = oldContent.substring(dFrom + 1, dTo - CrtPos + 1);
         if (oldD == ""){
             oldD = "1";
@@ -1642,8 +1646,12 @@ var MSOE = new function() {
         return [oldD, oldContent];
     };
     var ChgDstateInPlaceSingle = (md, pos, noclr) => {
+        var isChord = false;
+        if (pos < abcstr.length - 1 && abcstr[pos + 1] == "#"){
+            isChord = true;
+        }
         var oldD, oldContent, newD;
-        [oldD, oldContent] = getoldDAt(pos);
+        [oldD, oldContent] = getoldDAt(pos, isChord);
         if (oldContent.indexOf("*") == -1){
             if (oldContent == "$" && pos != 0){
                 oldContent = "\n$";
@@ -1655,7 +1663,7 @@ var MSOE = new function() {
         if (!noclr){
             act({inst: 10, param1: pos, param2: newContent, X: oldContent});
         }
-        return [newD.length - oldD.length, oldContent, newContent];
+        return [newContent.length - oldContent.length, oldContent, newContent];
     };
     var ChgDstateInPlaceSel = (md) => {
         var offset = 0;
