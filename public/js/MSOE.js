@@ -1262,7 +1262,7 @@ var MSOE = new function() {
                 CpStr = abcstr.substring(CpStP, CpStrEd);
             }
             var p = CpStr.indexOf("$[]");
-            if (( p != -1 )&&( Swap )) {
+            if ((p != -1) && (Swap)) {
                 CpStr = CpStr.substring(0,p)+CpStr.substring(p+3);
             }
             console.log("copy : "+CpStr);
@@ -1683,11 +1683,13 @@ var MSOE = new function() {
         updateSelPoses(newPoses);
     };
     this.ChgDstateInPlace = (md) => { //change duration state in place
+        this.chmodeoff();
         if (SelNotes.length == 0){
             ChgDstateInPlaceSingle(md, CrtPos);
         } else {
             ChgDstateInPlaceSel(md);
         }
+        this.chmodeon();
     };
     this.ChgTstate = (md) => { //change octave state
         if (md == 0) Tstate = (Tstate == 3) ? 0 : Tstate + 1;
