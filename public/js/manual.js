@@ -47,7 +47,7 @@ var manual = new function(){
             var keys = content.match(/'[^']+'/g);
             for (let key of keys){
                 var key_str = key.substring(1, key.length-1);
-                content = content.replace(key, "<span class='key_name'>" + key_str + "</span>");
+                content = content.replace(key, "<kbd class='dark-apple'>" + key_str + "</kbd>");
             }
             contents[content_index] = content;
         }

@@ -5,12 +5,12 @@
             "header":"cursor commands",
             "content":
             [
-                "'left-arrow' :move to the left slot",
-                "'right-arrow' :move to the right slot",
-                "'up-arrow' :move to the end of the previous line",
-                "'down-arrow' :move to the beginning of the next line",
-                "'home' :move to the beginning of the current line",
-                "'end' :move to the end of the current line"
+                "'&larr;' :move to the left slot",
+                "'&rarr;' :move to the right slot",
+                "'&uarr;' :move to the end of the previous line",
+                "'&darr;' :move to the beginning of the next line",
+                "'Home' :move to the beginning of the current line",
+                "'End' :move to the end of the current line"
             ]
         },
         {
@@ -18,11 +18,11 @@
             "content":
             [
                 "'Z'~'M' :enter notes",
-                "'shift'+'Z'~'M' :chord mode",
+                "'Shift'+'Z'~'M' :chord mode",
                 "'D' :pause",
                 "'|' :add a bar manually",
                 "'&lt' or '&gt' :tempo(/2 or *2)",
-                "'shift'+'&lt' or '&gt' :add or remove dots",
+                "'Shift'+'&lt' or '&gt' :add or remove dots",
                 "'?' :increase an octave :(C3 to C6)",
                 "'\"' :decrease an octave :(C3 to C6)",
                 "'Backspace' :delete",
@@ -34,21 +34,21 @@
                 "'+' :add or remove tie",
                 "'T': add triplet",
                 "'Y': remove triplet",
-                "'ctrl'+'C' :copy",
-                "'ctrl'+'X' :cut",
-                "'ctrl'+'V' :paste",
-				"'ctrl'+'Z' :undo",
-				"'ctrl'+'B' :redo",
-				"'ctrl'+'S' :save sheet"
+                "'Ctrl'+'C' :copy",
+                "'Ctrl'+'X' :cut",
+                "'Ctrl'+'V' :paste",
+				"'Ctrl'+'Z' :undo",
+				"'Ctrl'+'B' :redo",
+				"'Ctrl'+'S' :save sheet"
             ]
         },
         {
             "header":"select commands",
             "content":
             [
-                "hold 'ctrl'+'arrow keys' :select the notes in path",
-                "double press 'ctrl' :select the current note",
-                "'shift'+click :select the notes between and including the current note and the clicked note",
+                "hold 'Ctrl'+'&larr;''&uarr;''&rarr;''&darr;' :select the notes in path",
+                "double press 'Ctrl' :select the current note",
+                "'Shift'+click :select the notes between and including the current note and the clicked note",
                 "'-' :add or remove slur on selected notes"
             ]
         },
@@ -56,8 +56,8 @@
             "header":"copy commands",
             "content":
             [
-                "'shift'+'F' (normal mode) :enter copy/cut mode and record this point as start point",
-                "'shift'+'F' (copy/cut mode) :set this point as end point, copy everything between the points, and end copy/cut mode",
+                "'Shift'+'F' (normal mode) :enter copy/cut mode and record this point as start point",
+                "'Shift'+'F' (copy/cut mode) :set this point as end point, copy everything between the points, and end copy/cut mode",
                 "'H' (copy/cut mode) :set this point as end point, cut everything between the points, and end copy/cut mode",
                 "'F' (copy/cut mode) :cancel copy/cut mode",
                 "'G' :paste"
@@ -70,7 +70,7 @@
                 "'W' :insert a voice",
                 "'E' :delete current voice (invalid when there's only one voice)",
                 "'R' :record current voice as voiceA",
-                "'shift'+'R' :swap with voiceA",
+                "'Shift'+'R' :swap with voiceA",
                 "'Q' :enter clef mode",
 				"'1'~'6' (normal mode) :move cursor to voice 1~6",
 				"'1'~'4' (clef mode) :set the clef as (treble alto tenor bass)"
