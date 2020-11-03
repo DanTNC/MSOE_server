@@ -1390,9 +1390,12 @@ var MSOE = new function() {
         this.paste(CpStr2);
         this.print();
     };
-    this.cut2 = () => {
+    this.del_sel_notes = () => {
         var copiedNotes = arrangeSelNotes();
         var CtStP = copiedNotes[0];
+        if (abcstr[CtStP - 1] == "\n"){
+            CtStP--;
+        }
         var tmp = CrtPos;
         CrtPos = copiedNotes[copiedNotes.length - 1];
         var CtEdP = mvpos(1);
@@ -1400,19 +1403,52 @@ var MSOE = new function() {
             CtEdP = abcstr.length;
         }
         CrtPos = tmp;
-        copiedNotes = posToNotes(copiedNotes);
-        console.log("cut: ", copiedNotes);
-        CpStr2 = copiedNotes;
-        if (copiedNotes[0] == "\n"){
-            if (CtStP == 0){
-                copiedNotes = copiedNotes.substring(2);
-                CtStP++;
-            }else{
-                CtStP--;
-            }
+        var lastContent = abcstr.substring(copiedNotes[copiedNotes.length - 1], CtEdP);
+        var [prefix, _] = prefix_note_of(CtStP);
+        var new_prefix = union_symbol(has_symbol(prefix), has_symbol(lastContent)).join("");
+        var both_slurs = false;
+        if (prefix.includes("&(") && lastContent.includes("&)")){
+            new_prefix = new_prefix.replace(/&\(|&\)/g, "");
+            both_slurs = true;
+        // FIXME: lots of issues for slurs and ties
+        // more than one slurs would be ignored by union
+        // if a note is both a slur start and a slur end the &( should stay
+        // if the notes to be deleted are forming one big slur, delete the whole slur
+        // maybe the solution is creating different rules for every prefix type especially slur and tie... Oh my...
+        }else if (prefix.includes("&(") || lastContent.includes("&)")){
+            ErrorMes("cannot delete notes on one of slur ends");
+            return;
         }
-        act({inst:0, param1: CtStP, param2: copiedNotes, X: CtEdP});
-        this.print();
+        copiedNotes = posToNotes(copiedNotes);
+        // act({inst:0, param1: CtStP, param2: copiedNotes, X: CtEdP});
+        act({inst:10, param1: CtStP - prefix.length, param2: new_prefix, X: prefix + copiedNotes});
+        return copiedNotes;
+    };
+    this.cut2 = () => {
+        // var copiedNotes = arrangeSelNotes();
+        // var CtStP = copiedNotes[0];
+        // var tmp = CrtPos;
+        // CrtPos = copiedNotes[copiedNotes.length - 1];
+        // var CtEdP = mvpos(1);
+        // if (CtEdP == CrtPos){
+        //     CtEdP = abcstr.length;
+        // }
+        // CrtPos = tmp;
+        // copiedNotes = posToNotes(copiedNotes);
+        // console.log("cut: ", copiedNotes);
+        // CpStr2 = copiedNotes;
+        // if (copiedNotes[0] == "\n"){
+        //     if (CtStP == 0){
+        //         copiedNotes = copiedNotes.substring(2);
+        //         CtStP++;
+        //     }else{
+        //         CtStP--;
+        //     }
+        // }
+        // act({inst:0, param1: CtStP, param2: copiedNotes, X: CtEdP});
+        // this.print();
+        CpStr2 = this.del_sel_notes();
+        console.log("cut: ", CpStr2);
     };
     //-----------------------------------------//for note selector
     var SelColor = "#2196f3";
@@ -1800,31 +1836,32 @@ var MSOE = new function() {
             console.log(CrtPos);
             console.log(abcstr);
         }else{
-            var copiedNotes = arrangeSelNotes();
-            var CtStP = copiedNotes[0];
-            if (abcstr[CtStP - 1] == "\n"){
-                CtStP--;
-            }
-            var tmp = CrtPos;
-            CrtPos = copiedNotes[copiedNotes.length - 1];
-            var CtEdP = mvpos(1);
-            if (CtEdP == CrtPos){
-                CtEdP = abcstr.length;
-            }
-            CrtPos = tmp;
-            var lastContent = abcstr.substring(copiedNotes[copiedNotes.length - 1], CtEdP);
-            var [prefix, _] = prefix_note_of(CtStP);
-            var new_prefix = union_symbol(has_symbol(prefix), has_symbol(lastContent)).join("");
-            if (new_prefix == "&)&("){
-                new_prefix = "";
-            }
-            if (prefix.includes("&(") || lastContent.includes("&)")){
-                ErrorMes("cannot delete notes on one of slur ends");
-                return;
-            }
-            copiedNotes = posToNotes(copiedNotes);
-            // act({inst:0, param1: CtStP, param2: copiedNotes, X: CtEdP});
-            act({inst:10, param1: CtStP - prefix.length, param2: new_prefix, X: prefix + copiedNotes});
+            // var copiedNotes = arrangeSelNotes();
+            // var CtStP = copiedNotes[0];
+            // if (abcstr[CtStP - 1] == "\n"){
+            //     CtStP--;
+            // }
+            // var tmp = CrtPos;
+            // CrtPos = copiedNotes[copiedNotes.length - 1];
+            // var CtEdP = mvpos(1);
+            // if (CtEdP == CrtPos){
+            //     CtEdP = abcstr.length;
+            // }
+            // CrtPos = tmp;
+            // var lastContent = abcstr.substring(copiedNotes[copiedNotes.length - 1], CtEdP);
+            // var [prefix, _] = prefix_note_of(CtStP);
+            // var new_prefix = union_symbol(has_symbol(prefix), has_symbol(lastContent)).join("");
+            // if (new_prefix == "&)&("){
+            //     new_prefix = "";
+            // }
+            // if (prefix.includes("&(") || lastContent.includes("&)")){
+            //     ErrorMes("cannot delete notes on one of slur ends");
+            //     return;
+            // }
+            // copiedNotes = posToNotes(copiedNotes);
+            // // act({inst:0, param1: CtStP, param2: copiedNotes, X: CtEdP});
+            // act({inst:10, param1: CtStP - prefix.length, param2: new_prefix, X: prefix + copiedNotes});
+            this.del_sel_notes();
         }
     };
     this.outslur = () => {
