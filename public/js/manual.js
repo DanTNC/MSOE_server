@@ -20,10 +20,10 @@ var manual = new function(){
     this.manual_language = (lan) => { //change manual language
         if(lan_files[lan].json){
             $.getJSON(lan_files[lan].json, function(json){
-                $(".manual .mCSB_container:eq(0) .item:not(:first-child)").remove();
+                $(".manual .mCSB_container:eq(0) .content.item").remove();
                 var man_json = json.manual;
                 for (let item of man_json){
-                    $("<div class='item'/>")
+                    $("<div class='content item'/>")
                     .append($("<h2 class='ui header' style='color:white;'></h2>").text(item.header))
                     .append($("<p class='manual'></p>").html(make_color_for_keys(item.content).join("<br>")+"<br><br>"))
                     .appendTo(".manual .mCSB_container:eq(0)");
@@ -55,7 +55,7 @@ var manual = new function(){
     };
 };
 
-$(document).ready(function(){
+$(function(){
     var manual_config = {
         default: "en-US",
         content:{
@@ -74,14 +74,14 @@ $(document).ready(function(){
     $(".font").click(function(){
         manual.manual_font(parseInt($(this).attr("id").substring(5)));
     });
-
     for ([key, value] of Object.entries(manual_config.content)){
-        $("#lan div.menu").append("<div class='item" + ((key==manual_config.default)?" active selected":"") + "' data-value='" + key + "'>" + value.name + "</div>")
+        console.log(key, value);
+        $("#lan div.menu").append("<div class='item" + ((key==manual_config.default)?" active selected":"") + "' data-value='" + key + "'>" + value.name + "</div>");
         if (key==manual_config.default) $("#lan div.text").text(value.name);
     }
-    $(".ui.dropdown").dropdown({silent:true});
     $("#lan .item").click(function(){
         manual.manual_language($(this).attr("data-value"));
     });
+    $("#lan").dropdown();
     manual.manual_language(manual_config.default);
 });
