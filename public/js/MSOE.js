@@ -38,6 +38,7 @@ var MSOE = new function() {
     var strs = []; //voices
     var clef = []; //clef of voices
     var voicename = []; //name of voices
+    var musicEnds = []; //music ends ("" or "|]") of voices
     //-----------------------------------------//
     var maxoffset = 0; //the maximum of offset
     var actions = []; //record the order of actions for the "undo" command
@@ -384,6 +385,7 @@ var MSOE = new function() {
                     clef.splice(insind, 0, Restore.clef);
                     strs.splice(insind, 0, Restore.str);
                     voicename.splice(insind, 0, Restore.vn);
+                    musicEnds.splice(insind, 0, Restore.me);
                     if(!InsVocBef){
                         SaveNLoad(insind);
                     }else{
@@ -402,6 +404,7 @@ var MSOE = new function() {
                     strs = strs.slice(0, delind).concat(strs.slice(delind + 1));
                     clef = clef.slice(0, delind).concat(clef.slice(delind + 1));
                     voicename = voicename.slice(0, delind).concat(voicename.slice(delind + 1));
+                    musicEnds = musicEnds.slice(0, delind).concat(musicEnds.slice(delind + 1));
                     if(!InsVocBef){
                         SaveNLoad(delind);
                     }else if(abcindex == strs.length){
@@ -428,6 +431,7 @@ var MSOE = new function() {
                 strs[vicchga_] = [strs[vicchgb_], strs[vicchgb_] = strs[vicchga_]][0]; //swap strs
                 clef[vicchga_] = [clef[vicchgb_], clef[vicchgb_] = clef[vicchga_]][0]; //swap clef
                 voicename[vicchga_] = [voicename[vicchgb_], voicename[vicchgb_] = voicename[vicchga_]][0]; //swap voicename
+                musicEnds[vicchga_] = [musicEnds[vicchgb_], musicEnds[vicchgb_] = musicEnds[vicchga_]][0]; //swap music end
                 abcstr = strs[abcindex];
                 if(abcindex == vicchga_){
                     SaveNLoad(vicchgb_);
@@ -557,6 +561,11 @@ var MSOE = new function() {
                     CrtPos = A_DPos - 1;
                     Act.param1--;
                 }
+            },
+            function(Act){
+                //inst 13:  toggle music ends: [voice]
+                var vind = Act.param1;
+                musicEnds[vind] = !musicEnds[vind];
             }
         ];
 
@@ -700,6 +709,7 @@ var MSOE = new function() {
     //-----------------------------------------//for voices
     clef[0] = "treble"; //default value
     voicename[0] = undefined; //default value
+    musicEnds[0] = false; //default value
     var InsVocBef = false; //insert before or after certain voice
     var CtrlPos = -1;
     this.ctrl_pos = () => { //getter for CtrlPos
@@ -732,15 +742,19 @@ var MSOE = new function() {
         let Act = {inst: 7, param1: abcindex, X: voicename[abcindex]};
         act(Act);
     };
+    this.MusicEnd = () => { //toggle music end
+        let Act = {inst: 13, param1: abcindex};
+        act(Act);
+    }
     this.AddVoice = () => { //add voice
-        let Act = {inst: 5, param1: {clef: "treble", str: "$", vn: undefined},
+        let Act = {inst: 5, param1: {clef: "treble", str: "$", vn: undefined, me: false},
             param2: 1, X: InsVocBef
         };
         act(Act);
     };
     this.DelVoice = () => { //delete voice
         var X;
-        var param1 = {clef: clef[abcindex], str: abcstr, vn: voicename[abcindex]};
+        var param1 = {clef: clef[abcindex], str: abcstr, vn: voicename[abcindex], me: musicEnds[abcindex]};
         if(abcindex != 0){
             SaveNLoad(abcindex-1);
             X = false;
@@ -807,11 +821,13 @@ var MSOE = new function() {
             clef.splice(vic, 0, clef[vicchga]);
             strs.splice(vic, 0, strs[vicchga]);
             voicename.splice(vic, 0, voicename[vicchga]);
+            musicEnds.splice(vic, 0, musicEnds[vicchga]);
             var tmpvica = vicchga;
             if(vicchga > vic) vicchga++;
             strs = strs.slice(0, vicchga).concat(strs.slice(vicchga + 1));
             clef = clef.slice(0, vicchga).concat(clef.slice(vicchga + 1));
             voicename = voicename.slice(0, vicchga).concat(voicename.slice(vicchga + 1));
+            musicEnds = musicEnds.slice(0, vicchga).concat(musicEnds.slice(vicchga + 1));
             abcstr = strs[abcindex];
             if(abcindex == tmpvica){
                 SaveNLoad(vic);
@@ -993,11 +1009,12 @@ var MSOE = new function() {
     };
     var ForPrint = () => { //construct the string for ABCJS rendering
         var finalstr = "";
+        console.log(musicEnds);
         for (var i = 0; i < clef.length; i++) {
             if (i != abcindex) {
-                finalstr += "V: " + (i + 1) + " clef=" + clef[i] + " name=\"" + ((voicename[i] === undefined)?RdClf(clef[i], undefined, 1):voicename[i]) + "\"\n" + rmsmb(strs[i]) + " \n";
+                finalstr += "V: " + (i + 1) + " clef=" + clef[i] + " name=\"" + ((voicename[i] === undefined)?RdClf(clef[i], undefined, 1):voicename[i]) + "\"\n" + rmsmb(strs[i]) + ((musicEnds[i])?" |]":"") + " \n";
             } else {
-                finalstr += "V: " + (i + 1) + " clef=" + clef[i] + " name=\"" + ((voicename[i] === undefined)?RdClf(clef[i], undefined, 1):voicename[i]) + "\"\n" + rmsmb(abcstr) + " \n";
+                finalstr += "V: " + (i + 1) + " clef=" + clef[i] + " name=\"" + ((voicename[i] === undefined)?RdClf(clef[i], undefined, 1):voicename[i]) + "\"\n" + rmsmb(abcstr) + ((musicEnds[i])?" |]":"") + " \n";
             }
         }
         return finalstr;
@@ -1089,7 +1106,8 @@ var MSOE = new function() {
                 Lstr: Lstr,
                 strs: strs,
                 clef: clef,
-                voicename: voicename
+                voicename: voicename,
+                musicEnds: musicEnds
             };
             server_save(data, function(msg) {
                 console.log(msg);
@@ -1137,6 +1155,10 @@ var MSOE = new function() {
                     strs = msg.sheet.strs || [];
                     clef = msg.sheet.clef;
                     voicename = msg.sheet.voicename || [];
+                    musicEnds = msg.sheet.musicEnds || [];
+                    if (musicEnds.length != clef.length) { // for migrating old sheets
+                        musicEnds = new Array(clef.length).fill(false);
+                    }
 
                     Edit = msg.status.edit;
                     if(!Edit){

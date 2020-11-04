@@ -435,7 +435,7 @@ var key = (event) => { // only keypress can tell if "shift" is pressed at the sa
         case 114: //"R" swap two voices (mark current voice to be one of them)
             MSOE.VicChgA();
             break;
-        case 82: //"shift+r" swap two voices (swap current voice and the one marked before)
+        case 82: //"shift+R" swap two voices (swap current voice and the one marked before)
             MSOE.VicChgB();
             break;
             // ----------Clef and Voice----------
@@ -457,6 +457,11 @@ var key = (event) => { // only keypress can tell if "shift" is pressed at the sa
         case 121://"Y" untriplet
             MSOE.untriplet();
             break;
+            // ----------Triplet-----------------
+        case 108://"L" toggle music end for this voice
+            MSOE.MusicEnd();
+            break;
+            // ----------Music End---------------
         default:
     }
     console.log("keycode : "+event.keyCode);
@@ -465,6 +470,7 @@ var key = (event) => { // only keypress can tell if "shift" is pressed at the sa
 
 var move = (event) => { // some keys can't be detected in keypress
     if (checkinput()) return; //if inpus tags are focus, turn off key events
+    if (checkmodal()) return;
     if (!MSOE.Edit_()) return;
     switch(event.keyCode){
         case 37: //"left"
