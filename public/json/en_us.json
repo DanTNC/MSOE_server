@@ -34,6 +34,7 @@
                 "'+' :add or remove tie",
                 "'T': add triplet",
                 "'Y': remove triplet",
+                "'L': add or remove the music end symbol of current voice",
                 "'Ctrl'+'C' :copy",
                 "'Ctrl'+'X' :cut",
                 "'Ctrl'+'V' :paste",
