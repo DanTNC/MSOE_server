@@ -18,8 +18,8 @@ var manual = new function(){
         }
     };
     this.manual_language = (lan) => { //change manual language
-        if(lan_files[lan]){
-            $.getJSON(lan_files[lan], function(json){
+        if(lan_files[lan].json){
+            $.getJSON(lan_files[lan].json, function(json){
                 $(".manual .mCSB_container:eq(0) .item:not(:first-child)").remove();
                 var man_json = json.manual;
                 for (let item of man_json){
@@ -55,27 +55,33 @@ var manual = new function(){
     };
 };
 
-$(function(){
-    manual.lan_file_set({
-        "ch-TW": "json/ch_tw.json",
-        "en-US": "json/en_us.json"
-    }, false);
+$(document).ready(function(){
+    var manual_config = {
+        default: "en-US",
+        content:{
+            "ch-TW": {
+                json: "json/ch_tw.json",
+                name: "中文",
+            },
+            "en-US": {
+                json: "json/en_us.json",
+                name: "English",
+            }
+        }
+    };
+
+    manual.lan_file_set(manual_config.content, false);
     $(".font").click(function(){
         manual.manual_font(parseInt($(this).attr("id").substring(5)));
     });
-    
-    $("#lan").click(function(){
-        var lan = $(this).attr("data-lan");
-        if(lan == "ch-TW"){
-            $(this).attr("data-lan", "en-US");
-            $(this).text("English");
-        }else if(lan == "en-US"){
-            $(this).attr("data-lan", "ch-TW");
-            $(this).text("中文");
-        }else{
-            return;
-        }
-        manual.manual_language(lan);
+
+    for ([key, value] of Object.entries(manual_config.content)){
+        $("#lan div.menu").append("<div class='item" + ((key==manual_config.default)?" active selected":"") + "' data-value='" + key + "'>" + value.name + "</div>")
+        if (key==manual_config.default) $("#lan div.text").text(value.name);
+    }
+    $(".ui.dropdown").dropdown({silent:true});
+    $("#lan .item").click(function(){
+        manual.manual_language($(this).attr("data-value"));
     });
-    manual.manual_language("ch-TW");
+    manual.manual_language(manual_config.default);
 });

@@ -638,7 +638,6 @@ $(document).ready(function(){
         if(!MSOE.unsave() || !MSOE.Edit_()){
             $("#discard").hide();
         }
-        manual.manual_language("ch-TW");
         MSOE.displayurl();
         MSOE.adjustvolume();
     });
