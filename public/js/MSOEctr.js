@@ -97,10 +97,12 @@ var UIhandler = new function(){
         if(this.night){
             $("#sheet").css("background-color","#090909");
             $("#night").text("Default");
+            $("#hint").removeClass("blue").addClass("brown");
             MSOE.print();
         }else{
             $("#sheet").css("background-color","");
             $("#night").text("Night");
+            $("#hint").removeClass("brown").addClass("blue");
             MSOE.print();
         }
     };
