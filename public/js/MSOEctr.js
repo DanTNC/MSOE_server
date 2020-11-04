@@ -229,20 +229,37 @@ var UIhandler = new function(){
 };
 
 var checkinput = () => { //if input tags are focused, turn off key events
-    let myArray = Array.from(document.getElementsByTagName("input")).concat(
+    let inputs = Array.from(document.getElementsByTagName("input")).concat(
                 Array.from(document.getElementsByTagName("textarea"))).concat(
                 Array.from(document.getElementsByTagName("select")));
-    if (myArray.includes(document.activeElement))
+    if (inputs.includes(document.activeElement))
         return true;
     else
         return false;
 };
+
+var checkmodal = () => {
+    if ($("#modaldiv1").attr("class").split(/\s+/).includes("active")) {
+        return "#modaldiv1";
+    }else if($("#modaldiv2").attr("class").split(/\s+/).includes("active")) {
+        return "#modaldiv2";
+    }else{
+        return undefined;
+    }
+}
 
 var key = (event) => { // only keypress can tell if "shift" is pressed at the same time
     if ($("#voicename").is(":focus") && (event.keyCode == 13)) $("#check").click();
     if ($("#chordsym").is(":focus") && (event.keyCode == 13)) $("#chordgen").click();
     if ($("#chordform").is(":focus") && (event.keyCode == 13)) $("#chordforgen").click();
     if (checkinput()) return;
+    var checkmodal_ = checkmodal();
+    if (checkmodal_) {
+        if ((event.keyCode == 13) || (event.keyCode == 32)){
+            $(checkmodal_).modal("hide");
+        }
+        return;
+    }
     if (!MSOE.Edit_()) return;
     switch (event.keyCode) {
         case 44: //"<"

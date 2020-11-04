@@ -372,10 +372,9 @@
     });
     $('#modaldiv2')
         .modal({
-            allowMultiple: false
-        })
-        .modal({
-            blurring: true
+            allowMultiple: false,
+            blurring: true,
+            autofocus: false
         });
     $('#infomodal').click(function() {
         $('#modaldiv1').modal('hide');
