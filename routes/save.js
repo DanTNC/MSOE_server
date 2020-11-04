@@ -62,7 +62,8 @@ router.post('/', function(req, res) {
                Lstr: req.body.Lstr,
                strs: req.body.strs,
                clef: req.body.clef,
-               voicename: req.body.voicename
+               voicename: req.body.voicename,
+               musicEnds: req.body.musicEnds
             });
 
             SheetData.save(function(err) {
@@ -129,7 +130,8 @@ router.post('/', function(req, res) {
                 Lstr: req.body.Lstr,
                 strs: req.body.strs,
                 clef: req.body.clef,
-                voicename: req.body.voicename
+                voicename: req.body.voicename,
+                musicEnds: req.body.musicEnds
             };
             Sheet.update(query, SheetData,  function(err) {
                 if(err) {
