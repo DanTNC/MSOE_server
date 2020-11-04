@@ -1733,9 +1733,19 @@ var MSOE = new function() {
         return Tstate;
     };
     var insert = (str, md) => { //insert string in the right position. mode=1 for notations not occupying a position
-        if (str == "|")
-            str += "@";
+        if (str == "|"){
+            if (abcstr.substr(CrtPos, 3) == "$|@") {
+                act({inst: 10, param1: CrtPos, param2: "$||@", X: "$|@"});
+                return;
+            }else{
+                str += "@";
+            }
+        }
         var InsBef = mvpos(1); //insert before
+        if (abcstr.substr(InsBef, 3) == "$|@") {
+            act({inst: 10, param1: InsBef, param2: "$||@", X: "$|@"});
+            return;
+        }
         var finalstr = (md != 1 ? "$" : "") + str;
         if (InsBef != CrtPos) { //not the last note
             if (abcstr[InsBef - 1] == "\n") //if on the position before a "\n", insert before "\n"
