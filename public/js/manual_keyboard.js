@@ -48,8 +48,8 @@ $(function(){
     }
 
     $(".key").hover(function(){
-        $("#explanation ul").html("<il>" + explanations[$(this).attr("data-value")].split("<br>").join("</il><il>") + "</il>");
+        $("#explanation").html("<div class='line'>" + explanations[$(this).attr("data-value")].split("<br>").join("</div><div class='line'>") + "</div>");
     }, function(){
-        $("#explanation ul").html("<il>Point on a key or a key group to see the command of it.</il>");
+        $("#explanation").html("<div class='line'>Point on a key or a key group to see the command of it.</div>");
     })
 })

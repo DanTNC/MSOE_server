@@ -37,14 +37,15 @@
     width: 80vw;
 }
 
-#explanation ul {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+/* #explanation ul {
     padding: 0;
     margin: 0;
     list-style: none;
     height: 18vh;
+} */
+
+#explanation .line {
+    margin-bottom: 2vh;
 }
 
 #divider {
