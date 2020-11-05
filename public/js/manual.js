@@ -74,10 +74,10 @@ $(function(){
     $(".font").click(function(){
         manual.manual_font(parseInt($(this).attr("id").substring(5)));
     });
-    for ([key, value] of Object.entries(manual_config.content)){
-        console.log(key, value);
-        $("#lan div.menu").append("<div class='item" + ((key==manual_config.default)?" active selected":"") + "' data-value='" + key + "'>" + value.name + "</div>");
-        if (key==manual_config.default) $("#lan div.text").text(value.name);
+    for ([lan, value] of Object.entries(manual_config.content)){
+        console.log(lan, value);
+        $("#lan div.menu").append("<div class='item" + ((lan==manual_config.default)?" active selected":"") + "' data-value='" + lan + "'>" + value.name + "</div>");
+        if (lan==manual_config.default) $("#lan div.text").text(value.name);
     }
     $("#lan .item").click(function(){
         manual.manual_language($(this).attr("data-value"));
