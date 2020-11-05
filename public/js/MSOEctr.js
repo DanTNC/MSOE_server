@@ -747,14 +747,14 @@ $(document).ready(function(){
         MSOE.ClrVicName();
         MSOE.print();
     });
-    // $(".font").click(function(){
-    //     UIhandler.manual_font(parseInt($(this).attr("id").substring(5)));
-    // });
     $("#manual_width").click(function(){
         UIhandler.manual_width();
     });
     $("#manual_new").click(function(){
         window.open(window.location.origin + "/manual", "_blank");
+    });
+    $("#manual_keyboard").click(function(){
+        window.open(window.location.origin + "/manual_keyboard", "_blank");
     });
     $("#save_url button").click(function(){
         window.location = MSOE.host() + $("#save_url input").val();
