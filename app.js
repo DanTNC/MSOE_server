@@ -35,8 +35,8 @@ app.use(express.static(path.resolve(__dirname, 'public')));
 var port = process.env.PORT || 8080;
 
 http.listen(port, function () {
-  console.log('Example app listening on 127.0.0.1:'+port);
-  console.log('Example sheet on 127.0.0.1:'+port+'/?!WPR21F2BZT!FTBT+6SPTLB7BNCYJEYZ');
+  console.log('Example app listening on http://127.0.0.1:'+port);
+  console.log('Example sheet on http://127.0.0.1:'+port+'/?!WPR21F2BZT!FTBT+6SPTLB7BNCYJEYZ');
 });
 
 var sheet_data = {};
