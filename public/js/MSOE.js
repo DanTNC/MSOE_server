@@ -989,12 +989,12 @@ var MSOE = new function() {
             sum += 18 + (Math.floor(Math.log10(i + 1)) + 1) + clef[i].length + ((voicename[i] === undefined)?RdClf(clef[i], undefined, 1):voicename[i]).length;
             let str = (i == abcindex)?rmsmb(abcstr):rmsmb(strs[i]);
             console.log(sum);
-            if (sum + str.length + 2 > offset){
+            if (sum + str.length + (musicEnds[i]?3:0) + 2 > offset){
                 res.offset = offset - sum;
                 res.ix = i;
                 break;
             }
-            sum += str.length + 2;
+            sum += str.length + (musicEnds[i]?3:0) + 2;
             console.log(sum);
         }
         maxoffset = rmsmb(abcstr).length + 1;
