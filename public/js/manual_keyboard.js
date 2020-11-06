@@ -1,4 +1,4 @@
-$(function(){
+$(window).on("load", function(){
     var explanations = {};
     $.getJSON("json/key.json", function(res){
         explanations = res;
@@ -27,6 +27,7 @@ $(function(){
         }
 
         console.log("Regenerate keys.");
+        console.log($(window).height());
     }
 
     var keys = [ //[r, k, (left, width, height)]
@@ -63,4 +64,4 @@ $(function(){
     }, function(){
         $("#explanation").html("<div class='line'>Point on a key or a key group to see the command of it.</div>");
     })
-})
+});
