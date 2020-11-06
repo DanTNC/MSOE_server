@@ -11,6 +11,24 @@ $(function(){
         this.height = height || 9.8;
     };
 
+    var generateKeys = (keys) => {
+        var top = 1.8;
+    
+        for (row of keys) {
+            for (key of row) {
+                let key_elem = $("<div class='key' data-value='" + key.id_ + "'></div>");
+                key_elem.css("left", (key.left - 24.56)*$(window).height()/100+ $("#keyboard .ui.image").offset().left);
+                key_elem.css("width", key.width*$(window).height()/100);
+                key_elem.css("height", key.height*$(window).height()/100);
+                key_elem.css("top", top*$(window).height()/100);
+                $("#keys").append(key_elem);
+            }
+            top += 11.1;
+        }
+
+        console.log("Regenerate keys.");
+    }
+
     var keys = [ //[r, k, (left, width, height)]
         [new Key("1", 159.5, 27.5)],
         [new Key("I", 37, 65.5), new Key("J", 149, 9.8), new Key("K", 160.2, 9.8), new Key("L", 171.4, 15.8)],
@@ -33,19 +51,12 @@ $(function(){
         ]
     ];
 
-    var top = 1.8;
+    generateKeys(keys);
 
-    for (row of keys) {
-        for (key of row) {
-            let key_elem = $("<div class='key' data-value='" + key.id_ + "'></div>");
-            key_elem.css("left", (key.left - 24.56)*$(window).height()/100+ $("#keyboard .ui.image").offset().left);
-            key_elem.css("width", key.width*$(window).height()/100);
-            key_elem.css("height", key.height*$(window).height()/100);
-            key_elem.css("top", top*$(window).height()/100);
-            $("#keys").append(key_elem);
-        }
-        top += 11.1;
-    }
+    $(window).resize(function(){
+        $(".key").remove();
+        generateKeys(keys);
+    });
 
     $(".key").hover(function(){
         $("#explanation").html("<div class='line'>" + explanations[$(this).attr("data-value")].split("<br>").join("</div><div class='line'>") + "</div>");
