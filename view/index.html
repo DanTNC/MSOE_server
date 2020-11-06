@@ -142,6 +142,12 @@
                 <div class="ui inverted green button" id="submit" tabindex="0"> 提交 Submit </div>
             </form>
         </div>
+        <div id="modalQR" class="ui modal">
+            <div class="header" id="QRcodeWarn">
+                You need to save the sheet before generating QR code.
+            </div>
+            <div class="content" id="QRcode"></div>
+        </div>
         <div id="feedbackform" class="ui modal">
             <h2 class="ui header"><img src="img/logo.png" class="ui circular image"> 回饋 Feedback
                 <h3 class="sub header">
@@ -182,6 +188,7 @@
             <a class="item" id="help">Help</a>
             <a class="item help edit-but" id="save">Save</a>
             <a class="item help edit-but" id="tool">Toolbox</a>
+            <a class="item help edit-but" id="qrcode">QR Code</a>
             <a class="item edit-but" id="discard">Discard Unsaved Changes</a>
             <a class="item help pre-but" id="play">Play</a>
             <a class="item help pre-but" id="print">Print</a>

@@ -1159,6 +1159,7 @@ var MSOE = new function() {
                     if (musicEnds.length != clef.length) { // for migrating old sheets
                         musicEnds = new Array(clef.length).fill(false);
                     }
+                    musicEnds = musicEnds.map(x => x === "true");
 
                     Edit = msg.status.edit;
                     if(!Edit){
@@ -2308,13 +2309,13 @@ var MSOE = new function() {
     var allstr_empty = (before) => { //return if all abcstrs are empty. before: the index to test before
         let strs_ = strs.slice(0, before);
         if(strs_.length == 0){
-            return (abcstr == "$");
+            return (abcstr == "$") && (!musicEnds[abcindex]);
         }else{
             return strs_.reduce((res, str, i) => {
                 if(i != abcindex){
-                    return res && (str == "$");
+                    return res && (str == "$") && (!musicEnds[i]);
                 }else{
-                    return res && (abcstr == "$");
+                    return res && (abcstr == "$") && (!musicEnds[i]);
                 }
             }, true);
         }
@@ -2510,6 +2511,20 @@ var MSOE = new function() {
             }
         }
         this.print();
+    };
+
+    var qrcode = undefined;
+
+    this.isSaved = () => {
+        return index !== "";
+    };
+
+    this.genQRcode = () => {
+        if (!qrcode) {
+            qrcode = new QRCode($("#QRcode")[0], {
+                text: window.location.href
+            });
+        }
     };
     
     var UIhandler;//UI handler from outside the object (would become critical argument of constructor in API version)

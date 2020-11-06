@@ -699,6 +699,15 @@ $(document).ready(function(){
             $("#tool").css("color", "");
         }
     });
+    $("#qrcode").click(function() {
+        if (!MSOE.isSaved()){
+            $("#QRcodeWarn").text("You need to save the sheet before generating QR code.");
+        }else{
+            $("#QRcodeWarn").text("Here is the QR code of this sheet:");
+            MSOE.genQRcode();
+        }
+        $("#modalQR").modal("show");
+    })
     $("#copy").click(function(){
         if (!MSOE.Edit_()) return;
         MSOE.copyui();
