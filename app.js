@@ -32,7 +32,13 @@ app.use('/auth', auth);
 app.use('/CID', getCID);
 app.use('/feedback', feedback);
 
-app.use(express.static(path.resolve(__dirname, 'public')));
+app.use(express.static(path.resolve(__dirname, 'public'), {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.js') || path.endsWith('.css')) {
+      res.setHeader('Cache-Control', 'no-cache');
+    }
+  },
+}));
 
 var port = process.env.PORT || 8080;
 
