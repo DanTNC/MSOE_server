@@ -2524,6 +2524,8 @@ var MSOE = new function() {
             var [QRcode, QRdownload] = UIhandler.qrcode_DOM();
             qrcode = new QRCode(QRcode[0], {
                 text: window.location.href,
+                logo: "img/logo.ico",
+                colorDark: "#1B1C1D",
                 onRenderingEnd: () => {
                     QRdownload.find("a").attr("href", QRcode.find("img").attr("src"));
                 }
