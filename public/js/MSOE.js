@@ -2521,8 +2521,12 @@ var MSOE = new function() {
 
     this.genQRcode = () => {
         if (!qrcode) {
-            qrcode = new QRCode($("#QRcode")[0], {
-                text: window.location.href
+            var [QRcode, QRdownload] = UIhandler.qrcode_DOM();
+            qrcode = new QRCode(QRcode[0], {
+                text: window.location.href,
+                onRenderingEnd: () => {
+                    QRdownload.find("a").attr("href", QRcode.find("img").attr("src"));
+                }
             });
         }
     };

@@ -223,6 +223,19 @@ var UIhandler = new function(){
     this.scrollSheetTo = (elem) => {
         $("#sheet").mCustomScrollbar("scrollTo", elem);
     };
+
+    this.qrcode_DOM = () => {
+        var QRcode = $("<div class='content' id='QRcode'></div>");
+        var QRdownload = $(
+            "<div class='content'><a class='ui vertical animated button green' download='sheet.png' id='QRdownload'>"+
+            "<div class='visible content'>Download</div>"+
+            "<div class='hidden content'>"+
+                "<i class='download icon'></i>"+
+            "</div></a></div>");
+        $("#modalQR").append(QRcode);
+        $("#modalQR").append(QRdownload)
+        return [QRcode, QRdownload];
+    };
     
     this.imported = (sheets) => { //display exported sheets on screen to let the user choose
         //TODO: implement
