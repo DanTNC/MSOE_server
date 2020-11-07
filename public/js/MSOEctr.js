@@ -608,9 +608,9 @@ var btn = (a) => { //buttons for notes
 };
 
 
-$(window).on("load", function(){
-    $('#preloader').fadeOut('slow',function(){console.log("loaded");});
-});
+// $(window).on("load", function(){
+//     $('#preloader').fadeOut('slow',function(){console.log("loaded");});
+// });
 
 $(document).ready(function(){
     MSOE.UIhandler(UIhandler); //register UIhandler
@@ -640,6 +640,7 @@ $(document).ready(function(){
         }
         MSOE.displayurl();
         MSOE.adjustvolume();
+        $('#preloader').fadeOut('slow',function(){console.log("loaded");});
     });
     $("#logo").click(function(){
         window.location = "/";
