@@ -1765,7 +1765,7 @@ var MSOE = new function() {
             }
         }
         var InsBef = mvpos(1); //insert before
-        if (abcstr.substr(InsBef, 3) == "$|@") {
+        if (str == "|@" && abcstr.substr(InsBef, 3) == "$|@") {
             act({inst: 10, param1: InsBef, param2: "$||@", X: "$|@"});
             return;
         }
