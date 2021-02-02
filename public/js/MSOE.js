@@ -453,11 +453,10 @@ var MSOE = new function() {
                     console.error("no such info inputname");
                     return 1;
                 }
-                if(Act.param1 == "whatistempo" && Act.param2 == ""){
-                    infostrs[infoinputs[Act.param1]] = "4/4";
-                }else{
-                    infostrs[infoinputs[Act.param1]] = Act.param2;
-                }
+                if(Act.param1 == "whatistempo" && (Act.param2 == "" || !Act.param2.match(/\d+\/\d+/))){
+                    Act.param2 = "4/4";
+                }    
+                infostrs[infoinputs[Act.param1]] = Act.param2;
                 $("input[name=" + Act.param1 + "]").val(Act.param2);
                 Act.param2 = [Act.X, Act.X = Act.param2][0];
             },
