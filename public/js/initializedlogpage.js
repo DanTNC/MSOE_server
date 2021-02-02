@@ -1,4 +1,4 @@
 $(function () { $('#myModal').modal({
-keyboard: false
+    keyboard: false
 })});
 

@@ -165,7 +165,7 @@ var MSOE = new function() {
                         }
                     }else if(abcstr[CrtPos + 1] == "#"){
                         console.error("can't edit the accidental of a completed chord");
-                        ErrorMes("You can't edit the accidental of a completed chord")
+                        ErrorMes("You can't edit the accidental of a completed chord");
                         return 1;
                     }else{
                         console.log("warning: illegal position for inst: 3, md: 0");
@@ -190,7 +190,7 @@ var MSOE = new function() {
                         }
                     }else if(abcstr[CrtPos + 1] == "#"){
                         console.error("can't edit the accidental of a completed chord");
-                        ErrorMes("You can't edit the accidental of a completed chord")
+                        ErrorMes("You can't edit the accidental of a completed chord");
                         return 1;
                     }else{
                         console.log("warning: illegal position for inst: 3, md: 1");
@@ -714,7 +714,7 @@ var MSOE = new function() {
     var CtrlPos = -1;
     this.ctrl_pos = () => { //getter for CtrlPos
         return CtrlPos;
-    }
+    };
     this.insvocbef = (v) => { //setter and getter for InsVocBef
         if (v !== undefined){
             InsVocBef = v;
@@ -745,7 +745,7 @@ var MSOE = new function() {
     this.MusicEnd = () => { //toggle music end
         let Act = {inst: 13, param1: abcindex};
         act(Act);
-    }
+    };
     this.AddVoice = () => { //add voice
         let Act = {inst: 5, param1: {clef: "treble", str: "$", vn: undefined, me: false},
             param2: 1, X: InsVocBef
@@ -967,7 +967,7 @@ var MSOE = new function() {
     };
     this.adjustvolume = () => {
         UIhandler.adjustvolume(volume * 10);
-    }
+    };
     this.setmidivolume = (note) => {
         if (note === undefined) note = false;
         if (note){
@@ -975,7 +975,7 @@ var MSOE = new function() {
         }else{
             MIDI.volume = 0 + 0.01 * volume * volume;
         }
-    }
+    };
     //-----------------------------------------//for print
     var rmsmb = (str) => { //remove symbols should not be in the final abcstring
         console.log("after rmsmb:" + str);
@@ -2241,7 +2241,7 @@ var MSOE = new function() {
             abcchord = abcchord + accd + abcch;
         }
         insert(abcchord + "]");
-    }
+    };
     this.checkpause = () => { //check if the pause is legal
         return (Math.pow(2, Dstate % 10 - 5) * eval(Lstr) >= 2);
     };
@@ -2396,7 +2396,7 @@ var MSOE = new function() {
         var noteTail = mvpos(1);
         if (noteTail == CrtPos) noteTail = abcstr.length;
         CrtPos = temp;
-        return [abcstr.substring(noteEnd, pos), abcstr.substring(pos, noteTail)]
+        return [abcstr.substring(noteEnd, pos), abcstr.substring(pos, noteTail)];
     };
     
     var addon_symbols = ["&)", " ", "-", "(3", "&("];

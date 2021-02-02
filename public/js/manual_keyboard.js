@@ -2,7 +2,7 @@ $(window).on("load", function(){
     var explanations = {};
     $.getJSON("json/key.json", function(res){
         explanations = res;
-    })
+    });
 
     Key = function(id_, left, width, height){
         this.id_ = id_;
@@ -28,7 +28,7 @@ $(window).on("load", function(){
 
         console.log("Regenerate keys.");
         console.log($(window).height());
-    }
+    };
 
     var keys = [ //[r, k, (left, width, height)]
         [new Key("1", 159.5, 27.5)],
@@ -63,5 +63,5 @@ $(window).on("load", function(){
         $("#explanation").html("<div class='line'>" + explanations[$(this).attr("data-value")].split("<br>").join("</div><div class='line'>") + "</div>");
     }, function(){
         $("#explanation").html("<div class='line'>Point on a key or a key group to see the command of it.</div>");
-    })
+    });
 });

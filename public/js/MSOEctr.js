@@ -62,7 +62,7 @@ var UIhandler = new function(){
         "#load_url":"Reload page for the given sheet uri"
     };
     var help_right = ["#paste", "#slur", "#clef", "#check", "#remove", ".v_up:eq(0)", ".v_down:eq(0)", "#edit", "#preview", "#night", "#lan", "#feedback", ".volume-up", "#load_url"];
-    var help_center = [".v_div:eq(0)", "#logo"]
+    var help_center = [".v_div:eq(0)", "#logo"];
     //elements whose popups should expand to the right
     this.help_voice = () => { //set help popups for voice list
         if(!help_) return;
@@ -208,7 +208,7 @@ var UIhandler = new function(){
             autoSuccess: false,
             showActivity: false
         });
-    }
+    };
     
     this.isInView = (elem) => {
         var docViewTop = $("#sheet").offset().top;
@@ -233,7 +233,7 @@ var UIhandler = new function(){
                 "<i class='download icon'></i>"+
             "</div></a></div>");
         $("#modalQR").append(QRcode);
-        $("#modalQR").append(QRdownload)
+        $("#modalQR").append(QRdownload);
         return [QRcode, QRdownload];
     };
     
@@ -261,7 +261,7 @@ var checkmodal = () => {
     }else{
         return undefined;
     }
-}
+};
 
 var key = (event) => { // only keypress can tell if "shift" is pressed at the same time
     if ($("#voicename").is(":focus") && (event.keyCode == 13)) $("#check").click();
@@ -721,7 +721,7 @@ $(document).ready(function(){
             MSOE.genQRcode();
         }
         $("#modalQR").modal("show");
-    })
+    });
     $("#copy").click(function(){
         if (!MSOE.Edit_()) return;
         MSOE.copyui();
