@@ -45,7 +45,6 @@ describe('[info] MSOE UI', () => {
             return;
         }
         home = 'http://' + stdout + ':8080/';
-        console.log(home);
     });
     
     beforeEach(async () => { // go to info modal

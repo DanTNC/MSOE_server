@@ -3,7 +3,7 @@ UI tests -> js-beautify -> Refactor::naming -> Refactor::composition -> Refactor
 
 # UI
 ## Path done
-## Info
+## Info done
 ## Up-left (Edit)
 ## Up-left (Preview)
 ## Up-right
