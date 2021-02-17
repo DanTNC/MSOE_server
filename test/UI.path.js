@@ -4,17 +4,9 @@ const { expect } = require('chai');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 const { defaultIndex, defaultKey, generatePathByIndexKey } = require('./helper');
-
-const screen = {
-    width: 1024,
-    height: 768
-};
+const { screen, PRE_LOADER_TIMEOUT, ANIMATION_TIMEOUT, REDIRECT_TIMEOUT } = require('./constants');
 
 describe('[path] MSOE UI', () => {
-    const PRE_LOADER_TIMEOUT = 5000;
-    const ANIMATION_TIMEOUT = 5000;
-    const REDIRECT_TIMEOUT = 10000;
-    
     const driver = new Builder()
                     .forBrowser('chrome')
                     .setChromeOptions(new chrome.Options().headless().windowSize(screen))
