@@ -45,6 +45,7 @@ describe('[path] MSOE UI', () => {
             return;
         }
         home = 'http://' + stdout + ':8080/';
+        console.log(home);
     });
     
     it('should show loading screen before all documents are ready', async () => {
