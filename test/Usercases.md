@@ -1,5 +1,5 @@
 # Flow
-UI tests -> Refactor::naming -> Refactor::composition -> Refactor::* -> Core tests -> Refactor::ES6_import -> Core tests
+UI tests -> js-beautify -> Refactor::naming -> Refactor::composition -> Refactor::* -> Core tests -> Refactor::ES6_import -> Core tests
 
 # UI
 ## Path done
