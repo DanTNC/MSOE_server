@@ -3,7 +3,7 @@ const chrome = require('selenium-webdriver/chrome');
 const { expect } = require('chai');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
-const { defaultIndex, defaultKey, generatePathByIndexKey } = require('./helper');
+const { defaultIndex, defaultKey, generatePathByIndexKey, elementWithState, elementWithStateCheck } = require('./helper');
 const { screen, PRE_LOADER_TIMEOUT, ANIMATION_TIMEOUT, REDIRECT_TIMEOUT } = require('./constants');
 
 describe('[path] MSOE UI', () => {
@@ -11,16 +11,6 @@ describe('[path] MSOE UI', () => {
                     .forBrowser('chrome')
                     .setChromeOptions(new chrome.Options().headless().windowSize(screen))
                     .build();
-                    
-    const modalStateCheck = async (id_, state) => {
-        return (await driver.findElement(By.id(id_)).getAttribute('class')).includes(state);
-    };
-    
-    const modalState = (id_, state) => {
-        return async () => {
-            return await modalStateCheck(id_, state);
-        };
-    };
     
     const goTo = async (path) => {
         path = path || '';
@@ -49,22 +39,22 @@ describe('[path] MSOE UI', () => {
     it('should show welcome modal when user enters homepage', async () => {
         await goTo();
         
-        expect(await modalStateCheck('modaldiv1', 'visible')).to.be.true;
+        expect(await elementWithStateCheck(driver, By.id('modaldiv1'), 'visible')).to.be.true;
     });
     
     it('should not show welcome modal when user enters a sheetpage', async () => {
         await goTo(generatePathByIndexKey(true));
         
-        expect(await modalStateCheck('modaldiv1', 'visible')).to.be.false;
+        expect(await elementWithStateCheck(driver, By.id('modaldiv1'), 'visible')).to.be.false;
     });
     
     it('should show info modal when user clicks the start button in welcome modal', async () => {
         await goTo();
         await driver.findElement(By.id('infomodal')).click();
-        await driver.wait(modalState('modaldiv1', 'hidden'), ANIMATION_TIMEOUT);
+        await driver.wait(elementWithState(driver, By.id('modaldiv1'), 'hidden'), ANIMATION_TIMEOUT);
         var modalAppears = true;
         try {
-            await driver.wait(modalState('modaldiv2', 'visible'), ANIMATION_TIMEOUT);
+            await driver.wait(elementWithState(driver, By.id('modaldiv2'), 'visible'), ANIMATION_TIMEOUT);
         } catch (TimeoutException) {
             modalAppears = false;
         }
@@ -75,9 +65,9 @@ describe('[path] MSOE UI', () => {
     it('should go back to homepage when the logo is clicked', async () => {
         await goTo();
         await driver.findElement(By.id('infomodal')).click();
-        await driver.wait(modalState('modaldiv2', 'visible'), ANIMATION_TIMEOUT);
+        await driver.wait(elementWithState(driver, By.id('modaldiv2'), 'visible'), ANIMATION_TIMEOUT);
         await driver.findElement(By.id('submit')).sendKeys(Key.ENTER);
-        await driver.wait(modalState('modaldiv2', 'hidden'), ANIMATION_TIMEOUT);
+        await driver.wait(elementWithState(driver, By.id('modaldiv2'), 'hidden'), ANIMATION_TIMEOUT);
         await driver.findElement(By.id('logo')).click();
         await driver.wait(until.elementIsVisible(driver.findElement(By.id('preloader'))), PRE_LOADER_TIMEOUT);
 
