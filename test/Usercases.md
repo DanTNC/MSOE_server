@@ -13,6 +13,8 @@ UI tests -> js-beautify -> Refactor::naming -> Refactor::composition -> Refactor
 ## Volume
 ## Right preview
 ## Url-load
+## Unsaved Changes
+## Authorization
 ## Manual
 ## Sheet
 ### Cursor
