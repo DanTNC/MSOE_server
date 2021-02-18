@@ -3,7 +3,7 @@ const chrome = require('selenium-webdriver/chrome');
 const { expect } = require('chai');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
-const { generatePathByIndexKey } = require('./helper');
+const { generatePathByIndexKey, elementWithState, elementDisappears, elementAppears } = require('./helper');
 const { screen, PRE_LOADER_TIMEOUT, ANIMATION_TIMEOUT, REDIRECT_TIMEOUT } = require('./constants');
 
 describe('[edit-buttons] MSOE UI', () => {
@@ -11,38 +11,6 @@ describe('[edit-buttons] MSOE UI', () => {
                     .forBrowser('chrome')
                     .setChromeOptions(new chrome.Options().headless().windowSize(screen))
                     .build();
-    
-    const elementWithStateCheck = async (id_, state) => {
-        return (await driver.findElement(By.id(id_)).getAttribute('class')).includes(state);
-    };
-    
-    const elementWithoutStateCheck = async (id_, state) => {
-        return !(await elementWithStateCheck(id_, state));
-    };
-    
-    const elementWithState = (id_, state) => {
-        return async () => {
-            return await elementWithStateCheck(id_, state);
-        };
-    };
-    
-    const elementWithoutState = (id_, state) => {
-        return async () => {
-            return await elementWithoutStateCheck(id_, state);
-        };
-    };
-    
-    const elementDisappear = (by) => {
-        return async () => {
-            var disappear = false;
-            try {
-                await driver.findElement(by);
-            } catch (NoSuchElementError) {
-                disappear = true;
-            }
-            return disappear;
-        };
-    };
     
     const goTo = async (path) => {
         path = path || '';
@@ -64,17 +32,17 @@ describe('[edit-buttons] MSOE UI', () => {
     beforeEach(async () => { // hide modals
         await goTo();
         await driver.findElement(By.id('infomodal')).click();
-        await driver.wait(elementWithState('modaldiv2', 'visible'), ANIMATION_TIMEOUT);
+        await driver.wait(elementWithState(driver, By.id('modaldiv2'), 'visible'), ANIMATION_TIMEOUT);
         await driver.findElement(By.id('submit')).sendKeys(Key.ENTER);
-        await driver.wait(elementWithState('modaldiv2', 'hidden'), ANIMATION_TIMEOUT);
+        await driver.wait(elementWithState(driver, By.id('modaldiv2'), 'hidden'), ANIMATION_TIMEOUT);
     });
     
     describe('[Manual]', () => {
-        it('should show manual when [Manual] is clicked', async () => {
+        it('should show manual', async () => {
             await driver.findElement(By.xpath("//*[text()='Manual']")).click();
             var manualShown = true;
             try {
-                await driver.wait(elementWithState('sidebar', 'visible'), ANIMATION_TIMEOUT);
+                await driver.wait(elementWithState(driver, By.id('sidebar'), 'visible'), ANIMATION_TIMEOUT);
             } catch (TimeoutException) {
                 manualShown = false;
             }
@@ -87,7 +55,7 @@ describe('[edit-buttons] MSOE UI', () => {
             await driver.findElement(By.xpath("//*[@class='pusher dimmed']")).click();
             var manualShown = true;
             try {
-                await driver.wait(elementWithoutState('sidebar', 'visible'), ANIMATION_TIMEOUT);
+                await driver.wait(elementWithoutState(driver, By.id('sidebar'), 'visible'), ANIMATION_TIMEOUT);
             } catch (TimeoutException) {
                 manualShown = false;
             }
@@ -98,7 +66,7 @@ describe('[edit-buttons] MSOE UI', () => {
     
     
     describe('[Help]', () => {
-        it('should show popup messages for [Help] when it\'s hovered', async () => {
+        it('should show popup messages when hovered', async () => {
             const helpButton = await driver.findElement(By.xpath("//*[text()='Help']"));
             await driver.actions().move({x: 0, y: 0, origin: helpButton}).perform();
             var found = true;
@@ -111,7 +79,7 @@ describe('[edit-buttons] MSOE UI', () => {
             expect(found).to.be.true;
         });
         
-        it('should show popup messages for buttons with help after [Help] is clicked', async () => {
+        it('should show popup messages for buttons with help', async () => {
             await driver.findElement(By.xpath("//*[text()='Help']")).click();
             const buttonWithHelp = await driver.findElement(By.xpath("//*[contains(@class, 'help')][1]"));
             await driver.actions().move({x: 0, y: 0, origin: buttonWithHelp}).perform();
@@ -125,7 +93,7 @@ describe('[edit-buttons] MSOE UI', () => {
             expect(found).to.be.true;
         });
         
-        it('should toggle display of popup messages when [Help] is clicked', async () => {
+        it('should toggle display of popup messages', async () => {
             const helpButton = await driver.findElement(By.xpath("//*[text()='Help']"));
             const offColor = await driver.executeScript('return getComputedStyle(arguments[0]).getPropertyValue("color");', helpButton);
             await helpButton.click();
@@ -147,12 +115,46 @@ describe('[edit-buttons] MSOE UI', () => {
             await driver.actions().move({x: 0, y: 0, origin: buttonWithHelp}).perform();
             var popupDisappears = true;
             try {
-                await driver.wait(elementDisappear(By.xpath("//*[contains(@class, 'popup')]")), ANIMATION_TIMEOUT);
+                await driver.wait(elementDisappears(driver, By.xpath("//*[contains(@class, 'popup')]")), ANIMATION_TIMEOUT);
             } catch (TimeoutException) {
                 popupDisappears = false;
             }
             
             expect(popupDisappears).to.be.true;
+        });
+    });
+    
+    describe.only('[Save]', () => {
+        it('should generate a index-key pair and append it to the url', async () => {
+            await driver.findElement(By.xpath("//*[text()='Save']")).click();
+            var urlChanged = true;
+            try {
+                await driver.wait(async () => {
+                    return (await driver.getCurrentUrl()) != home;
+                }, REDIRECT_TIMEOUT);
+            } catch (TimeoutException) {
+                urlChanged = false;
+            }
+            expect(urlChanged).to.be.true;
+        });
+        
+        it('should save sheet in database', async () => {
+            await driver.actions().sendKeys("z").perform();
+            await driver.wait(until.elementLocated(By.xpath('//*[local-name()="path"and@class="note l0 m0 v0"]')), ANIMATION_TIMEOUT);
+            await driver.findElement(By.xpath("//*[text()='Save']")).click();
+            await driver.wait(async () => {
+                return (await driver.getCurrentUrl()) != home;
+            }, REDIRECT_TIMEOUT);
+            await driver.navigate().refresh();
+            await driver.wait(until.elementIsNotVisible(driver.findElement(By.id('preloader'))), PRE_LOADER_TIMEOUT);
+            var noteAppears = true;
+            try {
+                await driver.wait(elementAppears(driver, By.xpath('//*[local-name()="path"and@class="note l0 m0 v0"]')), ANIMATION_TIMEOUT);
+            } catch (TimeoutException) {
+                noteAppears = false;
+            }
+            
+            expect(noteAppears).to.be.true;
         });
     });
     
