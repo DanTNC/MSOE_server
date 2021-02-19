@@ -97,12 +97,12 @@ describe('[edit-buttons] MSOE UI', () => {
         
         it('should toggle display of popup messages', async () => {
             const helpButton = await driver.findElement(By.xpath("//*[text()='Help']"));
-            const offColor = await driver.executeScript('return getComputedStyle(arguments[0]).getPropertyValue("color");', helpButton);
+            const offColor = await helpButton.getCssValue("color");
             await helpButton.click();
             var colorChanged = true;
             try {
                 await driver.wait(async () => {
-                    const color = await driver.executeScript('return getComputedStyle(arguments[0]).getPropertyValue("color");', helpButton);
+                    const color = await helpButton.getCssValue("color");
                     return color != offColor;
                 }, ANIMATION_TIMEOUT);
             } catch (e) {
@@ -195,12 +195,12 @@ describe('[edit-buttons] MSOE UI', () => {
         
         it('should toggle display of sidebar toolbox', async () => {
             const toolboxButton = await driver.findElement(By.xpath("//*[text()='Toolbox']"));
-            const offColor = await driver.executeScript('return getComputedStyle(arguments[0]).getPropertyValue("color");', toolboxButton);
+            const offColor = await toolboxButton.getCssValue("color");
             await toolboxButton.click();
             var colorChanged = true;
             try {
                 await driver.wait(async () => {
-                    const color = await driver.executeScript('return getComputedStyle(arguments[0]).getPropertyValue("color");', toolboxButton);
+                    const color = await toolboxButton.getCssValue("color");
                     return color != offColor;
                 }, ANIMATION_TIMEOUT);
             } catch (e) {
