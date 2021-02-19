@@ -1,10 +1,12 @@
 # Flow
-UI tests -> js-beautify -> Refactor::naming -> Refactor::composition -> Refactor::* -> Core tests -> Refactor::ES6_import -> Core tests
+unnitest:= UI tests -> merge
+refactor:= branch -> js-beautify -> Refactor::naming -> Refactor::composition -> Refactor::* -> merge
+es6:= branch -> Core tests -> Refactor::ES6_import -> Core tests -> merge
 
 # UI
 ## Path done
 ## Info done
-## Up-left (Edit)
+## Up-left (Edit) done
 ## Up-left (Preview)
 ## Up-right
 ## Left voice list
