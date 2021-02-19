@@ -3,7 +3,7 @@ const chrome = require('selenium-webdriver/chrome');
 const { expect } = require('chai');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
-const { generatePathByIndexKey, elementWithState, elementWithoutState, elementDisappears, elementAppears } = require('./helper');
+const { elementWithState, elementWithoutState, elementDisappears, elementAppears } = require('./helper');
 const { screen, PRE_LOADER_TIMEOUT, ANIMATION_TIMEOUT, REDIRECT_TIMEOUT } = require('./constants');
 
 describe('[edit-buttons] MSOE UI', () => {
@@ -197,6 +197,31 @@ describe('[edit-buttons] MSOE UI', () => {
             }
             
             expect(toolboxHidden).to.be.true;
+        });
+    });
+    
+    describe('[QR Code]', () => {
+        it('should show warning message when the sheet is not saved', async () => {
+            await driver.findElement(By.xpath("//*[text()='QR Code']")).click();
+            var QRWarnShown = true;
+            try {
+                await driver.wait(elementAppears(driver, By.xpath('//*[text()="You need to save the sheet before generating QR code."]')), ANIMATION_TIMEOUT);
+            } catch (TimeoutException) {
+                QRWarnShown = false;
+            }
+            
+            expect(QRWarnShown).to.be.true;
+        });
+        
+        it('should show the QR code to the current page when sheet already saved', async () => {
+            await driver.findElement(By.xpath("//*[text()='Save']")).click();
+            await driver.wait(async () => {return (await driver.getCurrentUrl()) != home;}, REDIRECT_TIMEOUT);
+            await driver.findElement(By.xpath("//*[text()='QR Code']")).click();
+            await driver.wait(elementWithState(driver, By.id('modalQR'), 'visible'), ANIMATION_TIMEOUT);
+            
+            expect(await driver.findElement(By.xpath("//*[text()='Here is the QR code of this sheet:']")).isDisplayed()).to.be.true;
+            expect(await driver.findElement(By.xpath("//*[@alt='Scan me!']")).isDisplayed()).to.be.true;
+            expect(await driver.findElement(By.xpath("//*[text()='Download']")).isDisplayed()).to.be.true;
         });
     });
     
