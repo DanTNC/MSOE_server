@@ -1,26 +1,25 @@
 const { By, Key, until } = require('selenium-webdriver');
 const { expect } = require('chai');
-const { 
-    elementWithState, elementWithoutState, elementDisappears, elementAppears,
-    buildDriver, goTo, getHomeAddress
-} = require('./helper');
+const { Helper } = require('./helper');
 const { PRE_LOADER_TIMEOUT, ANIMATION_TIMEOUT, REDIRECT_TIMEOUT } = require('./constants');
 
 describe('[edit-buttons] MSOE UI', () => {
-    const driver = buildDriver();
+    const helper = new Helper();
+    
+    const driver = helper.buildDriver();
     
     var home;
     
     before(async () => { // get public ip using shell command
-        home = await getHomeAddress();
+        home = await helper.getHomeAddress();
     });
     
     beforeEach(async () => { // hide modals
-        await goTo(driver, home);
+        await helper.goTo();
         await driver.findElement(By.id('infomodal')).click();
-        await driver.wait(elementWithState(driver, By.id('modaldiv2'), 'visible'), ANIMATION_TIMEOUT);
+        await driver.wait(helper.elementWithState(By.id('modaldiv2'), 'visible'), ANIMATION_TIMEOUT);
         await driver.findElement(By.id('submit')).sendKeys(Key.ENTER);
-        await driver.wait(elementWithState(driver, By.id('modaldiv2'), 'hidden'), ANIMATION_TIMEOUT);
+        await driver.wait(helper.elementWithState(By.id('modaldiv2'), 'hidden'), ANIMATION_TIMEOUT);
     });
     
     describe('[Manual]', () => {
@@ -28,7 +27,7 @@ describe('[edit-buttons] MSOE UI', () => {
             await driver.findElement(By.xpath("//*[text()='Manual']")).click();
             var manualShown = true;
             try {
-                await driver.wait(elementWithState(driver, By.id('sidebar'), 'visible'), ANIMATION_TIMEOUT);
+                await driver.wait(helper.elementWithState(By.id('sidebar'), 'visible'), ANIMATION_TIMEOUT);
             } catch (e) {
                 if (e.name == 'TimeoutException') {
                 	manualShown = false;
@@ -45,7 +44,7 @@ describe('[edit-buttons] MSOE UI', () => {
             await driver.findElement(By.css(".pusher.dimmed")).click();
             var manualShown = true;
             try {
-                await driver.wait(elementWithoutState(driver, By.id('sidebar'), 'visible'), ANIMATION_TIMEOUT);
+                await driver.wait(helper.elementWithoutState(By.id('sidebar'), 'visible'), ANIMATION_TIMEOUT);
             } catch (e) {
                 if (e.name == 'TimeoutException') {
                 	manualShown = false;
@@ -122,7 +121,7 @@ describe('[edit-buttons] MSOE UI', () => {
             await driver.actions().move({x: 0, y: 0, origin: buttonWithHelp}).perform();
             var popupDisappears = true;
             try {
-                await driver.wait(elementDisappears(driver, By.css(".popup")), ANIMATION_TIMEOUT);
+                await driver.wait(helper.elementDisappears(By.css(".popup")), ANIMATION_TIMEOUT);
             } catch (e) {
                 if (e.name == 'TimeoutException') {
                 	popupDisappears = false;
@@ -164,7 +163,7 @@ describe('[edit-buttons] MSOE UI', () => {
             await driver.wait(until.elementIsNotVisible(driver.findElement(By.id('preloader'))), PRE_LOADER_TIMEOUT);
             var noteAppears = true;
             try {
-                await driver.wait(elementAppears(driver, By.css('path.note.l0.m0.v0')), ANIMATION_TIMEOUT);
+                await driver.wait(helper.elementAppears(By.css('path.note.l0.m0.v0')), ANIMATION_TIMEOUT);
             } catch (e) {
                 if (e.name == 'TimeoutException') {
                 	noteAppears = false;
@@ -182,7 +181,7 @@ describe('[edit-buttons] MSOE UI', () => {
             await driver.findElement(By.xpath("//*[text()='Toolbox']")).click();
             var toolboxShown = true;
             try {
-                await driver.wait(elementWithState(driver, By.id('toolbox'), 'visible'), ANIMATION_TIMEOUT);
+                await driver.wait(helper.elementWithState(By.id('toolbox'), 'visible'), ANIMATION_TIMEOUT);
             } catch (e) {
                 if (e.name == 'TimeoutException') {
                 	toolboxShown = false;
@@ -218,7 +217,7 @@ describe('[edit-buttons] MSOE UI', () => {
             
             var toolboxHidden = true;
             try {
-                await driver.wait(elementWithoutState(driver, By.id('toolbox'), 'visible'), ANIMATION_TIMEOUT);
+                await driver.wait(helper.elementWithoutState(By.id('toolbox'), 'visible'), ANIMATION_TIMEOUT);
             } catch (e) {
                 if (e.name == 'TimeoutException') {
                 	toolboxHidden = false;
@@ -236,7 +235,7 @@ describe('[edit-buttons] MSOE UI', () => {
             await driver.findElement(By.xpath("//*[text()='QR Code']")).click();
             var QRWarnShown = true;
             try {
-                await driver.wait(elementAppears(driver, By.xpath('//*[text()="You need to save the sheet before generating QR code."]')), ANIMATION_TIMEOUT);
+                await driver.wait(helper.elementAppears(By.xpath('//*[text()="You need to save the sheet before generating QR code."]')), ANIMATION_TIMEOUT);
             } catch (e) {
                 if (e.name == 'TimeoutException') {
                 	QRWarnShown = false;
@@ -252,7 +251,7 @@ describe('[edit-buttons] MSOE UI', () => {
             await driver.findElement(By.xpath("//*[text()='Save']")).click();
             await driver.wait(async () => {return (await driver.getCurrentUrl()) != home;}, REDIRECT_TIMEOUT);
             await driver.findElement(By.xpath("//*[text()='QR Code']")).click();
-            await driver.wait(elementWithState(driver, By.id('modalQR'), 'visible'), ANIMATION_TIMEOUT);
+            await driver.wait(helper.elementWithState(By.id('modalQR'), 'visible'), ANIMATION_TIMEOUT);
             
             expect(await driver.findElement(By.xpath("//*[text()='Here is the QR code of this sheet:']")).isDisplayed()).to.be.true;
             expect(await driver.findElement(By.xpath("//*[@alt='Scan me!']")).isDisplayed()).to.be.true;
