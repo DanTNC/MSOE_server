@@ -16,6 +16,7 @@ UI tests -> js-beautify -> Refactor::naming -> Refactor::composition -> Refactor
 ## Unsaved Changes
 ## Authorization
 ## Manual
+## Toolbox
 ## Sheet
 ### Cursor
 ### Edit

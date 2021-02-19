@@ -3,7 +3,7 @@ const chrome = require('selenium-webdriver/chrome');
 const { expect } = require('chai');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
-const { generatePathByIndexKey, elementWithState, elementDisappears, elementAppears } = require('./helper');
+const { generatePathByIndexKey, elementWithState, elementWithoutState, elementDisappears, elementAppears } = require('./helper');
 const { screen, PRE_LOADER_TIMEOUT, ANIMATION_TIMEOUT, REDIRECT_TIMEOUT } = require('./constants');
 
 describe('[edit-buttons] MSOE UI', () => {
@@ -107,7 +107,7 @@ describe('[edit-buttons] MSOE UI', () => {
                 colorChanged = false;
             }
             
-            expect(colorChanged).to.be.true;
+            expect(colorChanged, "color of button should change").to.be.true;
             
             await helpButton.click();
             
@@ -124,7 +124,7 @@ describe('[edit-buttons] MSOE UI', () => {
         });
     });
     
-    describe.only('[Save]', () => {
+    describe('[Save]', () => {
         it('should generate a index-key pair and append it to the url', async () => {
             await driver.findElement(By.xpath("//*[text()='Save']")).click();
             var urlChanged = true;
@@ -155,6 +155,48 @@ describe('[edit-buttons] MSOE UI', () => {
             }
             
             expect(noteAppears).to.be.true;
+        });
+    });
+    
+    describe('[Toolbox]', () => {
+        it('should show sidebar toolbox', async () => {
+            await driver.findElement(By.xpath("//*[text()='Toolbox']")).click();
+            var toolboxShown = true;
+            try {
+                await driver.wait(elementWithState(driver, By.id('toolbox'), 'visible'), ANIMATION_TIMEOUT);
+            } catch (TimeoutException) {
+                toolboxShown = false;
+            }
+            
+            expect(toolboxShown).to.be.true;
+        });
+        
+        it('should toggle display of sidebar toolbox', async () => {
+            const toolboxButton = await driver.findElement(By.xpath("//*[text()='Toolbox']"));
+            const offColor = await driver.executeScript('return getComputedStyle(arguments[0]).getPropertyValue("color");', toolboxButton);
+            await toolboxButton.click();
+            var colorChanged = true;
+            try {
+                await driver.wait(async () => {
+                    const color = await driver.executeScript('return getComputedStyle(arguments[0]).getPropertyValue("color");', toolboxButton);
+                    return color != offColor;
+                }, ANIMATION_TIMEOUT);
+            } catch (TimeoutException) {
+                colorChanged = false;
+            }
+            
+            expect(colorChanged, "color of button should change").to.be.true;
+            
+            await toolboxButton.click();
+            
+            var toolboxHidden = true;
+            try {
+                await driver.wait(elementWithoutState(driver, By.id('toolbox'), 'visible'), ANIMATION_TIMEOUT);
+            } catch (TimeoutException) {
+                toolboxHidden = false;
+            }
+            
+            expect(toolboxHidden).to.be.true;
         });
     });
     
