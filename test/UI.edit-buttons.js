@@ -56,7 +56,7 @@ describe('[edit-buttons] MSOE UI', () => {
         
         it('should hide manual when dimmer is clicked while manual is shown', async () => {
             await driver.findElement(By.xpath("//*[text()='Manual']")).click();
-            await driver.findElement(By.xpath("//*[@class='pusher dimmed']")).click();
+            await driver.findElement(By.css(".pusher.dimmed")).click();
             var manualShown = true;
             try {
                 await driver.wait(elementWithoutState(driver, By.id('sidebar'), 'visible'), ANIMATION_TIMEOUT);
@@ -79,7 +79,8 @@ describe('[edit-buttons] MSOE UI', () => {
             await driver.actions().move({x: 0, y: 0, origin: helpButton}).perform();
             var found = true;
             try {
-                await driver.findElement(By.xpath("//*[contains(@class, 'popup')]"));
+                // await driver.findElement(By.xpath("//*[contains(@class, 'popup')]"));
+                await driver.findElement(By.css(".popup"));
             } catch (e) {
                 if (e.name == 'NoSuchElementError') {
                 	found = false;
@@ -97,7 +98,7 @@ describe('[edit-buttons] MSOE UI', () => {
             await driver.actions().move({x: 0, y: 0, origin: buttonWithHelp}).perform();
             var found = true;
             try {
-                await driver.findElement(By.xpath("//*[contains(@class, 'popup')]"));
+                await driver.findElement(By.css(".popup"));
             } catch (e) {
                 if (e.name == 'NoSuchElementError') {
                 	found = false;
@@ -135,7 +136,7 @@ describe('[edit-buttons] MSOE UI', () => {
             await driver.actions().move({x: 0, y: 0, origin: buttonWithHelp}).perform();
             var popupDisappears = true;
             try {
-                await driver.wait(elementDisappears(driver, By.xpath("//*[contains(@class, 'popup')]")), ANIMATION_TIMEOUT);
+                await driver.wait(elementDisappears(driver, By.css(".popup")), ANIMATION_TIMEOUT);
             } catch (e) {
                 if (e.name == 'TimeoutException') {
                 	popupDisappears = false;
@@ -168,7 +169,7 @@ describe('[edit-buttons] MSOE UI', () => {
         
         it('should save sheet in database', async () => {
             await driver.actions().sendKeys("z").perform();
-            await driver.wait(until.elementLocated(By.xpath('//*[local-name()="path"and@class="note l0 m0 v0"]')), ANIMATION_TIMEOUT);
+            await driver.wait(until.elementLocated(By.css('path.note.l0.m0.v0')), ANIMATION_TIMEOUT);
             await driver.findElement(By.xpath("//*[text()='Save']")).click();
             await driver.wait(async () => {
                 return (await driver.getCurrentUrl()) != home;
@@ -177,7 +178,7 @@ describe('[edit-buttons] MSOE UI', () => {
             await driver.wait(until.elementIsNotVisible(driver.findElement(By.id('preloader'))), PRE_LOADER_TIMEOUT);
             var noteAppears = true;
             try {
-                await driver.wait(elementAppears(driver, By.xpath('//*[local-name()="path"and@class="note l0 m0 v0"]')), ANIMATION_TIMEOUT);
+                await driver.wait(elementAppears(driver, By.css('path.note.l0.m0.v0')), ANIMATION_TIMEOUT);
             } catch (e) {
                 if (e.name == 'TimeoutException') {
                 	noteAppears = false;
