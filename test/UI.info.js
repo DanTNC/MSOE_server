@@ -1,10 +1,7 @@
-const { Builder, By, Key, until } = require('selenium-webdriver');
-const chrome = require('selenium-webdriver/chrome');
+const { By, Key } = require('selenium-webdriver');
 const { expect } = require('chai');
-const util = require('util');
-const exec = util.promisify(require('child_process').exec);
-const { elementWithState } = require('./helper');
-const { screen, PRE_LOADER_TIMEOUT, ANIMATION_TIMEOUT, REDIRECT_TIMEOUT } = require('./constants');
+const { elementWithState, buildDriver, goTo, getHomeAddress } = require('./helper');
+const { PRE_LOADER_TIMEOUT, ANIMATION_TIMEOUT, REDIRECT_TIMEOUT } = require('./constants');
 
 describe('[info] MSOE UI', () => {
     const fields = [
@@ -16,30 +13,16 @@ describe('[info] MSOE UI', () => {
         "whoisartist",
     ];
     
-    const driver = new Builder()
-                    .forBrowser('chrome')
-                    .setChromeOptions(new chrome.Options().headless().windowSize(screen))
-                    .build();
-    
-    const goTo = async (path) => {
-        path = path || '';
-        await driver.get(home + path);
-        await driver.wait(until.elementIsNotVisible(driver.findElement(By.id('preloader'))), PRE_LOADER_TIMEOUT);
-    };
+    const driver = buildDriver();
     
     var home;
     
     before(async () => { // get public ip using shell command
-        const { stdout, stderr } = await exec("curl -s http://169.254.169.254/latest/meta-data/public-ipv4");
-        if (stderr) {
-            console.log(`stderr: ${stderr}`);
-            return;
-        }
-        home = 'http://' + stdout + ':8080/';
+        home = await getHomeAddress();
     });
     
     beforeEach(async () => { // go to info modal
-        await goTo();
+        await goTo(driver, home);
         await driver.findElement(By.id('infomodal')).click();
         await driver.wait(elementWithState(driver, By.id('modaldiv2'), 'visible'), ANIMATION_TIMEOUT);
     });
