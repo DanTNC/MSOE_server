@@ -1,32 +1,19 @@
-const { Builder, By, Key, until } = require('selenium-webdriver');
-const chrome = require('selenium-webdriver/chrome');
+const { By, Key, until } = require('selenium-webdriver');
 const { expect } = require('chai');
-const util = require('util');
-const exec = util.promisify(require('child_process').exec);
-const { defaultIndex, defaultKey, generatePathByIndexKey, elementWithState, elementWithStateCheck } = require('./helper');
-const { screen, PRE_LOADER_TIMEOUT, ANIMATION_TIMEOUT, REDIRECT_TIMEOUT } = require('./constants');
+const { 
+    defaultIndex, defaultKey, generatePathByIndexKey,
+    elementWithState, elementWithStateCheck,
+    buildDriver, goTo, getHomeAddress
+} = require('./helper');
+const { PRE_LOADER_TIMEOUT, ANIMATION_TIMEOUT, REDIRECT_TIMEOUT } = require('./constants');
 
 describe('[path] MSOE UI', () => {
-    const driver = new Builder()
-                    .forBrowser('chrome')
-                    .setChromeOptions(new chrome.Options().headless().windowSize(screen))
-                    .build();
-    
-    const goTo = async (path) => {
-        path = path || '';
-        await driver.get(home + path);
-        await driver.wait(until.elementIsNotVisible(driver.findElement(By.id('preloader'))), PRE_LOADER_TIMEOUT);
-    };
+    const driver = buildDriver();
     
     var home;
     
     before(async () => { // get public ip using shell command
-        const { stdout, stderr } = await exec("curl -s http://169.254.169.254/latest/meta-data/public-ipv4");
-        if (stderr) {
-            console.log(`stderr: ${stderr}`);
-            return;
-        }
-        home = 'http://' + stdout + ':8080/';
+        home = await getHomeAddress();
     });
     
     it('should show loading screen before all documents are ready', async () => {
@@ -37,19 +24,19 @@ describe('[path] MSOE UI', () => {
     });
     
     it('should show welcome modal when user enters homepage', async () => {
-        await goTo();
+        await goTo(driver, home);
         
         expect(await elementWithStateCheck(driver, By.id('modaldiv1'), 'visible')).to.be.true;
     });
     
     it('should not show welcome modal when user enters a sheetpage', async () => {
-        await goTo(generatePathByIndexKey(true));
+        await goTo(driver, home, generatePathByIndexKey(true));
         
         expect(await elementWithStateCheck(driver, By.id('modaldiv1'), 'visible')).to.be.false;
     });
     
     it('should show info modal when user clicks the start button in welcome modal', async () => {
-        await goTo();
+        await goTo(driver, home);
         await driver.findElement(By.id('infomodal')).click();
         await driver.wait(elementWithState(driver, By.id('modaldiv1'), 'hidden'), ANIMATION_TIMEOUT);
         var modalAppears = true;
@@ -67,7 +54,7 @@ describe('[path] MSOE UI', () => {
     });
 
     it('should go back to homepage when the logo is clicked', async () => {
-        await goTo();
+        await goTo(driver, home);
         await driver.findElement(By.id('infomodal')).click();
         await driver.wait(elementWithState(driver, By.id('modaldiv2'), 'visible'), ANIMATION_TIMEOUT);
         await driver.findElement(By.id('submit')).sendKeys(Key.ENTER);

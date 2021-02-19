@@ -1,7 +1,35 @@
+const { Builder, By, until } = require('selenium-webdriver');
+const chrome = require('selenium-webdriver/chrome');
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
+const { screen, PRE_LOADER_TIMEOUT } = require('./constants');
+
+const buildDriver = () => {
+    return new Builder()
+            .forBrowser('chrome')
+            .setChromeOptions(new chrome.Options().headless().windowSize(screen))
+            .build();
+};
+    
+const goTo = async (driver, home, path) => {
+    path = path || '';
+    await driver.get(home + path);
+    await driver.wait(until.elementIsNotVisible(driver.findElement(By.id('preloader'))), PRE_LOADER_TIMEOUT);
+};
+
+const getHomeAddress = async () => {
+    const { stdout, stderr } = await exec("curl -s http://169.254.169.254/latest/meta-data/public-ipv4");
+    if (stderr) {
+        console.log(`stderr: ${stderr}`);
+        return;
+    }
+    return 'http://' + stdout + ':8080/';
+};
+
 const defaultIndex = 'WPR21F2BZT';
 const defaultKey = 'FTBT+6SPTLB7BNCYJEYZ';
 
-function generatePathByIndexKey(editMode, index, key) {
+const generatePathByIndexKey = (editMode, index, key) => {
     index = index || defaultIndex;
     if (editMode) {
         key = key || defaultKey;
@@ -10,7 +38,7 @@ function generatePathByIndexKey(editMode, index, key) {
         key = '';
     }
     return '?!' + index + key;
-}
+};
 
 const elementWithStateCheck = async (driver, by, state) => {
     return (await driver.findElement(by).getAttribute('class')).includes(state);
@@ -63,6 +91,9 @@ const elementDisappears = (driver, by) => {
 };
 
 module.exports = {
+    buildDriver,
+    goTo,
+    getHomeAddress,
     defaultIndex,
     defaultKey,
     generatePathByIndexKey,
