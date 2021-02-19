@@ -1,6 +1,6 @@
 const { By, Key } = require('selenium-webdriver');
 const { expect } = require('chai');
-const { elementWithState, buildDriver, goTo, getHomeAddress } = require('./helper');
+const { Helper } = require('./helper');
 const { PRE_LOADER_TIMEOUT, ANIMATION_TIMEOUT, REDIRECT_TIMEOUT } = require('./constants');
 
 describe('[info] MSOE UI', () => {
@@ -13,18 +13,20 @@ describe('[info] MSOE UI', () => {
         "whoisartist",
     ];
     
-    const driver = buildDriver();
+    const helper = new Helper();
+    
+    const driver = helper.buildDriver();
     
     var home;
     
     before(async () => { // get public ip using shell command
-        home = await getHomeAddress();
+        home = await helper.getHomeAddress();
     });
     
     beforeEach(async () => { // go to info modal
-        await goTo(driver, home);
+        await helper.goTo();
         await driver.findElement(By.id('infomodal')).click();
-        await driver.wait(elementWithState(driver, By.id('modaldiv2'), 'visible'), ANIMATION_TIMEOUT);
+        await driver.wait(helper.elementWithState(By.id('modaldiv2'), 'visible'), ANIMATION_TIMEOUT);
     });
     
     it('should show all info fields', async () => {
@@ -39,9 +41,9 @@ describe('[info] MSOE UI', () => {
         const input_field = await driver.findElement(By.name(field));
         await input_field.sendKeys("test");
         await driver.findElement(By.id('submit')).click();
-        await driver.wait(elementWithState(driver, By.id('modaldiv2'), 'hidden'), ANIMATION_TIMEOUT);
+        await driver.wait(helper.elementWithState(By.id('modaldiv2'), 'hidden'), ANIMATION_TIMEOUT);
         await driver.findElement(By.id('infohome')).click();
-        await driver.wait(elementWithState(driver, By.id('modaldiv2'), 'visible'), ANIMATION_TIMEOUT);
+        await driver.wait(helper.elementWithState(By.id('modaldiv2'), 'visible'), ANIMATION_TIMEOUT);
         
         expect(await (driver.findElement(By.name(field))).getAttribute("value")).to.equal("test");
     });
@@ -52,10 +54,10 @@ describe('[info] MSOE UI', () => {
         const input_field = await driver.findElement(By.name(field));
         await input_field.sendKeys("test");
         await driver.findElement(By.id('submit')).click();
-        await driver.wait(elementWithState(driver, By.id('modaldiv2'), 'hidden'), ANIMATION_TIMEOUT);
+        await driver.wait(helper.elementWithState(By.id('modaldiv2'), 'hidden'), ANIMATION_TIMEOUT);
         await driver.actions().keyDown(Key.CONTROL).sendKeys('z').keyUp(Key.CONTROL).perform();
         await driver.findElement(By.id('infohome')).click();
-        await driver.wait(elementWithState(driver, By.id('modaldiv2'), 'visible'), ANIMATION_TIMEOUT);
+        await driver.wait(helper.elementWithState(By.id('modaldiv2'), 'visible'), ANIMATION_TIMEOUT);
         
         expect(await (driver.findElement(By.name(field))).getAttribute("value")).to.equal("");
     });
