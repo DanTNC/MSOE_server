@@ -36,14 +36,18 @@ const elementAppearsCheck = async (driver, by) => {
     var appears = true;
     try {
         await driver.findElement(by);
-    } catch (NoSuchElementError) {
-        appears = false;
+    } catch (e) {
+        if (e.name == 'NoSuchElementError') {
+            appears = false;
+        } else {
+            throw e;
+        }
     }
     return appears;
 };
 
 const elementDisappearsCheck = async (driver, by) => {
-    return !(await elementApearsCheck(driver, by));
+    return !(await elementAppearsCheck(driver, by));
 };
 
 const elementAppears = (driver, by) => {

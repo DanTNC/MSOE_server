@@ -55,8 +55,12 @@ describe('[path] MSOE UI', () => {
         var modalAppears = true;
         try {
             await driver.wait(elementWithState(driver, By.id('modaldiv2'), 'visible'), ANIMATION_TIMEOUT);
-        } catch (TimeoutException) {
-            modalAppears = false;
+        } catch (e) {
+            if (e.name == 'TimeoutException') {
+                modalAppears = false;
+            } else {
+                throw e;
+            }
         }
         
         expect(modalAppears).to.be.true;
@@ -82,8 +86,12 @@ describe('[path] MSOE UI', () => {
             await driver.wait(async () => {
                 return (await driver.getCurrentUrl()) == home;
             }, REDIRECT_TIMEOUT);
-        } catch (TimeoutException) {
-            redirected = false;
+        } catch (e) {
+            if (e.name == 'TimeoutException') {
+                redirected = false;
+            } else {
+                throw e;
+            }
         }
         
         expect(redirected).to.be.true;
@@ -97,8 +105,12 @@ describe('[path] MSOE UI', () => {
             await driver.wait(async () => {
                 return (await driver.getCurrentUrl()) == home + generatePathByIndexKey(false, defaultIndex);
             }, REDIRECT_TIMEOUT);
-        } catch (TimeoutException) {
-            redirected = false;
+        } catch (e) {
+            if (e.name == 'TimeoutException') {
+                redirected = false;
+            } else {
+                throw e;
+            }
         }
         
         expect(redirected).to.be.true;

@@ -43,8 +43,12 @@ describe('[edit-buttons] MSOE UI', () => {
             var manualShown = true;
             try {
                 await driver.wait(elementWithState(driver, By.id('sidebar'), 'visible'), ANIMATION_TIMEOUT);
-            } catch (TimeoutException) {
-                manualShown = false;
+            } catch (e) {
+                if (e.name == 'TimeoutException') {
+                	manualShown = false;
+                } else {
+                	throw e;
+                }
             }
             
             expect(manualShown).to.be.true;
@@ -56,8 +60,12 @@ describe('[edit-buttons] MSOE UI', () => {
             var manualShown = true;
             try {
                 await driver.wait(elementWithoutState(driver, By.id('sidebar'), 'visible'), ANIMATION_TIMEOUT);
-            } catch (TimeoutException) {
-                manualShown = false;
+            } catch (e) {
+                if (e.name == 'TimeoutException') {
+                	manualShown = false;
+                } else {
+                	throw e;
+                }
             }
             
             expect(manualShown).to.be.true;
@@ -72,8 +80,12 @@ describe('[edit-buttons] MSOE UI', () => {
             var found = true;
             try {
                 await driver.findElement(By.xpath("//*[contains(@class, 'popup')]"));
-            } catch (NoSuchElementError) {
-                found = false;
+            } catch (e) {
+                if (e.name == 'NoSuchElementError') {
+                	found = false;
+                } else {
+                	throw e;
+                }
             }
             
             expect(found).to.be.true;
@@ -86,8 +98,12 @@ describe('[edit-buttons] MSOE UI', () => {
             var found = true;
             try {
                 await driver.findElement(By.xpath("//*[contains(@class, 'popup')]"));
-            } catch (NoSuchElementError) {
-                found = false;
+            } catch (e) {
+                if (e.name == 'NoSuchElementError') {
+                	found = false;
+                } else {
+                	throw e;
+                }
             }
             
             expect(found).to.be.true;
@@ -103,8 +119,12 @@ describe('[edit-buttons] MSOE UI', () => {
                     const color = await driver.executeScript('return getComputedStyle(arguments[0]).getPropertyValue("color");', helpButton);
                     return color != offColor;
                 }, ANIMATION_TIMEOUT);
-            } catch (TimeoutException) {
-                colorChanged = false;
+            } catch (e) {
+                if (e.name == 'TimeoutException') {
+                	colorChanged = false;
+                } else {
+                	throw e;
+                }
             }
             
             expect(colorChanged, "color of button should change").to.be.true;
@@ -116,8 +136,12 @@ describe('[edit-buttons] MSOE UI', () => {
             var popupDisappears = true;
             try {
                 await driver.wait(elementDisappears(driver, By.xpath("//*[contains(@class, 'popup')]")), ANIMATION_TIMEOUT);
-            } catch (TimeoutException) {
-                popupDisappears = false;
+            } catch (e) {
+                if (e.name == 'TimeoutException') {
+                	popupDisappears = false;
+                } else {
+                	throw e;
+                }
             }
             
             expect(popupDisappears).to.be.true;
@@ -132,8 +156,12 @@ describe('[edit-buttons] MSOE UI', () => {
                 await driver.wait(async () => {
                     return (await driver.getCurrentUrl()) != home;
                 }, REDIRECT_TIMEOUT);
-            } catch (TimeoutException) {
-                urlChanged = false;
+            } catch (e) {
+                if (e.name == 'TimeoutException') {
+                	urlChanged = false;
+                } else {
+                	throw e;
+                }
             }
             expect(urlChanged).to.be.true;
         });
@@ -150,8 +178,12 @@ describe('[edit-buttons] MSOE UI', () => {
             var noteAppears = true;
             try {
                 await driver.wait(elementAppears(driver, By.xpath('//*[local-name()="path"and@class="note l0 m0 v0"]')), ANIMATION_TIMEOUT);
-            } catch (TimeoutException) {
-                noteAppears = false;
+            } catch (e) {
+                if (e.name == 'TimeoutException') {
+                	noteAppears = false;
+                } else {
+                	throw e;
+                }
             }
             
             expect(noteAppears).to.be.true;
@@ -164,8 +196,12 @@ describe('[edit-buttons] MSOE UI', () => {
             var toolboxShown = true;
             try {
                 await driver.wait(elementWithState(driver, By.id('toolbox'), 'visible'), ANIMATION_TIMEOUT);
-            } catch (TimeoutException) {
-                toolboxShown = false;
+            } catch (e) {
+                if (e.name == 'TimeoutException') {
+                	toolboxShown = false;
+                } else {
+                	throw e;
+                }
             }
             
             expect(toolboxShown).to.be.true;
@@ -181,8 +217,12 @@ describe('[edit-buttons] MSOE UI', () => {
                     const color = await driver.executeScript('return getComputedStyle(arguments[0]).getPropertyValue("color");', toolboxButton);
                     return color != offColor;
                 }, ANIMATION_TIMEOUT);
-            } catch (TimeoutException) {
-                colorChanged = false;
+            } catch (e) {
+                if (e.name == 'TimeoutException') {
+                	colorChanged = false;
+                } else {
+                	throw e;
+                }
             }
             
             expect(colorChanged, "color of button should change").to.be.true;
@@ -192,8 +232,12 @@ describe('[edit-buttons] MSOE UI', () => {
             var toolboxHidden = true;
             try {
                 await driver.wait(elementWithoutState(driver, By.id('toolbox'), 'visible'), ANIMATION_TIMEOUT);
-            } catch (TimeoutException) {
-                toolboxHidden = false;
+            } catch (e) {
+                if (e.name == 'TimeoutException') {
+                	toolboxHidden = false;
+                } else {
+                	throw e;
+                }
             }
             
             expect(toolboxHidden).to.be.true;
@@ -206,8 +250,12 @@ describe('[edit-buttons] MSOE UI', () => {
             var QRWarnShown = true;
             try {
                 await driver.wait(elementAppears(driver, By.xpath('//*[text()="You need to save the sheet before generating QR code."]')), ANIMATION_TIMEOUT);
-            } catch (TimeoutException) {
-                QRWarnShown = false;
+            } catch (e) {
+                if (e.name == 'TimeoutException') {
+                	QRWarnShown = false;
+                } else {
+                	throw e;
+                }
             }
             
             expect(QRWarnShown).to.be.true;
