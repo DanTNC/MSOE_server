@@ -1,5 +1,15 @@
-var express = require('express');
+var fs = require('fs');
 var path = require('path');
+
+if (process.argv.length > 2 && process.argv[2] == 'test') {
+  mongo_json = fs.readFileSync(path.resolve(__dirname, "db/mongo-test.json"), 'utf-8');
+} else {
+  mongo_json = fs.readFileSync(path.resolve(__dirname, "db/mongo-prod.json"), 'utf-8');
+}
+
+fs.writeFileSync(path.resolve(__dirname, "db/mongo.json"), mongo_json, 'utf-8');
+
+var express = require('express');
 var bodyParser = require('body-parser');
 var helmet = require('helmet');
 var app = express();
