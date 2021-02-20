@@ -1,11 +1,5 @@
-var fs = require('fs');
-var path = require('path');
-
-mongo_json = fs.readFileSync(path.resolve(__dirname, "mongo-test.json"), 'utf-8');
-fs.writeFileSync(path.resolve(__dirname, "mongo.json"), mongo_json, 'utf-8');
-
-var mongoose = require('./dbconnect');
-var Sheet = require('./Sheet');
+var mongoose = require('./dbconnect')(true);
+var Sheet = require('./Sheet')(mongoose);
 
 Sheet.deleteMany({index: {$ne: "WPR21F2BZT"}}, (err, res) => {
     if (err) {

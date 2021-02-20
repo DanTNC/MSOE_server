@@ -1,14 +1,4 @@
-var fs = require('fs');
 var path = require('path');
-
-if (process.argv.length > 2 && process.argv[2] == 'test') {
-  mongo_json = fs.readFileSync(path.resolve(__dirname, "db/mongo-test.json"), 'utf-8');
-} else {
-  mongo_json = fs.readFileSync(path.resolve(__dirname, "db/mongo-prod.json"), 'utf-8');
-}
-
-fs.writeFileSync(path.resolve(__dirname, "db/mongo.json"), mongo_json, 'utf-8');
-
 var express = require('express');
 var bodyParser = require('body-parser');
 var helmet = require('helmet');
@@ -16,9 +6,18 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+var mongoose;
+if (process.argv.length > 2 && process.argv[2] == 'test') {
+  mongoose = require('./db/dbconnect')(true);
+} else {
+  mongoose = require('./db/dbconnect')(false);
+}
+var Sheet = require('./db/Sheet')(mongoose);
+var Temp = require('./db/Temp')(mongoose);
+var Feedback = require('./db/Feedback')(mongoose);
 var index = require('./routes/index');
-var load = require('./routes/load');
-var save = require('./routes/save');
+var load = require('./routes/load')(Sheet);
+var save = require('./routes/save')(Sheet);
 var auth = require('./routes/auth');
 var manual = require('./routes/manual');
 var manual_keyboard = require('./routes/manual_keyboard');
@@ -26,7 +25,7 @@ var mocha_test = require('./routes/mocha_test');
 var getCID = require('./routes/CID');
 var tempload = require('./db/tempload');
 var tempsave = require('./db/tempsave');
-var feedback = require('./routes/feedback');
+var feedback = require('./routes/feedback')(Feedback);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -72,7 +71,7 @@ io.on("connection", function(socket){
     socket_count[index] = (socket_count[index] || 0) + 1;
     if(socket_count[index] == 1){//first save or connect
       if(update){//first connect (load temp data)
-        tempload(index, function(temp_data){
+        tempload(Temp, index, function(temp_data){
           sheet_data[index] = temp_data;
           socket.emit("update", sheet_data[index], callback);
         });
@@ -96,14 +95,14 @@ io.on("connection", function(socket){
         socket_count[index]--;
         if(socket_count[index] == 0){
           console.log("save "+JSON.stringify(sheet_data[index]));
-          tempsave(index, sheet_data[index], function(){
+          tempsave(Temp, index, sheet_data[index], function(){
             delete socket_count[index];
             delete sheet_data[index];
           });
         }
       });
       socket.on('cleartemp', function() {
-          tempsave(index, [], function() {
+          tempsave(Temp, index, [], function() {
               sheet_data[index] = [];
               io.in(index).emit('forceupdate');
           });

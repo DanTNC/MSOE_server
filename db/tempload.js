@@ -1,6 +1,4 @@
-var Temp = require('./Temp');
-
-var temp = (index, callback) => {
+module.exports = (Temp, index, callback) => {
     var query = {
         index: index
     };
@@ -18,5 +16,3 @@ var temp = (index, callback) => {
         }
     });
 };
-
-module.exports = temp;
