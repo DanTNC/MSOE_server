@@ -1,4 +1,6 @@
 #!/bin/bash
 
 mocha --timeout 30000 test/$1.$2.js
-node db/clearTestDB.js
+if [ "$3" == "clear" ]; then
+    node db/clearTestDB.js
+fi
