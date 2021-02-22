@@ -1,7 +1,7 @@
 const { By, Key, until } = require('selenium-webdriver');
 const { expect } = require('chai');
 const { Helper, deleteDir } = require('./helper');
-const { PRE_LOADER_TIMEOUT, ANIMATION_TIMEOUT, REDIRECT_TIMEOUT } = require('./constants');
+const { PRE_LOADER_TIMEOUT, ANIMATION_TIMEOUT, REDIRECT_TIMEOUT, DOWNLOAD_TIMEOUT } = require('./constants');
 const path = require('path');
 const fs = require('fs');
 
@@ -137,7 +137,7 @@ describe('[preview-buttons] MSOE UI', () => {
         });
     });
     
-    describe.only('[Share]', () => {
+    describe('[Share]', () => {
         it('should download the midi file of the sheet with the title as filename', async () => {
             await driver.findElement(By.xpath('//*[text()="Score Info"]')).click();
             await driver.wait(helper.elementWithState(By.id('modaldiv2'), 'visible'), ANIMATION_TIMEOUT);
@@ -151,7 +151,18 @@ describe('[preview-buttons] MSOE UI', () => {
             await driver.wait(until.elementIsVisible(driver.findElement(By.xpath('//*[text()="Share"]'))), ANIMATION_TIMEOUT);
             await driver.findElement(By.xpath("//*[text()='Share']")).click();
             
-            const fileDownloaded = fs.existsSync(path.resolve(tempDir, title + '.midi'));
+            var fileDownloaded = true;
+            try {
+                driver.wait(() => {
+                    return fs.existsSync(path.resolve(tempDir, title + '.midi'));
+                }, DOWNLOAD_TIMEOUT);
+            } catch (e) {
+                if (e.name == 'TimeoutException') {
+                    fileDownloaded = false;
+                } else {
+                    throw e;
+                }
+            }
             
             expect(fileDownloaded).to.be.true;
         });
