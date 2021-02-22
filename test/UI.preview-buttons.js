@@ -123,79 +123,17 @@ describe('[preview-buttons] MSOE UI', () => {
     });
     
     
-    describe('[Print]', () => {
-        it('should show popup messages when hovered', async () => {
-            const helpButton = await driver.findElement(By.xpath("//*[text()='Help']"));
-            await driver.actions().move({x: 0, y: 0, origin: helpButton}).perform();
-            var found = true;
-            try {
-                // await driver.findElement(By.xpath("//*[contains(@class, 'popup')]"));
-                await driver.findElement(By.css(".popup"));
-            } catch (e) {
-                if (e.name == 'NoSuchElementError') {
-                	found = false;
-                } else {
-                	throw e;
-                }
-            }
+    describe.only('[Print]', () => {
+        it('should print the sheet (by calling printJS with "sheet" and "html")', async () => {
+            await driver.wait(until.elementIsVisible(driver.findElement(By.xpath('//*[text()="Print"]'))), ANIMATION_TIMEOUT);
+            const args = await driver.executeScript(
+                'var args = [];' + 
+                'printJS = (id, typ) => {args = [id, typ];};' + 
+                'arguments[0].click();' + 
+                'return args', driver.findElement(By.xpath('//*[text()="Print"]')));
             
-            expect(found).to.be.true;
-        });
-        
-        it('should show popup messages for buttons with help', async () => {
-            await driver.findElement(By.xpath("//*[text()='Help']")).click();
-            const buttonWithHelp = await driver.findElement(By.xpath("//*[contains(@class, 'help')][1]"));
-            await driver.actions().move({x: 0, y: 0, origin: buttonWithHelp}).perform();
-            var found = true;
-            try {
-                await driver.findElement(By.css(".popup"));
-            } catch (e) {
-                if (e.name == 'NoSuchElementError') {
-                	found = false;
-                } else {
-                	throw e;
-                }
-            }
-            
-            expect(found).to.be.true;
-        });
-        
-        it('should toggle display of popup messages', async () => {
-            const helpButton = await driver.findElement(By.xpath("//*[text()='Help']"));
-            const offColor = await driver.executeScript('return getComputedStyle(arguments[0]).getPropertyValue("color");', helpButton);
-            await helpButton.click();
-            var colorChanged = true;
-            try {
-                await driver.wait(async () => {
-                    const color = await driver.executeScript('return getComputedStyle(arguments[0]).getPropertyValue("color");', helpButton);
-                    return color != offColor;
-                }, ANIMATION_TIMEOUT);
-            } catch (e) {
-                if (e.name == 'TimeoutException') {
-                	colorChanged = false;
-                } else {
-                	throw e;
-                }
-            }
-            
-            expect(colorChanged, "color of button should change").to.be.true;
-            
-            await helpButton.click();
-            
-            const buttonWithHelp = await driver.findElement(By.xpath("//*[contains(@class, 'help')][1]"));
-            await driver.actions().move({x: 0, y: 0, origin: buttonWithHelp}).perform();
-            var popupDisappears = true;
-            try {
-                await driver.wait(helper.elementDisappears(By.css(".popup")), ANIMATION_TIMEOUT);
-            } catch (e) {
-                if (e.name == 'TimeoutException') {
-                	popupDisappears = false;
-                } else {
-                	throw e;
-                }
-            }
-            
-            expect(popupDisappears).to.be.true;
+            expect(args[0]).to.equal('sheet');
+            expect(args[1]).to.equal('html');
         });
     });
     
