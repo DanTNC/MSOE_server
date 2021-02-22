@@ -8,7 +8,7 @@ const fs = require('fs');
 describe('[preview-buttons] MSOE UI', () => {
     const helper = new Helper();
     
-    const tempDir = path.resolve(__dirname, 'temp');
+    const tempDir = path.resolve(__dirname, 'temp_3');
     
     deleteDir(fs, path, tempDir);
     fs.mkdirSync(tempDir);
