@@ -5,10 +5,11 @@ const exec = util.promisify(require('child_process').exec);
 const { screen, PRE_LOADER_TIMEOUT } = require('./constants');
 
 class Helper {
-    buildDriver() {
+    buildDriver(extra_options) {
+        extra_options = extra_options || ((options) => {return options});
         this.driver = new Builder()
             .forBrowser('chrome')
-            .setChromeOptions(new chrome.Options().headless().windowSize(screen))
+            .setChromeOptions(extra_options(new chrome.Options().headless().windowSize(screen)))
             .build();
         return this.driver;
     }
@@ -94,9 +95,20 @@ const generatePathByIndexKey = (editMode, index, key) => {
     return '?!' + index + key;
 };
 
+const deleteDir = (fs, path, dir) => {
+    if (fs.existsSync(dir)) {
+        const files = fs.readdirSync(dir);
+        for (let file of files) {
+            fs.unlinkSync(path.resolve(dir, file));
+        }
+        fs.rmdirSync(dir);
+    }
+};
+
 module.exports = {
     Helper,
     defaultIndex,
     defaultKey,
     generatePathByIndexKey,
+    deleteDir,
 };
