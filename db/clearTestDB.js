@@ -6,6 +6,6 @@ Sheet.deleteMany({index: {$ne: "WPR21F2BZT"}}, (err, res) => {
         mongoose.disconnect();
         return console.log(err);
     }
-    console.log(res);
+    console.log("deletedCount:", res["deletedCount"]);
     mongoose.disconnect();
 });
