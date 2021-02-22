@@ -1,3 +1,5 @@
+!!TODO: New issue::Check for empty sheet when clicking [Play] or [Share]!!
+
 # Flow
 unnitest:= UI tests -> merge
 refactor:= branch -> js-beautify -> Refactor::naming -> Refactor::composition -> Refactor::* -> merge
@@ -7,7 +9,7 @@ es6:= branch -> Core tests -> Refactor::ES6_import -> Core tests -> merge
 ## Path done
 ## Info done
 ## Up-left (Edit) done
-## Up-left (Preview)
+## Up-left (Preview) done
 ## Up-right
 ## Left voice list
 ## Meter

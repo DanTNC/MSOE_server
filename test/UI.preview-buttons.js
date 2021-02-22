@@ -1,12 +1,24 @@
 const { By, Key, until } = require('selenium-webdriver');
 const { expect } = require('chai');
-const { Helper } = require('./helper');
+const { Helper, deleteDir } = require('./helper');
 const { PRE_LOADER_TIMEOUT, ANIMATION_TIMEOUT, REDIRECT_TIMEOUT } = require('./constants');
+const path = require('path');
+const fs = require('fs');
 
 describe('[preview-buttons] MSOE UI', () => {
     const helper = new Helper();
     
-    const driver = helper.buildDriver();
+    const tempDir = path.resolve(__dirname, 'temp');
+    
+    deleteDir(fs, path, tempDir);
+    fs.mkdirSync(tempDir);
+    
+    const driver = helper.buildDriver((options) => {
+        return options.setUserPreferences({
+          'download.default_directory': tempDir,
+          'download.prompt_for_download': false, // Maybe
+        });
+    });
     
     var home;
     
@@ -20,14 +32,10 @@ describe('[preview-buttons] MSOE UI', () => {
         await driver.wait(helper.elementWithState(By.id('modaldiv2'), 'visible'), ANIMATION_TIMEOUT);
         await driver.findElement(By.id('submit')).sendKeys(Key.ENTER);
         await driver.wait(helper.elementWithState(By.id('modaldiv2'), 'hidden'), ANIMATION_TIMEOUT);
-        await driver.findElement(By.xpath('//*[text()="Preview"]')).click();
     });
     
     describe('[Play]', () => {
         it('should play the music', async () => {
-            await driver.wait(until.elementIsVisible(driver.findElement(By.xpath('//*[text()="Edit"]'))), ANIMATION_TIMEOUT);
-            await driver.findElement(By.xpath('//*[text()="Edit"]')).click();
-            await driver.wait(until.elementIsVisible(driver.findElement(By.xpath('//*[text()="Preview"]'))), ANIMATION_TIMEOUT);
             await driver.actions().sendKeys('zzz').perform();
             await driver.wait(until.elementLocated(By.css('path.note.l0.m0.v0')), ANIMATION_TIMEOUT);
             await driver.findElement(By.xpath('//*[text()="Preview"]')).click();
@@ -48,9 +56,6 @@ describe('[preview-buttons] MSOE UI', () => {
         });
         
         it('should has text "Stop" while playing music', async () => {
-            await driver.wait(until.elementIsVisible(driver.findElement(By.xpath('//*[text()="Edit"]'))), ANIMATION_TIMEOUT);
-            await driver.findElement(By.xpath('//*[text()="Edit"]')).click();
-            await driver.wait(until.elementIsVisible(driver.findElement(By.xpath('//*[text()="Preview"]'))), ANIMATION_TIMEOUT);
             await driver.actions().sendKeys('zzz').perform();
             await driver.wait(until.elementLocated(By.css('path.note.l0.m0.v0')), ANIMATION_TIMEOUT);
             await driver.findElement(By.xpath('//*[text()="Preview"]')).click();
@@ -71,9 +76,6 @@ describe('[preview-buttons] MSOE UI', () => {
         });
         
         it('should has text "Play" while the music stops', async () => {
-            await driver.wait(until.elementIsVisible(driver.findElement(By.xpath('//*[text()="Edit"]'))), ANIMATION_TIMEOUT);
-            await driver.findElement(By.xpath('//*[text()="Edit"]')).click();
-            await driver.wait(until.elementIsVisible(driver.findElement(By.xpath('//*[text()="Preview"]'))), ANIMATION_TIMEOUT);
             const notes = 'zzz';
             await driver.actions().sendKeys(notes).perform();
             await driver.wait(until.elementLocated(By.css('path.note.l0.m0.v0')), ANIMATION_TIMEOUT);
@@ -96,9 +98,6 @@ describe('[preview-buttons] MSOE UI', () => {
         });
         
         it('should stop the music (while playing)', async () => {
-            await driver.wait(until.elementIsVisible(driver.findElement(By.xpath('//*[text()="Edit"]'))), ANIMATION_TIMEOUT);
-            await driver.findElement(By.xpath('//*[text()="Edit"]')).click();
-            await driver.wait(until.elementIsVisible(driver.findElement(By.xpath('//*[text()="Preview"]'))), ANIMATION_TIMEOUT);
             const notes = 'zzz';
             await driver.actions().sendKeys(notes).perform();
             await driver.wait(until.elementLocated(By.css('path.note.l0.m0.v0')), ANIMATION_TIMEOUT);
@@ -123,11 +122,12 @@ describe('[preview-buttons] MSOE UI', () => {
     });
     
     
-    describe.only('[Print]', () => {
+    describe('[Print]', () => {
         it('should print the sheet (by calling printJS with "sheet" and "html")', async () => {
+            await driver.findElement(By.xpath('//*[text()="Preview"]')).click();
             await driver.wait(until.elementIsVisible(driver.findElement(By.xpath('//*[text()="Print"]'))), ANIMATION_TIMEOUT);
             const args = await driver.executeScript(
-                'var args = [];' + 
+                'var args = ["", ""];' + 
                 'printJS = (id, typ) => {args = [id, typ];};' + 
                 'arguments[0].click();' + 
                 'return args', driver.findElement(By.xpath('//*[text()="Print"]')));
@@ -137,47 +137,28 @@ describe('[preview-buttons] MSOE UI', () => {
         });
     });
     
-    describe('[Share]', () => {
-        it('should generate a index-key pair and append it to the url', async () => {
-            await driver.findElement(By.xpath("//*[text()='Save']")).click();
-            var urlChanged = true;
-            try {
-                await driver.wait(async () => {
-                    return (await driver.getCurrentUrl()) != home;
-                }, REDIRECT_TIMEOUT);
-            } catch (e) {
-                if (e.name == 'TimeoutException') {
-                	urlChanged = false;
-                } else {
-                	throw e;
-                }
-            }
-            expect(urlChanged).to.be.true;
-        });
-        
-        it('should save sheet in database', async () => {
-            await driver.actions().sendKeys("z").perform();
+    describe.only('[Share]', () => {
+        it('should download the midi file of the sheet with the title as filename', async () => {
+            await driver.findElement(By.xpath('//*[text()="Score Info"]')).click();
+            await driver.wait(helper.elementWithState(By.id('modaldiv2'), 'visible'), ANIMATION_TIMEOUT);
+            const title = 'title';
+            await driver.findElement(By.name('whatistitle')).sendKeys(title);
+            await driver.findElement(By.id('submit')).sendKeys(Key.ENTER);
+            await driver.wait(helper.elementWithState(By.id('modaldiv2'), 'hidden'), ANIMATION_TIMEOUT);
+            await driver.actions().sendKeys('zzz').perform();
             await driver.wait(until.elementLocated(By.css('path.note.l0.m0.v0')), ANIMATION_TIMEOUT);
-            await driver.findElement(By.xpath("//*[text()='Save']")).click();
-            await driver.wait(async () => {
-                return (await driver.getCurrentUrl()) != home;
-            }, REDIRECT_TIMEOUT);
-            await driver.navigate().refresh();
-            await driver.wait(until.elementIsNotVisible(driver.findElement(By.id('preloader'))), PRE_LOADER_TIMEOUT);
-            var noteAppears = true;
-            try {
-                await driver.wait(helper.elementAppears(By.css('path.note.l0.m0.v0')), ANIMATION_TIMEOUT);
-            } catch (e) {
-                if (e.name == 'TimeoutException') {
-                	noteAppears = false;
-                } else {
-                	throw e;
-                }
-            }
+            await driver.findElement(By.xpath('//*[text()="Preview"]')).click();
+            await driver.wait(until.elementIsVisible(driver.findElement(By.xpath('//*[text()="Share"]'))), ANIMATION_TIMEOUT);
+            await driver.findElement(By.xpath("//*[text()='Share']")).click();
             
-            expect(noteAppears).to.be.true;
+            const fileDownloaded = fs.existsSync(path.resolve(tempDir, title + '.midi'));
+            
+            expect(fileDownloaded).to.be.true;
         });
     });
     
-    after(async () => driver.quit());
+    after(async () => {
+        driver.quit();
+        deleteDir(fs, path, tempDir);
+    });
 });
