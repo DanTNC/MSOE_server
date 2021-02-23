@@ -36,8 +36,7 @@ describe('[info] MSOE UI', () => {
     });
     
     it('should keep the inputted value after modal being closed', async () => {
-        const field_index = Math.floor(Math.random() * fields.length);
-        const field = fields[field_index];
+        const field = helper.randomChoice(fields);
         const input_field = await driver.findElement(By.name(field));
         await input_field.sendKeys("test");
         await driver.findElement(By.id('submit')).click();
@@ -49,8 +48,7 @@ describe('[info] MSOE UI', () => {
     });
     
     it('should restore previous value when [undo] is fired by user', async () => {
-        const field_index = Math.floor(Math.random() * fields.length);
-        const field = fields[field_index];
+        const field = helper.randomChoice(fields);
         const input_field = await driver.findElement(By.name(field));
         await input_field.sendKeys("test");
         await driver.findElement(By.id('submit')).click();
