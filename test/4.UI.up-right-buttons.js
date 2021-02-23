@@ -30,7 +30,7 @@ describe('[up-right-buttons] MSOE UI', () => {
             await driver.findElement(By.xpath('//*[text()="Preview"]')).click();
             var textChanged = await helper.errorThrownCheck(async () => {
                 await driver.wait(until.elementLocated(By.xpath('//*[text()="Edit"]')), ANIMATION_TIMEOUT);
-            }, 'TimeoutException');
+            }, 'TimeoutError');
             
             expect(textChanged).to.be.true;
         });
@@ -68,7 +68,7 @@ describe('[up-right-buttons] MSOE UI', () => {
             await driver.findElement(By.xpath('//*[text()="Edit"]')).click();
             var textChanged = await helper.errorThrownCheck(async () => {
                 await driver.wait(until.elementLocated(By.xpath('//*[text()="Preview"]')), ANIMATION_TIMEOUT);
-            }, 'TimeoutException');
+            }, 'TimeoutError');
             
             expect(textChanged).to.be.true;
         });
@@ -100,7 +100,7 @@ describe('[up-right-buttons] MSOE UI', () => {
             await driver.findElement(By.xpath('//*[text()="Night"]')).click();
             var textChanged = await helper.errorThrownCheck(async () => {
                 await driver.wait(until.elementLocated(By.xpath('//*[text()="Default"]')), ANIMATION_TIMEOUT);
-            }, 'TimeoutException');
+            }, 'TimeoutError');
             
             expect(textChanged).to.be.true;
         });
@@ -130,7 +130,7 @@ describe('[up-right-buttons] MSOE UI', () => {
             await driver.findElement(By.xpath('//*[text()="Default"]')).click();
             var textChanged = await helper.errorThrownCheck(async () => {
                 await driver.wait(until.elementLocated(By.xpath('//*[text()="Night"]')), ANIMATION_TIMEOUT);
-            }, 'TimeoutException');
+            }, 'TimeoutError');
             
             expect(textChanged).to.be.true;
         });
@@ -156,7 +156,7 @@ describe('[up-right-buttons] MSOE UI', () => {
             await driver.findElement(By.id('lan')).click();
             var menuShown = await helper.errorThrownCheck(async () => {
                 await driver.wait(helper.elementWithState(By.css('#lan .menu'), 'visible'), ANIMATION_TIMEOUT);
-            }, 'TimeoutException');
+            }, 'TimeoutError');
             
             expect(menuShown).to.be.true;
         });
@@ -185,7 +185,7 @@ describe('[up-right-buttons] MSOE UI', () => {
             await driver.findElement(By.xpath('//*[text()="Feedback"]')).click();
             var modalShown = await helper.errorThrownCheck(async () => {
                 await driver.wait(helper.elementWithState(By.id('feedbackform'), 'visible'), ANIMATION_TIMEOUT);
-            }, 'TimeoutException');
+            }, 'TimeoutError');
             
             expect(modalShown).to.be.true;
         });
@@ -196,7 +196,7 @@ describe('[up-right-buttons] MSOE UI', () => {
             await driver.actions().move().click().perform();
             var modalHidden = await helper.errorThrownCheck(async () => {
                 await driver.wait(helper.elementWithState(By.id('feedbackform'), 'hidden'), ANIMATION_TIMEOUT);
-            }, 'TimeoutException');
+            }, 'TimeoutError');
             
             expect(modalHidden).to.be.true;
         });
