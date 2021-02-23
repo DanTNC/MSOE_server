@@ -41,16 +41,9 @@ describe('[preview-buttons] MSOE UI', () => {
             await driver.findElement(By.xpath('//*[text()="Preview"]')).click();
             await driver.wait(until.elementIsVisible(driver.findElement(By.xpath('//*[text()="Play"]'))), ANIMATION_TIMEOUT);
             await driver.findElement(By.xpath("//*[text()='Play']")).click();
-            var musicPlayed = true;
-            try {
+            var musicPlayed = await helper.errorThrownCheck(async () => {
                 await driver.wait(until.elementLocated(By.css('.cursor')), ANIMATION_TIMEOUT);
-            } catch (e) {
-                if (e.name == 'TimeoutException') {
-                	musicPlayed = false;
-                } else {
-                	throw e;
-                }
-            }
+            }, 'TimeoutException');
             
             expect(musicPlayed).to.be.true;
         });
@@ -61,16 +54,9 @@ describe('[preview-buttons] MSOE UI', () => {
             await driver.findElement(By.xpath('//*[text()="Preview"]')).click();
             await driver.wait(until.elementIsVisible(driver.findElement(By.xpath('//*[text()="Play"]'))), ANIMATION_TIMEOUT);
             await driver.findElement(By.xpath("//*[text()='Play']")).click();
-            var textBecomesStop = true;
-            try {
+            var textBecomesStop = await helper.errorThrownCheck(async () => {
                 await driver.wait(until.elementLocated(By.xpath('//*[text()="Stop"]')), ANIMATION_TIMEOUT);
-            } catch (e) {
-                if (e.name == 'TimeoutException') {
-                	textBecomesStop = false;
-                } else {
-                	throw e;
-                }
-            }
+            }, 'TimeoutException');
             
             expect(textBecomesStop).to.be.true;
         });
@@ -83,16 +69,9 @@ describe('[preview-buttons] MSOE UI', () => {
             await driver.wait(until.elementIsVisible(driver.findElement(By.xpath('//*[text()="Play"]'))), ANIMATION_TIMEOUT);
             await driver.findElement(By.xpath("//*[text()='Play']")).click();
             await driver.wait(until.elementLocated(By.css('.cursor')), ANIMATION_TIMEOUT);
-            var textBecomesPlay = true;
-            try {
+            var textBecomesPlay = await helper.errorThrownCheck(async () => {
                 await driver.wait(until.elementLocated(By.xpath('//*[text()="Play"]')), ANIMATION_TIMEOUT * notes.length);
-            } catch (e) {
-                if (e.name == 'TimeoutException') {
-                	textBecomesPlay = false;
-                } else {
-                	throw e;
-                }
-            }
+            }, 'TimeoutException');
             
             expect(textBecomesPlay).to.be.true;
         });
@@ -106,16 +85,9 @@ describe('[preview-buttons] MSOE UI', () => {
             await driver.findElement(By.xpath("//*[text()='Play']")).click();
             await driver.wait(until.elementLocated(By.css('.cursor')), ANIMATION_TIMEOUT);
             await driver.findElement(By.xpath("//*[text()='Stop']")).click();
-            var textBecomesPlay = true;
-            try {
+            var textBecomesPlay = await helper.errorThrownCheck(async () => {
                 await driver.wait(until.elementLocated(By.xpath('//*[text()="Play"]')), ANIMATION_TIMEOUT * notes.length);
-            } catch (e) {
-                if (e.name == 'TimeoutException') {
-                	textBecomesPlay = false;
-                } else {
-                	throw e;
-                }
-            }
+            }, 'TimeoutException');
             
             expect(textBecomesPlay).to.be.true;
         });
@@ -151,18 +123,11 @@ describe('[preview-buttons] MSOE UI', () => {
             await driver.wait(until.elementIsVisible(driver.findElement(By.xpath('//*[text()="Share"]'))), ANIMATION_TIMEOUT);
             await driver.findElement(By.xpath("//*[text()='Share']")).click();
             
-            var fileDownloaded = true;
-            try {
+            var fileDownloaded = await helper.errorThrownCheck(async () => {
                 driver.wait(() => {
                     return fs.existsSync(path.resolve(tempDir, title + '.midi'));
                 }, DOWNLOAD_TIMEOUT);
-            } catch (e) {
-                if (e.name == 'TimeoutException') {
-                    fileDownloaded = false;
-                } else {
-                    throw e;
-                }
-            }
+            }, 'TimeoutException');
             
             expect(fileDownloaded).to.be.true;
         });

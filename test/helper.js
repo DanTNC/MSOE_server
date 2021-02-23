@@ -30,6 +30,20 @@ class Helper {
         await this.driver.wait(until.elementIsNotVisible(this.driver.findElement(By.id('preloader'))), PRE_LOADER_TIMEOUT);
     }
     
+    async errorThrownCheck(func, errorName) {
+        var res = true;
+        try {
+            await func();
+        } catch (e) {
+            if (e.name == errorName) {
+                res = false;
+            } else {
+                throw e;
+            }
+        }
+        return res;
+    }
+    
     async elementWithStateCheck(by, state) {
         return (await this.driver.findElement(by).getAttribute('class')).includes(state);
     }
@@ -51,17 +65,9 @@ class Helper {
     }
     
     async elementAppearsCheck(by) {
-        var appears = true;
-        try {
+        return await this.errorThrownCheck(async () => {
             await this.driver.findElement(by);
-        } catch (e) {
-            if (e.name == 'NoSuchElementError') {
-                appears = false;
-            } else {
-                throw e;
-            }
-        }
-        return appears;
+        }, 'NoSuchElementError');
     }
     
     async elementDisappearsCheck(by) {
