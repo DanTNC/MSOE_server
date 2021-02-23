@@ -65,7 +65,7 @@ describe('[up-right-buttons] MSOE UI', () => {
     });
     
     
-    describe.only('[Edit]', () => {
+    describe('[Edit]', () => {
         beforeEach(async () => {
             await driver.findElement(By.xpath('//*[text()="Preview"]')).click();
             await driver.wait(until.elementLocated(By.xpath('//*[text()="Edit"]')), ANIMATION_TIMEOUT);
@@ -110,8 +110,71 @@ describe('[up-right-buttons] MSOE UI', () => {
     });
     
     describe('[Night]', () => {
-        it('should download the midi file of the sheet with the title as filename', async () => {
-            await driver.findElement(By.xpath('//*[text()="Score Info"]')).click();
+        it('should switch to text "Default"', async () => {
+            await driver.findElement(By.xpath('//*[text()="Night"]')).click();
+            var textChanged = true;
+            try {
+                await driver.wait(until.elementLocated(By.xpath('//*[text()="Default"]')), ANIMATION_TIMEOUT);
+            } catch (e) {
+                if (e.name == 'TimeoutException') {
+                	textChanged = false;
+                } else {
+                	throw e;
+                }
+            }
+            
+            expect(textChanged).to.be.true;
+        });
+        
+        it('should change sheet background color to "rgba(9, 9, 9, 1)"', async () => {
+            await driver.findElement(By.xpath('//*[text()="Night"]')).click();
+            await driver.wait(until.elementLocated(By.xpath('//*[text()="Default"]')), ANIMATION_TIMEOUT);
+            
+            expect(await driver.findElement(By.id('sheet')).getCssValue('background-color')).to.equal('rgba(9, 9, 9, 1)');
+        });
+        
+        it('should change hint message state to "brown"', async () => {
+            await driver.findElement(By.xpath('//*[text()="Night"]')).click();
+            await driver.wait(until.elementLocated(By.xpath('//*[text()="Default"]')), ANIMATION_TIMEOUT);
+            
+            expect(await helper.elementWithStateCheck(By.id('hint'), 'brown')).to.be.true;
+        });
+    });
+    
+    describe.only('[Default]', () => {
+        beforeEach(async () => {
+            await driver.findElement(By.xpath('//*[text()="Night"]')).click();
+            await driver.wait(until.elementLocated(By.xpath('//*[text()="Default"]')), ANIMATION_TIMEOUT);
+        });
+        
+        it('should switch to text "Night"', async () => {
+            await driver.findElement(By.xpath('//*[text()="Default"]')).click();
+            var textChanged = true;
+            try {
+                await driver.wait(until.elementLocated(By.xpath('//*[text()="Night"]')), ANIMATION_TIMEOUT);
+            } catch (e) {
+                if (e.name == 'TimeoutException') {
+                	textChanged = false;
+                } else {
+                	throw e;
+                }
+            }
+            
+            expect(textChanged).to.be.true;
+        });
+        
+        it('should change sheet background color to "rgba(0, 0, 0, 0)"', async () => {
+            await driver.findElement(By.xpath('//*[text()="Default"]')).click();
+            await driver.wait(until.elementLocated(By.xpath('//*[text()="Night"]')), ANIMATION_TIMEOUT);
+            
+            expect(await driver.findElement(By.id('sheet')).getCssValue('background-color')).to.equal('rgba(0, 0, 0, 0)');
+        });
+        
+        it('should change hint message state to "blue"', async () => {
+            await driver.findElement(By.xpath('//*[text()="Default"]')).click();
+            await driver.wait(until.elementLocated(By.xpath('//*[text()="Night"]')), ANIMATION_TIMEOUT);
+            
+            expect(await helper.elementWithStateCheck(By.id('hint'), 'blue')).to.be.true;
         });
     });
     
