@@ -178,7 +178,7 @@ describe('[up-right-buttons] MSOE UI', () => {
         });
     });
     
-    describe.only('[{language}]', () => {
+    describe('[{language}]', () => {
         
         it('should show language dropdown menu', async () => {
             await driver.findElement(By.id('lan')).click();
@@ -212,6 +212,42 @@ describe('[up-right-buttons] MSOE UI', () => {
                 'return arg', lan);
             
             expect(arg).to.equal(dataValue);
+        });
+    });
+    
+    describe('[Feedback]', () => {
+        it('should show feedback modal', async () => {
+            await driver.findElement(By.xpath('//*[text()="Feedback"]')).click();
+            var modalShown = true;
+            try {
+                await driver.wait(helper.elementWithState(By.id('feedbackform'), 'visible'), ANIMATION_TIMEOUT);
+            } catch (e) {
+                if (e.name == 'TimeoutException') {
+                    modalShown = false;
+                } else {
+                    throw e;
+                }
+            }
+            
+            expect(modalShown).to.be.true;
+        });
+        
+        it('should hide feedback modal when the dimmer is clicked', async () => {
+            await driver.findElement(By.xpath('//*[text()="Feedback"]')).click();
+            await driver.wait(helper.elementWithState(By.id('feedbackform'), 'visible'), ANIMATION_TIMEOUT);
+            await driver.actions().move().click().perform();
+            var modalHidden = true;
+            try {
+                await driver.wait(helper.elementWithState(By.id('feedbackform'), 'hidden'), ANIMATION_TIMEOUT);
+            } catch (e) {
+                if (e.name == 'TimeoutException') {
+                    modalHidden = false;
+                } else {
+                    throw e;
+                }
+            }
+            
+            expect(modalHidden).to.be.true;
         });
     });
     
