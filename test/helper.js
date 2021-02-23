@@ -86,9 +86,17 @@ class Helper {
         };
     }
     
+    randomIndex(list) {
+        return Math.floor(Math.random() * list.length); 
+    }
+    
+    randomItem(list) {
+        const index = this.randomIndex(list);
+        return [index, list[index]];
+    }
+    
     randomChoice(list) {
-        const index = Math.floor(Math.random() * list.length);
-        return list[index];
+        return list[this.randomIndex(list)];
     }
 }
 
