@@ -79,6 +79,11 @@ class Helper {
             return await this.elementDisappearsCheck(by);
         };
     }
+    
+    randomChoice(list) {
+        const index = Math.floor(Math.random() * list.length);
+        return list[index];
+    }
 }
 
 const defaultIndex = 'WPR21F2BZT';
