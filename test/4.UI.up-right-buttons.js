@@ -141,7 +141,7 @@ describe('[up-right-buttons] MSOE UI', () => {
         });
     });
     
-    describe.only('[Default]', () => {
+    describe('[Default]', () => {
         beforeEach(async () => {
             await driver.findElement(By.xpath('//*[text()="Night"]')).click();
             await driver.wait(until.elementLocated(By.xpath('//*[text()="Default"]')), ANIMATION_TIMEOUT);
@@ -175,6 +175,43 @@ describe('[up-right-buttons] MSOE UI', () => {
             await driver.wait(until.elementLocated(By.xpath('//*[text()="Night"]')), ANIMATION_TIMEOUT);
             
             expect(await helper.elementWithStateCheck(By.id('hint'), 'blue')).to.be.true;
+        });
+    });
+    
+    describe.only('[{language}]', () => {
+        
+        it('should show language dropdown menu', async () => {
+            await driver.findElement(By.id('lan')).click();
+            var menuShown = true;
+            try {
+                await driver.wait(helper.elementWithState(By.css('#lan .menu'), 'visible'), ANIMATION_TIMEOUT);
+            } catch (e) {
+                if (e.name == 'TimeoutException') {
+                	menuShown = false;
+                } else {
+                	throw e;
+                }
+            }
+            
+            expect(menuShown).to.be.true;
+        });
+        
+        it('should call manual.manual_language with data-value of selected item', async () => {
+            await driver.findElement(By.id('lan')).click();
+            const lans = await driver.findElement(By.css('#lan .menu')).findElements(By.css('.item'));
+            const lan = helper.randomChoice(lans);
+            const dataValue = await lan.getAttribute('data-value');
+            const arg = await driver.executeScript(
+                'var arg = "";' + 
+                'manual.bak = manual.manual_language;' + 
+                'manual.manual_language = (lan) => {' + 
+                '   arg = lan;' + 
+                '   manual.bak(lan);' + 
+                '};' + 
+                'arguments[0].click();' + 
+                'return arg', lan);
+            
+            expect(arg).to.equal(dataValue);
         });
     });
     
