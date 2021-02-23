@@ -39,7 +39,7 @@ describe('[path] MSOE UI', () => {
         await driver.wait(helper.elementWithState(By.id('modaldiv1'), 'hidden'), ANIMATION_TIMEOUT);
         var modalAppears = await helper.errorThrownCheck(async () => {
             await driver.wait(helper.elementWithState(By.id('modaldiv2'), 'visible'), ANIMATION_TIMEOUT);
-        }, 'TimeoutException');
+        }, 'TimeoutError');
         
         expect(modalAppears).to.be.true;
     });
@@ -63,7 +63,7 @@ describe('[path] MSOE UI', () => {
             await driver.wait(async () => {
                 return (await driver.getCurrentUrl()) == home;
             }, REDIRECT_TIMEOUT);
-        }, 'TimeoutException');
+        }, 'TimeoutError');
         
         expect(redirected).to.be.true;
     });
@@ -75,7 +75,7 @@ describe('[path] MSOE UI', () => {
             await driver.wait(async () => {
                 return (await driver.getCurrentUrl()) == home + generatePathByIndexKey(false, defaultIndex);
             }, REDIRECT_TIMEOUT);
-        }, 'TimeoutException');
+        }, 'TimeoutError');
         
         expect(redirected).to.be.true;
     });
