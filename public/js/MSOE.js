@@ -1221,6 +1221,9 @@ var MSOE = new function() {
         "tmpstr":"4/4",
         "bpmstr":""
     };
+    this.getinfo = (name) => { //get info string
+        return infostrs[infoinputs[name]];
+    };
     this.chginfo = (a) => { //change info strings
         if ((!Edit && a.name!="whatisbpm")||(a.name === "")) return;
         if (a.name == "whatistempo" && a.value.length == 2){ //update tempo preprocessing
