@@ -177,17 +177,9 @@ describe('[voice-list] MSOE UI', () => {
             await driver.findElement(By.xpath('//*[@class="left"]/div[contains(@class, "menu")][2]/div[@class="right menu"]/a[contains(@class, "item")][i[contains(@class, "check")]]')).click();
             
             expect(await driver.findElement(By.xpath(`(//a[contains(@class, "v_name")])[1]`)).getText()).to.equal(defaultVoiceName);
-            var errorMes = '';
-            const errorDiv = await driver.findElement(By.id('error'));
-            await driver.wait(async () => {
-                const shown = errorDiv.isDisplayed();
-                if (shown) {
-                    errorMes = await errorDiv.findElement(By.xpath('p')).getText();
-                }
-                return shown;
-            }, ANIMATION_TIMEOUT);
+            const errorMessage = await helper.checkErrorMessage();
             
-            expect(errorMes).to.equal('A voicename can\'t contain ".');
+            expect(errorMessage).to.equal('A voicename can\'t contain ".');
         });
         
         it('should reset the voice name of current voice when user clicks remove icon', async () => {
