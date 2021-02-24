@@ -42,8 +42,9 @@ describe('[voice-list] MSOE UI', () => {
             return name;
         };
         
-        const randomInitVoices = async (useRandomName) => {
-            const numVoice = helper.randomIndex(new Array(3)) + 2;
+        const randomInitVoices = async (useRandomName, atLeast) => {
+            atLeast = atLeast || 2;
+            const numVoice = helper.randomIndex(new Array(3)) + atLeast; // at least two voices
             const chosenClefs = [];
             const voiceNames = [];
             for (let i = 0; i < numVoice; i++) {
@@ -93,6 +94,48 @@ describe('[voice-list] MSOE UI', () => {
             
             expect(await driver.findElement(By.xpath(`(//a[contains(@class, "v_name")])[${A_index + 1}]`)).getText()).to.equal(String(B_index));
             expect(await driver.findElement(By.xpath(`(//a[contains(@class, "v_name")])[${B_index + 1}]`)).getText()).to.equal(String(A_index));
+        });
+        
+        it('should swap a voice and its next voice when user clicks down icon', async () => {
+            const { numVoice } = await randomInitVoices(false);
+            const A_index = helper.randomIndex(new Array(numVoice - 1));
+            
+            await driver.findElement(By.xpath(`(//a[contains(@class, "v_down")])[${A_index + 1}]`)).click();
+            
+            expect(await driver.findElement(By.xpath(`(//a[contains(@class, "v_name")])[${A_index + 1}]`)).getText()).to.equal(String(A_index + 1));
+            expect(await driver.findElement(By.xpath(`(//a[contains(@class, "v_name")])[${A_index + 2}]`)).getText()).to.equal(String(A_index));
+        });
+        
+        it('should swap a voice and its next voice when user clicks up icon', async () => {
+            const { numVoice } = await randomInitVoices(false);
+            const A_index = helper.randomIndex(new Array(numVoice - 1)) + 1;
+            
+            await driver.findElement(By.xpath(`(//a[contains(@class, "v_up")])[${A_index + 1}]`)).click();
+            
+            expect(await driver.findElement(By.xpath(`(//a[contains(@class, "v_name")])[${A_index + 1}]`)).getText()).to.equal(String(A_index - 1));
+            expect(await driver.findElement(By.xpath(`(//a[contains(@class, "v_name")])[${A_index}]`)).getText()).to.equal(String(A_index));
+        });
+        
+        it('should move a voice to between two voices when user clicks the divider of them', async () => {
+            const { numVoice } = await randomInitVoices(false, 3);
+            const A_index = helper.randomIndex(new Array(numVoice));
+            const div_index = helper.randomIndex(new Array(numVoice - 1));
+            const dst_index = (div_index >= A_index)? div_index: div_index + 1;
+            
+            await driver.findElement(By.xpath(`(//a[contains(@class, "v_up")])[${A_index + 1}]`)).click();
+            await driver.findElement(By.xpath(`(//div[contains(@class, "v_div")])[${div_index + 1}]`)).click();
+            
+            expect(await driver.findElement(By.xpath(`(//a[contains(@class, "v_name")])[${dst_index + 1}]`)).getText()).to.equal(String(A_index));
+        });
+        
+        it('should move the cursor to the voice when user clicks the voice name', async () => {
+            const { numVoice } = await randomInitVoices(false);
+            const A_index = helper.randomIndex(new Array(numVoice));
+            
+            await driver.findElement(By.xpath(`(//a[contains(@class, "v_name")])[${A_index + 1}]`)).click();
+            
+            await driver.executeScript('MSOE.ChgVicName("cursor"); MSOE.print();');
+            expect(await driver.findElement(By.xpath(`(//a[contains(@class, "v_name")])[${A_index + 1}]`)).getText()).to.equal('cursor');
         });
     });
     
