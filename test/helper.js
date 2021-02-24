@@ -2,7 +2,7 @@ const { Builder, By, until } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
-const { screen, PRE_LOADER_TIMEOUT } = require('./constants');
+const { screen, PRE_LOADER_TIMEOUT, ANIMATION_TIMEOUT } = require('./constants');
 
 class Helper {
     buildDriver(extra_options) {
@@ -98,6 +98,25 @@ class Helper {
     randomChoice(list) {
         return list[this.randomIndex(list)];
     }
+    
+    async checkMessage(id_) {
+        var message = '';
+        const messageDiv = await this.driver.findElement(By.id(id_));
+        try {
+            await this.driver.wait(async () => {
+                const shown = messageDiv.isDisplayed();
+                if (shown) {
+                    message = await messageDiv.findElement(By.xpath('p')).getText();
+                }
+                return shown;
+            }, ANIMATION_TIMEOUT);
+        } catch (e) {}
+        return message;
+    }
+    
+    async checkErrorMessage() { return await this.checkMessage('error'); }
+    async checkSuccessMessage() { return await this.checkMessage('success'); }
+    async checkWarningMessage() { return await this.checkMessage('warning'); }
 }
 
 const defaultIndex = 'WPR21F2BZT';
