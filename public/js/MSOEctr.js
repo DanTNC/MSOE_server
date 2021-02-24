@@ -665,8 +665,11 @@ $(document).ready(function(){
     document.onkeydown = move;
     document.onkeyup = chord;
     
-    $(document).dbKeypress(17, function(e){
-        MSOE.SelNotesCrt();
+    $(document).dbKeypress(17, {
+        eventType: 'keyup',
+        callback: function(e){
+            MSOE.SelNotesCrt();
+        }
     });
     
     $("#save").click(function(e) { MSOE.save(e); });
