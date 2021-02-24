@@ -11,7 +11,7 @@ es6:= branch -> Core tests -> Refactor::ES6_import -> Core tests -> merge
 ## Up-left (Edit) done
 ## Up-left (Preview) done
 ## Up-right done
-## Left voice list
+## Left voice list done
 ## Meter
 ## Right Keyboard
 ## Volume

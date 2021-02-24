@@ -32,7 +32,7 @@ describe('[voice-list] MSOE UI', () => {
         await driver.wait(helper.elementWithState(By.id('modaldiv2'), 'hidden'), ANIMATION_TIMEOUT);
     });
     
-    describe('[list]', () => {
+    describe('[list]', () => { // dependency: MSOE.js
         const randomName = () => {
             var name = "";
             var alphabetIndices = new Array(26);
@@ -120,9 +120,9 @@ describe('[voice-list] MSOE UI', () => {
             const { numVoice } = await randomInitVoices(false, 3);
             const A_index = helper.randomIndex(new Array(numVoice));
             const div_index = helper.randomIndex(new Array(numVoice - 1));
-            const dst_index = (div_index >= A_index)? div_index: div_index + 1;
+            const dst_index = (div_index >= A_index)? div_index: (div_index + 1);
             
-            await driver.findElement(By.xpath(`(//a[contains(@class, "v_up")])[${A_index + 1}]`)).click();
+            await driver.findElement(By.xpath(`(//a[contains(@class, "v_num")])[${A_index + 1}]`)).click();
             await driver.findElement(By.xpath(`(//div[contains(@class, "v_div")])[${div_index + 1}]`)).click();
             
             expect(await driver.findElement(By.xpath(`(//a[contains(@class, "v_name")])[${dst_index + 1}]`)).getText()).to.equal(String(A_index));
@@ -136,6 +136,67 @@ describe('[voice-list] MSOE UI', () => {
             
             await driver.executeScript('MSOE.ChgVicName("cursor"); MSOE.print();');
             expect(await driver.findElement(By.xpath(`(//a[contains(@class, "v_name")])[${A_index + 1}]`)).getText()).to.equal('cursor');
+        });
+    });
+    
+    describe('[voice-control]', async () => { // dependency: MSOE.js
+        it('should add a voice after current voice when user clicks plus icon', async () => {
+            await driver.findElement(By.xpath('//*[@class="left"]/div[contains(@class, "menu")][2]/a[contains(@class, "item")][i[contains(@class, "plus")]]')).click();
+            
+            await driver.executeScript('MSOE.ChgVicName("cursor"); MSOE.print();');
+            expect(await driver.findElement(By.xpath(`(//a[contains(@class, "v_name")])[2]`)).getText()).to.equal('cursor');
+        });
+        
+        it('should add a voice before current voice when user clicks plus icon while holding "ctrl"', async () => {
+            const plusButton = await driver.findElement(By.xpath('//*[@class="left"]/div[contains(@class, "menu")][2]/a[contains(@class, "item")][i[contains(@class, "plus")]]'));
+            await plusButton.click();
+            await driver.actions().move({origin: plusButton}).keyDown(Key.CONTROL).click().keyUp(Key.CONTROL).perform();
+            
+            await driver.executeScript('MSOE.ChgVicName("cursor"); MSOE.print();');
+            expect(await driver.findElement(By.xpath(`(//a[contains(@class, "v_name")])[2]`)).getText()).to.equal('cursor');
+        });
+        
+        it('should delete current voice when user clicks minus icon', async () => {
+            await driver.findElement(By.xpath('//*[@class="left"]/div[contains(@class, "menu")][2]/a[contains(@class, "item")][i[contains(@class, "plus")]]')).click();
+            await driver.executeScript('MSOE.ChgVicName("cursor"); MSOE.print();');
+            await driver.findElement(By.xpath('//*[@class="left"]/div[contains(@class, "menu")][2]/a[contains(@class, "item")][i[contains(@class, "minus")]]')).click();
+            
+            expect(await driver.findElement(By.xpath(`(//a[contains(@class, "v_name")])[1]`)).getText()).to.not.equal('cursor');
+        });
+        
+        it('should change the voice name of current voice when user enters voice name in input and clicks check icon', async () => {
+            await driver.findElement(By.xpath('//*[@class="left"]/div[contains(@class, "menu")][2]/div[contains(@class, "item")]/div[contains(@class, "input")]/input')).sendKeys('test');
+            await driver.findElement(By.xpath('//*[@class="left"]/div[contains(@class, "menu")][2]/div[@class="right menu"]/a[contains(@class, "item")][i[contains(@class, "check")]]')).click();
+            
+            expect(await driver.findElement(By.xpath(`(//a[contains(@class, "v_name")])[1]`)).getText()).to.equal('test');
+        });
+        
+        it('should keep the voice name of current voice when user enters a voice name containing " and show error', async () => {
+            const defaultVoiceName = await driver.findElement(By.xpath(`(//a[contains(@class, "v_name")])[1]`)).getText();
+            await driver.findElement(By.xpath('//*[@class="left"]/div[contains(@class, "menu")][2]/div[contains(@class, "item")]/div[contains(@class, "input")]/input')).sendKeys('test"');
+            await driver.findElement(By.xpath('//*[@class="left"]/div[contains(@class, "menu")][2]/div[@class="right menu"]/a[contains(@class, "item")][i[contains(@class, "check")]]')).click();
+            
+            expect(await driver.findElement(By.xpath(`(//a[contains(@class, "v_name")])[1]`)).getText()).to.equal(defaultVoiceName);
+            var errorMes = '';
+            const errorDiv = await driver.findElement(By.id('error'));
+            await driver.wait(async () => {
+                const shown = errorDiv.isDisplayed();
+                if (shown) {
+                    errorMes = await errorDiv.findElement(By.xpath('p')).getText();
+                }
+                return shown;
+            }, ANIMATION_TIMEOUT);
+            
+            expect(errorMes).to.equal('A voicename can\'t contain ".');
+        });
+        
+        it('should reset the voice name of current voice when user clicks remove icon', async () => {
+            const defaultVoiceName = await driver.findElement(By.xpath(`(//a[contains(@class, "v_name")])[1]`)).getText();
+            await driver.findElement(By.xpath('//*[@class="left"]/div[contains(@class, "menu")][2]/div[contains(@class, "item")]/div[contains(@class, "input")]/input')).sendKeys('test');
+            await driver.findElement(By.xpath('//*[@class="left"]/div[contains(@class, "menu")][2]/div[@class="right menu"]/a[contains(@class, "item")][i[contains(@class, "check")]]')).click();
+            await driver.findElement(By.xpath('//*[@class="left"]/div[contains(@class, "menu")][2]/div[@class="right menu"]/a[contains(@class, "item")][i[contains(@class, "remove")]]')).click();
+            
+            expect(await driver.findElement(By.xpath(`(//a[contains(@class, "v_name")])[1]`)).getText()).to.equal(defaultVoiceName);
         });
     });
     
