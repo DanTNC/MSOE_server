@@ -22,7 +22,25 @@ describe('[unsaved-changes] MSOE UI', () => {
         await driver.wait(helper.elementWithState(By.id('modaldiv2'), 'hidden'), ANIMATION_TIMEOUT);
     });
     
-    it.only('should appear when there are unsaved changes', async () => {
+    it('should not appear when there are no unsaved changes', async () => {
+        await driver.findElement(By.xpath("//*[text()='Save']")).click();
+        await driver.wait(async () => {
+            return (await driver.getCurrentUrl()) != home;
+        }, REDIRECT_TIMEOUT);
+        await driver.navigate().refresh();
+        await driver.wait(until.elementIsNotVisible(driver.findElement(By.id('preloader'))), PRE_LOADER_TIMEOUT);
+        const warnMessage = await helper.checkWarningMessage();
+        const buttonShown = await helper.errorThrownCheck(async () => {
+            await driver.wait(until.elementIsVisible(
+                driver.findElement(By.xpath("//*[text()='Discard Unsaved Changes']"))
+            ), ANIMATION_TIMEOUT);
+        }, 'TimeoutError');
+        
+        expect(buttonShown).to.be.false;
+        expect(warnMessage).to.equal('');
+    });
+    
+    it('should appear when there are unsaved changes', async () => {
         await driver.findElement(By.xpath("//*[text()='Save']")).click();
         await driver.wait(async () => {
             return (await driver.getCurrentUrl()) != home;
@@ -32,38 +50,42 @@ describe('[unsaved-changes] MSOE UI', () => {
         await driver.wait(until.elementIsNotVisible(driver.findElement(By.id('preloader'))), PRE_LOADER_TIMEOUT);
         const warnMessage = await helper.checkWarningMessage();
         const buttonShown = await helper.errorThrownCheck(async () => {
-            driver.wait(helper.elementAppears(By.xpath("//*[text()='Discard Unsaved Changes']")), ANIMATION_TIMEOUT);
+            await driver.wait(until.elementIsVisible(
+                driver.findElement(By.xpath("//*[text()='Discard Unsaved Changes']"))
+            ), ANIMATION_TIMEOUT);
         }, 'TimeoutError');
         
         expect(buttonShown).to.be.true;
         expect(warnMessage).to.equal('Some unsaved modifications are found.');
     });
     
-    it('should show current url of a saved sheet on saving', async () => {
+    it('should clear the unsaved changes and force reloading', async () => {
         await driver.findElement(By.xpath("//*[text()='Save']")).click();
         await driver.wait(async () => {
             return (await driver.getCurrentUrl()) != home;
         }, REDIRECT_TIMEOUT);
-        const currentUrl = (await driver.getCurrentUrl());
+        const savedUrl = await driver.getCurrentUrl();
+        await driver.actions().sendKeys('z').perform();
+        await driver.navigate().refresh();
+        await driver.wait(until.elementIsNotVisible(driver.findElement(By.id('preloader'))), PRE_LOADER_TIMEOUT);
+        await driver.wait(until.elementIsVisible(
+            driver.findElement(By.xpath("//*[text()='Discard Unsaved Changes']"))
+        ), ANIMATION_TIMEOUT);
+        await driver.findElement(By.xpath("//*[text()='Discard Unsaved Changes']")).click();
+        await driver.wait(until.elementIsVisible(driver.findElement(By.css('#discardconfirm>.actions>.ok'))), ANIMATION_TIMEOUT);
+        await driver.findElement(By.css('#discardconfirm>.actions>.ok')).click();
+        await driver.wait(until.elementIsVisible(driver.findElement(By.css('#forceupdatecheck'))), ANIMATION_TIMEOUT);
+        await driver.findElement(By.css('#forceupdatecheck')).click();
+        await driver.wait(until.elementIsNotVisible(driver.findElement(By.id('preloader'))), PRE_LOADER_TIMEOUT);
+        const currentUrl = await driver.getCurrentUrl();
+        const buttonShown = await helper.errorThrownCheck(async () => {
+            await driver.wait(until.elementIsVisible(
+                driver.findElement(By.xpath("//*[text()='Discard Unsaved Changes']"))
+            ), ANIMATION_TIMEOUT);
+        }, 'TimeoutError');
         
-        expect(home + await driver.findElement(By.css('#save_url>input')).getAttribute('value')).to.equal(currentUrl);
-    });
-    
-    it('should show current url of a saved sheet', async () => {
-        await helper.goTo(generatePathByIndexKey(true));
-        
-        expect(await driver.findElement(By.css('#save_url>input')).getAttribute('value')).to.equal(generatePathByIndexKey(true));
-    });
-    
-    it('should jump to the inputted url while [load] button is clicked', async () => {
-        await driver.findElement(By.css('#save_url>input')).sendKeys(generatePathByIndexKey(true));
-        await driver.findElement(By.xpath("//*[text()='Load']")).click();
-        await driver.wait(async () => {
-            return (await driver.getCurrentUrl()) != home;
-        }, REDIRECT_TIMEOUT);
-        const currentUrl = (await driver.getCurrentUrl());
-        
-        expect(currentUrl).to.equal(home + generatePathByIndexKey(true));
+        expect(currentUrl).to.equal(savedUrl);
+        expect(buttonShown).to.be.false;
     });
     
     after(async () => driver.quit());

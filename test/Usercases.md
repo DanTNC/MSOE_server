@@ -17,7 +17,7 @@ es6:= branch -> Core tests -> Refactor::ES6_import -> Core tests -> merge
 ## Volume done
 ## Right preview cannot test
 ## Url-load done
-## Unsaved Changes
+## Unsaved Changes done
 ## Authorization
 ## Manual
 ## Toolbox
