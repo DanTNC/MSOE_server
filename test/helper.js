@@ -15,12 +15,7 @@ class Helper {
     }
     
     async getHomeAddress() {
-        const { stdout, stderr } = await exec("curl -s http://169.254.169.254/latest/meta-data/public-ipv4");
-        if (stderr) {
-            console.log(`stderr: ${stderr}`);
-            return;
-        }
-        this.home = 'http://' + stdout + ':8080/';
+        this.home = 'http://127.0.0.1:8080/';
         return this.home;
     }
     
