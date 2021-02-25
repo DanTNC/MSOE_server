@@ -4,7 +4,7 @@
   "description": "Music Sheet Online Editor",
   "main": "app.js",
   "scripts": {
-    "test": "mocha --timeout 30000 --parallel; node db/clearTestDB.js",
+    "test": "mocha --timeout 30000 --parallel --reporter nyan; node db/clearTestDB.js",
     "start": "node app.js"
   },
   "engines": {
