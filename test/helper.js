@@ -105,7 +105,11 @@ class Helper {
                 }
                 return shown;
             }, ANIMATION_TIMEOUT);
-        } catch (e) {}
+        } catch (e) {
+            if (e.name != 'TimeoutError') {
+                throw e;
+            }
+        }
         return message;
     }
     
