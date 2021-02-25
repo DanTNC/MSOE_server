@@ -33,7 +33,7 @@ describe('[unsaved-changes] MSOE UI', () => {
         const warnMessage = await helper.checkWarningMessage();
         const buttonShown = await helper.errorThrownCheck(async () => {
             driver.wait(helper.elementAppears(By.xpath("//*[text()='Discard Unsaved Changes']")), ANIMATION_TIMEOUT);
-        }, 'TimeoutException');
+        }, 'TimeoutError');
         
         expect(buttonShown).to.be.true;
         expect(warnMessage).to.equal('Some unsaved modifications are found.');
