@@ -57,9 +57,14 @@ button{
 }
 
 .manual {
-  font-size:0.9vw;
+  font-size: 0.9vw;
   color:white;
 }
+
+p.manual {
+  font-size: 0.9vw;
+}
+
 .panel-heading {
   font-size:14px;
 }
@@ -341,10 +346,10 @@ img.logo{
   font-size: 1vw;
 }
 
-.manual_lan {
-  cursor: pointer;
-  margin-right: 2vw;
-}
+/*.manual_lan {*/
+/*  cursor: pointer;*/
+/*  margin-right: 2vw;*/
+/*}*/
 
 #forceupdateicon {
   position: initial;
