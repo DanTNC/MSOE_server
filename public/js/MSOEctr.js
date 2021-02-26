@@ -631,11 +631,9 @@ $(document).ready(function(){
         MSOE.print();
         MSOE.printVoc();
         if(MSOE.Edit_()){
-            $("#edit").hide();
-            $(".pre-but").hide();
+            edit_mode();
         }else{
-            $(".edit-but").hide();
-            $(".panel-group-preview").hide();
+            preview_mode();
         }
         $('#modaldiv1')
             .modal({
