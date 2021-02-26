@@ -1,4 +1,5 @@
 !!TODO: New issue::Check for empty sheet when clicking [Play] or [Share]!!
+!!TODO: New issue::Add loader gif for manual language switching (individual window)!!
 
 # Flow
 unnitest:= UI tests -> merge
@@ -18,8 +19,8 @@ es6:= branch -> Core tests -> Refactor::ES6_import -> Core tests -> merge
 ## Right preview: cannot test
 ## Url-load: done
 ## Unsaved Changes: done
-## Authorization:
-## Manual:
+## Authorization: done
+## Manual: done
 ## Toolbox:
 ## Sheet:
 ### Cursor:
