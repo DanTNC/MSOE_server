@@ -105,17 +105,17 @@ describe('[edit-buttons] MSOE UI', () => {
         it('should save sheet in database', async () => {
             await driver.actions().sendKeys("z").perform();
             await driver.wait(until.elementLocated(By.css('path.note.l0.m0.v0')), ANIMATION_TIMEOUT);
+            const noteStr = await driver.executeScript('return MSOE.getNoteOf("path.note.l0.m0.v0", 0);');
             await driver.findElement(By.xpath("//*[text()='Save']")).click();
             await driver.wait(async () => {
                 return (await driver.getCurrentUrl()) != home;
             }, REDIRECT_TIMEOUT);
             await driver.navigate().refresh();
             await driver.wait(until.elementIsNotVisible(driver.findElement(By.id('preloader'))), PRE_LOADER_TIMEOUT);
-            var noteAppears = await helper.errorThrownCheck(async () => {
-                await driver.wait(helper.elementAppears(By.css('path.note.l0.m0.v0')), ANIMATION_TIMEOUT);
-            }, 'TimeoutError');
+            await driver.wait(helper.elementAppears(By.css('path.note.l0.m0.v0')), ANIMATION_TIMEOUT);
             
-            expect(noteAppears).to.be.true;
+            
+            expect(await driver.executeScript('return MSOE.getNoteOf("path.note.l0.m0.v0", 0);')).to.equal(noteStr);
         });
     });
     
