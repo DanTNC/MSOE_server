@@ -56,6 +56,38 @@
     -o-border-radius: 1vh;
 }
 
+.multikey {
+    position: fixed;
+    background-color: transparent;
+    border-radius: 1.5vh;
+    -webkit-border-radius: 1.5vh;
+    -moz-border-radius: 1.5vh;
+    -ms-border-radius: 1.5vh;
+    -o-border-radius: 1.5vh;
+}
+
+.label {
+    position: relative;
+    background-color: white;
+    border-radius: 50%;
+    width: 3vh;
+    height: 3vh;
+    line-height: 3vh;
+    color: black;
+    text-align: center;
+    left: -0.5vh;
+    top: -0.5vh;
+}
+
+.label p {
+    line-height: 1.5;
+    display: inline-block;
+    vertical-align: middle;
+    font-family:  'Baloo Tammudu 2', cursive;
+    font-weight: bold;
+    font-size: 3vh;
+}
+
 #explanation {
     height: 24vh;
     background-color: #404040;
