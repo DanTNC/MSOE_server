@@ -5,7 +5,7 @@ var manual = new function(){
     this.manual_font = (index) => { //toggle manual font size
         $(".font").removeClass("active");
         $("#font_" + index).addClass("active");
-        $(".manual").css("font-size", font_size[index]);
+        $("p.manual").css("font-size", font_size[index]);
     };
     var lan_files = {};
     this.lan_file_set = (file_set, update) => { //set language corresponding files

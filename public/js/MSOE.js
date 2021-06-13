@@ -1221,6 +1221,9 @@ var MSOE = new function() {
         "tmpstr":"4/4",
         "bpmstr":""
     };
+    this.getinfo = (name) => { //get info string
+        return infostrs[infoinputs[name]];
+    };
     this.chginfo = (a) => { //change info strings
         if ((!Edit && a.name!="whatisbpm")||(a.name === "")) return;
         if (a.name == "whatistempo" && a.value.length == 2){ //update tempo preprocessing
@@ -1384,9 +1387,12 @@ var MSOE = new function() {
             SelNotes[idx].pos = poses[idx];
         }
     };
-    var posToNotes = (poses) => {
+    var posToNotes = (poses, abcindex_) => {
+        abcindex_ == abcindex_ || abcindex;
         var res = [];
+        var tmpIndex = abcindex;
         var tmp = CrtPos;
+        SaveNLoad(abcindex_);
         for (let pos of poses){
             CrtPos = pos;
             var End = (mvpos(1) == CrtPos)?abcstr.length:mvpos(1);
@@ -1397,6 +1403,7 @@ var MSOE = new function() {
             if (str == "$") str = "\n$";
             res.push(str);
         }
+        SaveNLoad(tmpIndex);
         CrtPos = tmp;
         console.log(res);
         return res.join("");
@@ -2249,6 +2256,15 @@ var MSOE = new function() {
         abcindex_ = (abcindex_ == undefined)?abcindex:abcindex_;
         return CrtPos_cssClass(CrtPos_, abcindex_);
     };
+    this.getStrIndex = (cssClass, noteindex) => {
+        return CrtPos_cssClass(cssClass, noteindex);
+    }
+    this.getNoteOf = (cssClass, noteindex) => {
+        const temp = this.getStrIndex(cssClass, noteindex);
+        if (temp === undefined) return "";
+        const [strIndex, abcindex_] = temp;
+        return posToNotes([strIndex], abcindex_);
+    };
     //convert CrtPos to or from a note's cssClass (selector) type: number <-> string
     //typeof from: number => CrtPos, abcindex -> cssClass, noteindex
     //typeof from: string => cssClass, noteindex -> CrtPos, abcindex
@@ -2299,10 +2315,62 @@ var MSOE = new function() {
             }
             return "#boo path" + type + L + M + V + note;
         }else if((typeof from) == "string"){ //from cssClass to CrtPos
-            //reserved
+            //cssClass: "path.note.lX.mX.vX" or "path.staff-extra.lX.vX" or "path.bar.lX.mX.vX"
+            var tokens = from.split(".");
+            var type = tokens[1];
+            var L, M, V;
+            if (type == "staff-extra") {
+                L = extractToken(tokens, 2);
+                V = extractToken(tokens, 3);
+            } else {
+                L = extractToken(tokens, 2);
+                M = extractToken(tokens, 3);
+                V = extractToken(tokens, 4);
+            }
+            var strToSearch = strs[V];
+            if (V == abcindex) {
+                strToSearch = abcstr;
+            }
+            var line = 0;
+            var measure = 0;
+            for (let chIndex = 0; chIndex < strToSearch.length; chIndex++) {
+                if (line == L) {
+                    if (type == "staff-extra") {
+                        return [chIndex, V];
+                    } else {
+                        if (measure == M) {
+                            var note = (measure == 0)? -2: -1;
+                            for (let chIndexLine = chIndex; chIndexLine < strToSearch.length; chIndexLine++) {
+                                if (type == "bar") {
+                                    if (strToSearch[chIndexLine] == "|") {
+                                        return [chIndexLine - 1, V];
+                                    }
+                                } else {
+                                    if (strToSearch[chIndexLine] == "$") {
+                                        note++;
+                                        if (note == index) {
+                                            return [chIndexLine, V];
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (strToSearch[chIndex] == "|") {
+                            measure++;
+                        }
+                    }
+                }
+                if (strToSearch[chIndex] == "\n") {
+                    line++;
+                }
+            }
         }else{
             console.warn("the type of argument is not supported: " + from);
         }
+    };
+    
+    var extractToken = (tokens, i) => {
+        return parseInt(tokens[i].substr(1), 10);
     };
     
     var allstr_empty = (before) => { //return if all abcstrs are empty. before: the index to test before

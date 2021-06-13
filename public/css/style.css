@@ -57,9 +57,14 @@ button{
 }
 
 .manual {
-  font-size:0.9vw;
+  font-size: 0.9vw;
   color:white;
 }
+
+p.manual {
+  font-size: 0.9vw;
+}
+
 .panel-heading {
   font-size:14px;
 }
@@ -250,8 +255,21 @@ img.logo{
   width: 17vh;
   margin-left: 28%;
 }
+#logo:hover{
+  transform: scale(1.1);
+  -webkit-transform: scale(1.1);
+  -moz-transform: scale(1.1);
+  -ms-transform: scale(1.1);
+  -o-transform: scale(1.1);
+  opacity: 0.8;
+}
 #logo{
   cursor: pointer;
+  transition: 0.1s;
+  -webkit-transition: 0.1s;
+  -moz-transition: 0.1s;
+  -ms-transition: 0.1s;
+  -o-transition: 0.1s;
 }
 #voices{
   height: 40vh;
@@ -341,10 +359,10 @@ img.logo{
   font-size: 1vw;
 }
 
-.manual_lan {
-  cursor: pointer;
-  margin-right: 2vw;
-}
+/*.manual_lan {*/
+/*  cursor: pointer;*/
+/*  margin-right: 2vw;*/
+/*}*/
 
 #forceupdateicon {
   position: initial;

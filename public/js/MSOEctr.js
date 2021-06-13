@@ -631,11 +631,9 @@ $(document).ready(function(){
         MSOE.print();
         MSOE.printVoc();
         if(MSOE.Edit_()){
-            $("#edit").hide();
-            $(".pre-but").hide();
+            edit_mode();
         }else{
-            $(".edit-but").hide();
-            $(".panel-group-preview").hide();
+            preview_mode();
         }
         $('#modaldiv1')
             .modal({
@@ -665,8 +663,11 @@ $(document).ready(function(){
     document.onkeydown = move;
     document.onkeyup = chord;
     
-    $(document).dbKeypress(17, function(e){
-        MSOE.SelNotesCrt();
+    $(document).dbKeypress(17, {
+        eventType: 'keyup',
+        callback: function(e){
+            MSOE.SelNotesCrt();
+        }
     });
     
     $("#save").click(function(e) { MSOE.save(e); });
