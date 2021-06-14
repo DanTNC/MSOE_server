@@ -19,7 +19,7 @@ class Key {
         this.left = Number(left);
         this.top = Number(top);
         this.width = Number(width);
-        this.height = Number(height) || 9.8;
+        this.height = Number(height) ?? 9.8;
     }
 }
 
