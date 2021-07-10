@@ -1135,9 +1135,9 @@ var MSOE = new function() {
         }
     };
     this.urlload = (func) => { //load sheet from database using info in url
-        url = location.search.split("?")[1] || "";
-        index = url.split("!")[1] || "";
-        key = url.split("!")[2] || "";
+        url = location.search.split("?")[1] ?? "";
+        index = url.split("!")[1] ?? "";
+        key = url.split("!")[2] ?? "";
 
         if (index !== "") { //call ajax to load sheet data
             server_load(func, function(msg) {
@@ -1151,10 +1151,10 @@ var MSOE = new function() {
                     abcstr = msg.sheet.abcstr;
                     abcindex = msg.sheet.abcindex;
                     Lstr = msg.sheet.Lstr;
-                    strs = msg.sheet.strs || [];
+                    strs = msg.sheet.strs ?? [];
                     clef = msg.sheet.clef;
-                    voicename = msg.sheet.voicename || [];
-                    musicEnds = msg.sheet.musicEnds || [];
+                    voicename = msg.sheet.voicename ?? [];
+                    musicEnds = msg.sheet.musicEnds ?? [];
                     if (musicEnds.length != clef.length) { // for migrating old sheets
                         musicEnds = new Array(clef.length).fill(false);
                     }
@@ -1348,7 +1348,7 @@ var MSOE = new function() {
         }
     };
     this.paste = (cpStr) => { //paste copied or cutten string
-        cpStr = cpStr || CpStr;
+        cpStr = cpStr ?? CpStr;
         if (mvpos(1) == CrtPos) {
             let Act = {inst: 1, param1: abcstr.length, param2: cpStr, X: abcstr.length + cpStr.length - 1};
             act(Act);
@@ -1388,7 +1388,7 @@ var MSOE = new function() {
         }
     };
     var posToNotes = (poses, abcindex_) => {
-        abcindex_ == abcindex_ || abcindex;
+        abcindex_ == abcindex_ ?? abcindex;
         var res = [];
         var tmpIndex = abcindex;
         var tmp = CrtPos;
@@ -1486,7 +1486,7 @@ var MSOE = new function() {
         var mapfunc = n => n;
         if (mode=="pos") mapfunc = n => n.pos;
         if (mode=="sel") mapfunc = n => n.sel;
-        var subject = guest || SelNotes;
+        var subject = guest ?? SelNotes;
         return subject.map(mapfunc);
     };
     this.SelNoteClr = () => { //clear selected notes, called when the sheet is changed
@@ -1681,7 +1681,7 @@ var MSOE = new function() {
         return [newD, oldD];
     };
     var getoldDAt = (pos, isChord) => { // get oldD from substring for note at pos
-        isChord = isChord || false;
+        isChord = isChord ?? false;
         var temp = CrtPos;
         CrtPos = pos;
         var edP = mvpos(1);
@@ -2448,7 +2448,7 @@ var MSOE = new function() {
         if (pos == 0){
             return -1;
         }
-        after = after || 0;
+        after = after ?? 0;
         for (var i = pos - 1; i >= after; i--){
             if (abcstr[i] == "@" || abcstr[i] == "]" || abcstr[i] == "$"){
                 return i;

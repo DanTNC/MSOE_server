@@ -1,9 +1,7 @@
 /* global $, MSOE */
 
 var edit_mode = () => {
-  $("#infohome").removeClass("disabled").click(()=>{
-    $('#modaldiv2').modal('setting', 'transition', 'vertical flip').modal('show');
-  });
+  $("#infohome").removeClass("disabled").click(showScoreInfo);
   $(".left").show();
   $(".panel-group").show();
   $(".panel-group-preview").hide();

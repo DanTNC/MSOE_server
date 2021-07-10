@@ -621,12 +621,29 @@ var btn = (a) => { //buttons for notes
 };
 
 
-// $(window).on("load", function(){
-//     $('#preloader').fadeOut('slow',function(){console.log("loaded");});
-// });
+var showScoreInfo = () => {
+    $('#modaldiv2').modal('show');
+};
 
 $(document).ready(function(){
     MSOE.UIhandler(UIhandler); //register UIhandler
+    $('#manualback, #manualgo').click(function() {
+        $('#sidebar').sidebar('setting', 'transition', 'overlay')
+        .sidebar('toggle');
+    });
+    $('#modaldiv2')
+        .modal({
+            allowMultiple: false,
+            blurring: true,
+            autofocus: false,
+            transition: 'vertical flip',
+        });
+    $('#infomodal').click(function() {
+        $('#modaldiv1').modal('hide');
+    });
+    $('#submit').click(function() {
+        $('#modaldiv2').modal('hide');
+    });
     MSOE.urlload(function(m){
         MSOE.print();
         MSOE.printVoc();
@@ -639,9 +656,7 @@ $(document).ready(function(){
             .modal({
                 allowMultiple: false,
                 blurring: true,
-                onHidden: function(){
-                    $('#modaldiv2').modal('setting', 'transition', 'vertical flip').modal('show');
-                }
+                onHidden: showScoreInfo
             });
         if(m){
             $("#modaldiv1").modal('setting', 'transition', 'vertical flip').modal("show");

@@ -11,7 +11,7 @@ var mutliKeyColorLoop = [
     "#31ffff",
     "#f0943a",
     "#4cec4c",
-]
+];
 var mutliKeyColorMap = {};
 
 class Key {
@@ -19,7 +19,7 @@ class Key {
         this.left = Number(left);
         this.top = Number(top);
         this.width = Number(width);
-        this.height = Number(height) || 9.8;
+        this.height = Number(height) ?? 9.8;
     }
 }
 
@@ -60,13 +60,14 @@ var getKeys = (groupIdx, st, ed) => {
     if (ed == -1) {
         return [keyboardKeys[groupIdx].keys[st]];
     } else {
-        let res = []
+        let res = [];
         for (let i = st; i <= ed ; i++) {
             res.push(keyboardKeys[groupIdx].keys[i]);
         }
         return res;
     }
-}
+};
+
 class FunctionKey extends Key {
     constructor(id_, left, top, width, height, multi) {
         super(left, top, width, height);
@@ -141,7 +142,7 @@ var generateKeys = () => {
 var generateKeyboardKeys = () => {
     let parent = $("#keyboard-keys");
 
-    for (group of keyboardKeys) {
+    for (let group of keyboardKeys) {
         group.toDom(parent);
     }
 }
@@ -150,8 +151,8 @@ var generateFunctionKeys = () => {
     let top = LAYOUT_TOP;
     let parent = $("#function-keys");
 
-    for (row of functionKeys) {
-        for (key of row) {
+    for (let row of functionKeys) {
+        for (let key of row) {
             key.toDom(parent, top);
         }
         top += LAYOUT_ROW_OFFSET;
@@ -161,7 +162,7 @@ var generateFunctionKeys = () => {
 var defaultOverrides = (defConfigs, line) => {
     let [param, val] = line.substring(1).split("=");
     defConfigs[param] = Number(val);
-}
+};
 
 var layoutDefinitions = (defConfigs, line, contentGroups, top) => {
     if (line == "") return;
@@ -194,7 +195,7 @@ var layoutDefinitions = (defConfigs, line, contentGroups, top) => {
         keyboardKeys.push(new Group(top, left_, keys));
     }
     return nextTopOffset;
-}
+};
 
 var initializeKeyboardKeys = () => {
     const defConfigs = {gap: 1, left: 0, height: 1};

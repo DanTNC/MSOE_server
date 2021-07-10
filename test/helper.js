@@ -1,7 +1,5 @@
 const { Builder, By, until } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
-const util = require('util');
-const exec = util.promisify(require('child_process').exec);
 const { screen, PRE_LOADER_TIMEOUT, ANIMATION_TIMEOUT } = require('./constants');
 
 class Helper {
