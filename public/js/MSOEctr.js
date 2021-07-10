@@ -631,13 +631,18 @@ $(document).ready(function(){
         $('#sidebar').sidebar('setting', 'transition', 'overlay')
         .sidebar('toggle');
     });
-    $('#modaldiv2')
-        .modal({
-            allowMultiple: false,
-            blurring: true,
-            autofocus: false,
-            transition: 'vertical flip',
-        });
+    $('#modaldiv2').modal({
+        allowMultiple: false,
+        blurring: true,
+        autofocus: false,
+        transition: 'vertical flip',
+    });
+    $('#modaldiv1').modal({
+        allowMultiple: false,
+        blurring: true,
+        onHidden: showScoreInfo
+    });
+    $('#infohome').click(showScoreInfo);
     $('#infomodal').click(function() {
         $('#modaldiv1').modal('hide');
     });
@@ -652,12 +657,6 @@ $(document).ready(function(){
         }else{
             preview_mode();
         }
-        $('#modaldiv1')
-            .modal({
-                allowMultiple: false,
-                blurring: true,
-                onHidden: showScoreInfo
-            });
         if(m){
             $("#modaldiv1").modal('setting', 'transition', 'vertical flip').modal("show");
         }
