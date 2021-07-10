@@ -1,7 +1,6 @@
 /* global $, MSOE */
 
 var edit_mode = () => {
-  $("#infohome").removeClass("disabled").click(showScoreInfo);
   $(".left").show();
   $(".panel-group").show();
   $(".panel-group-preview").hide();
@@ -23,7 +22,6 @@ var edit_mode = () => {
   MSOE.print();
 };
 var preview_mode = () => {
-  $("#infohome").addClass("disabled").off("click");
   $(".left").hide();
   $(".panel-group").hide();
   $(".panel-group-preview").show();
