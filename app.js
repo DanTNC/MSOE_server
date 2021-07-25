@@ -1,6 +1,5 @@
 var path = require('path');
 var express = require('express');
-var bodyParser = require('body-parser');
 var helmet = require('helmet');
 var app = express();
 var http = require('http').Server(app);
@@ -27,8 +26,8 @@ var tempload = require('./db/tempload');
 var tempsave = require('./db/tempsave');
 var feedback = require('./routes/feedback')(Feedback);
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
+app.use(express.json());
+app.use(express.urlencoded({
   extended: true
 }));
 app.use(helmet());
