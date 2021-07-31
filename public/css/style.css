@@ -103,6 +103,7 @@ h3.ui.header{
   z-index: 1;
   padding-top: 18vh;
   margin-left: 1vw;
+  border-radius: 0.5vw;
 }
 .black{
   background-color: black;
@@ -110,6 +111,7 @@ h3.ui.header{
   width: 8%;
   z-index: 2;
   margin-left: 1vw;
+  border-radius: 0 0 0.5vw 0.5vw;
 }
 #C{
   left: 0%;
