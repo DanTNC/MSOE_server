@@ -1,6 +1,13 @@
 /* global $, MSOE */
 
 var edit_mode = () => {
+  if(MSOE.playing == true){
+    MSOE.playing = false;
+    $(".abcjs-midi-reset").click();
+    $(".abcjs-midi-start").click();
+    $("#play").text("Play");
+    ABCJS.stopAnimation();
+  }
   $(".left").show();
   $(".panel-group").show();
   $(".panel-group-preview").hide();
@@ -11,13 +18,6 @@ var edit_mode = () => {
   MSOE.Edit_(true);
   if(!MSOE.unsave() || !MSOE.Edit_()){
     $("#discard").hide();
-  }
-  if(MSOE.playing == true){
-    $(".abcjs-midi-reset").click();
-    $(".abcjs-midi-start").click();
-    ABCJS.stopAnimation();
-    $("#play").text("Play");
-    MSOE.playing == false;
   }
   MSOE.print();
 };
