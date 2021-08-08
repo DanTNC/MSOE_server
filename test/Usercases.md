@@ -1,6 +1,3 @@
-!!TODO: New issue::Check for empty sheet when clicking [Play] or [Share]!!
-!!TODO: New issue::Add loader gif for manual language switching (individual window)!!
-
 # Flow
 unnitest:= UI tests -> merge
 refactor:= branch -> js-beautify -> Refactor::naming -> Refactor::composition -> Refactor::* -> merge
