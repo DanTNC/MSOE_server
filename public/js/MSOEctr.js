@@ -694,6 +694,10 @@ $(document).ready(function(){
     $("#play").click(function(e) {
         if (MSOE.Edit_()) return;
         if(MSOE.playing == false){
+            if (MSOE.emptySheet()) {
+                WarningMes("Cannot play empty sheet.");
+                return;
+            }
             MSOE.playing = true;
             MSOE.setmidivolume();
             $(".abcjs-midi-reset").click();

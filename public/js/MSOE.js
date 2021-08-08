@@ -2580,6 +2580,10 @@ var MSOE = new function() {
         this.print();
     };
 
+    this.emptySheet = () => {
+        return allstr_empty();
+    };
+
     var qrcode = undefined;
 
     this.isSaved = () => {
