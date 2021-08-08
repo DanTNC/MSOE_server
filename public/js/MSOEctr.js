@@ -695,7 +695,7 @@ $(document).ready(function(){
         if (MSOE.Edit_()) return;
         if(MSOE.playing == false){
             if (MSOE.emptySheet()) {
-                WarningMes("Cannot play empty sheet.");
+                WarningMes("cannot play empty sheet");
                 return;
             }
             MSOE.playing = true;

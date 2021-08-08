@@ -283,71 +283,93 @@
                     }
                 });
             </script>
-            <div class="three wide column panel-group right_menu">
-                <div class="ui sticky" style="width: 272px !important; height: 262.531px !important;">
-                    <h3 class="ui header">Keyboard</h3>
-                    <div class="keyboard">
-                        <button id="C" class="white" onclick="btn(this)">Z</button>
-                        <button id="CS" class="black"></button>
-                        <button id="D" class="white" onclick="btn(this)">X</button>
-                        <button id="DS" class="black"></button>
-                        <button id="E" class="white" onclick="btn(this)">C</button>
-                        <button id="F" class="white" onclick="btn(this)">V</button>
-                        <button id="FS" class="black"></button>
-                        <button id="G" class="white" onclick="btn(this)">B</button>
-                        <button id="GS" class="black"></button>
-                        <button id="A" class="white" onclick="btn(this)">N</button>
-                        <button id="AS" class="black"></button>
-                        <button id="B" class="white" onclick="btn(this)">M</button>
+            <div class="three wide column right_menu">
+                <div class="panel-group">
+                    <div class="ui">
+                        <h3 class="ui header">Keyboard</h3>
+                        <div class="keyboard">
+                            <button id="C" class="white" onclick="btn(this)">Z</button>
+                            <button id="CS" class="black"></button>
+                            <button id="D" class="white" onclick="btn(this)">X</button>
+                            <button id="DS" class="black"></button>
+                            <button id="E" class="white" onclick="btn(this)">C</button>
+                            <button id="F" class="white" onclick="btn(this)">V</button>
+                            <button id="FS" class="black"></button>
+                            <button id="G" class="white" onclick="btn(this)">B</button>
+                            <button id="GS" class="black"></button>
+                            <button id="A" class="white" onclick="btn(this)">N</button>
+                            <button id="AS" class="black"></button>
+                            <button id="B" class="white" onclick="btn(this)">M</button>
+                        </div>
+                        <div class="ui teal inverted tiny progress volume">
+                            <div class="bar"></div>
+                            <div class="label">volume</div>
+                        </div>
+                        <div class="ui icon teal inverted button help volume-down">
+                            <i class="volume down icon"></i>
+                        </div>
+                        <div class="ui icon blue inverted button help volume-up">
+                            <i class="volume up icon"></i>
+                        </div>
+                        <div id="note-props">
+                            <div class="ui small orange circular label" style="display: none;" id="slur-icon">
+                                <i class="forward icon"></i>slur
+                            </div>
+                            <div class="ui small brown circular label" style="display: none;" id="tie-icon">
+                                <i class="minus icon"></i>tie
+                            </div>
+                            <div class="ui small blue circular label" style="display: none;" id="triplet-icon">
+                                <i class="list ol icon"></i>triplet
+                            </div>
+                            <div class="ui small red circular label" style="display: none;" id="separate-icon">
+                                <i class="expand arrows alternate icon"></i>separate
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-group-preview">
+                    <div class="one wide column row" id="bpm">
+                        BPM
+                    </div>
+                    <div class="ui input mini" id="bpm_input">
+                        <input type="text" placeholder="180" name="whatisbpm"/>
                     </div>
                     <div class="ui teal inverted tiny progress volume">
                         <div class="bar"></div>
                         <div class="label">volume</div>
                     </div>
-                    <div class="ui icon teal inverted button help volume-down">
+                    <div class="ui icon teal inverted button volume-down">
                         <i class="volume down icon"></i>
                     </div>
-                    <div class="ui icon blue inverted button help volume-up">
+                    <div class="ui icon blue inverted button volume-up">
                         <i class="volume up icon"></i>
                     </div>
-                    <div id="note-props">
-                        <div class="ui small orange circular label" style="display: none;" id="slur-icon">
-                            <i class="forward icon"></i>slur
-                        </div>
-                        <div class="ui small brown circular label" style="display: none;" id="tie-icon">
-                            <i class="minus icon"></i>tie
-                        </div>
-                        <div class="ui small blue circular label" style="display: none;" id="triplet-icon">
-                            <i class="list ol icon"></i>triplet
-                        </div>
-                        <div class="ui small red circular label" style="display: none;" id="separate-icon">
-                            <i class="expand arrows alternate icon"></i>separate
-                        </div>
+                </div>
+                <div class="ui negative message" style="display: none;" id="error">
+                    <div class="header">
+                        Error
                     </div>
-                    <div class="ui negative message" style="display: none;" id="error">
-                        <div class="header">
-                            Error
-                        </div>
-                        <p>
-                            A voicename can't contain ".
-                        </p>
+                    <p>
+                        A voicename can't contain ".
+                    </p>
+                </div>
+                <div class="ui positive message" style="display: none;" id="success">
+                    <div class="header">
+                        Success
                     </div>
-                    <div class="ui positive message" style="display: none;" id="success">
-                        <div class="header">
-                            Success
-                        </div>
-                        <p>
-                            Successfully saved.
-                        </p>
+                    <p>
+                        Successfully saved.
+                    </p>
+                </div>
+                <div class="ui warning message" style="display: none;" id="warning">
+                    <div class="header">
+                        Warning
                     </div>
-                    <div class="ui warning message" style="display: none;" id="warning">
-                        <div class="header">
-                            Warning
-                        </div>
-                        <p>
-                            Some unsaved modifications are found.
-                        </p>
-                    </div>
+                    <p>
+                        Some unsaved modifications are found.
+                    </p>
+                </div>
+                <div class="panel-group">
                     <div class="ui inverted segment" id="noteinfo">
                         <div class="ui pointing below small label" id="preview_label">
                             Preview
@@ -360,24 +382,6 @@
                         <i class="at icon"></i>
                         <button class="ui inverted brown mini button help" id="load_url">Load</button>
                     </div>
-                </div>
-            </div>
-            <div class="three wide column panel-group-preview right_menu">
-                <div class="one wide column row" id="bpm">
-                    BPM
-                </div>
-                <div class="ui input mini" id="bpm_input">
-                    <input type="text" placeholder="180" name="whatisbpm"/>
-                </div>
-                <div class="ui teal inverted tiny progress volume">
-                    <div class="bar"></div>
-                    <div class="label">volume</div>
-                </div>
-                <div class="ui icon teal inverted button volume-down">
-                    <i class="volume down icon"></i>
-                </div>
-                <div class="ui icon blue inverted button volume-up">
-                    <i class="volume up icon"></i>
                 </div>
             </div>
         </div>
