@@ -695,7 +695,7 @@ $(document).ready(function(){
         if (MSOE.Edit_()) return;
         if(MSOE.playing == false){
             if (MSOE.emptySheet()) {
-                WarningMes("cannot play empty sheet");
+                ErrorMes("cannot play empty sheet");
                 return;
             }
             MSOE.playing = true;
@@ -718,6 +718,10 @@ $(document).ready(function(){
         }
     });
     $("#share").click(function(e){
+        if (MSOE.emptySheet()) {
+            ErrorMes("cannot generate midi file for empty sheet");
+            return;
+        }
         $(".download-midi a")[0].click();
     });
     $("#help").click(function(e){
