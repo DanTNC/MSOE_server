@@ -528,6 +528,7 @@ var move = (event) => { // some keys can't be detected in keypress
             MSOE.chordmode(true);
             MSOE.chmodeon();
             break;
+        case 91: //"cmd"
         case 17: //"ctrl" for add voice before
             MSOE.insvocbef(true);
             break;
@@ -594,6 +595,7 @@ var chord = (event) => { //keyup event for chord mode
             MSOE.chordmode(false);
             MSOE.chmodeoff();
             break;
+        case 91: //"cmd"
         case 17: //"ctrl" for add voice before
             MSOE.insvocbef(false);
             break;
@@ -677,7 +679,7 @@ $(document).ready(function(){
     document.onkeydown = move;
     document.onkeyup = chord;
     
-    $(document).dbKeypress(17, {
+    $(document).dbKeypress([17, 91], {
         eventType: 'keyup',
         callback: function(e){
             MSOE.SelNotesCrt();
