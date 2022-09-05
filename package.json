@@ -27,7 +27,7 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "chromedriver": "^88.0.0",
-    "mocha": "^8.2.1",
+    "mocha": "^10.0.0",
     "selenium-webdriver": "^4.0.0-alpha.8",
     "sinon": "^9.2.4"
   }
