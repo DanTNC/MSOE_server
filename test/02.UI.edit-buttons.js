@@ -25,8 +25,8 @@ describe('[edit-buttons] MSOE UI', () => {
     describe('[Manual]', () => {
         it('should show manual', async () => {
             await driver.findElement(By.xpath("//*[text()='Manual']")).click();
-            var manualShown = await helper.errorThrownCheck(async () => {
-                await driver.wait(helper.elementWithState(By.id('sidebar'), 'visible'), ANIMATION_TIMEOUT);
+            var manualShown = await helper.noSuchErrorThrownCheck(async () => {
+                await helper.waitAnimatedShowing(By.id('sidebar'));
             }, 'TimeoutError');
             
             expect(manualShown).to.be.true;
@@ -34,12 +34,13 @@ describe('[edit-buttons] MSOE UI', () => {
         
         it('should hide manual when dimmer is clicked while manual is shown', async () => {
             await driver.findElement(By.xpath("//*[text()='Manual']")).click();
+            await helper.waitAnimatedShowing(By.id('sidebar'));
             await driver.findElement(By.css(".pusher.dimmed")).click();
-            var manualShown = await helper.errorThrownCheck(async () => {
+            var manualHidden = await helper.noSuchErrorThrownCheck(async () => {
                 await driver.wait(helper.elementWithoutState(By.id('sidebar'), 'visible'), ANIMATION_TIMEOUT);
             }, 'TimeoutError');
             
-            expect(manualShown).to.be.true;
+            expect(manualHidden).to.be.true;
         });    
     });
     
@@ -48,7 +49,7 @@ describe('[edit-buttons] MSOE UI', () => {
         it('should show popup messages when hovered', async () => {
             const helpButton = await driver.findElement(By.xpath("//*[text()='Help']"));
             await driver.actions().move({x: 0, y: 0, origin: helpButton}).perform();
-            var found = await helper.errorThrownCheck(async () => {
+            var found = await helper.noSuchErrorThrownCheck(async () => {
                 await driver.findElement(By.css(".popup"));
             }, 'NoSuchElementError');
             
@@ -59,7 +60,7 @@ describe('[edit-buttons] MSOE UI', () => {
             await driver.findElement(By.xpath("//*[text()='Help']")).click();
             const buttonWithHelp = await driver.findElement(By.xpath("//*[contains(@class, 'help')][1]"));
             await driver.actions().move({x: 0, y: 0, origin: buttonWithHelp}).perform();
-            var found = await helper.errorThrownCheck(async () => {
+            var found = await helper.noSuchErrorThrownCheck(async () => {
                 await driver.findElement(By.css(".popup"));
             }, 'NoSuchElementError');
             
@@ -70,7 +71,7 @@ describe('[edit-buttons] MSOE UI', () => {
             const helpButton = await driver.findElement(By.xpath("//*[text()='Help']"));
             const offColor = await helpButton.getCssValue("color");
             await helpButton.click();
-            var colorChanged = await helper.errorThrownCheck(async () => {
+            var colorChanged = await helper.noSuchErrorThrownCheck(async () => {
                 await driver.wait(async () => {
                     const color = await helpButton.getCssValue("color");
                     return color != offColor;
@@ -83,7 +84,7 @@ describe('[edit-buttons] MSOE UI', () => {
             
             const buttonWithHelp = await driver.findElement(By.xpath("//*[contains(@class, 'help')][1]"));
             await driver.actions().move({x: 0, y: 0, origin: buttonWithHelp}).perform();
-            var popupDisappears = await helper.errorThrownCheck(async () => {
+            var popupDisappears = await helper.noSuchErrorThrownCheck(async () => {
                 await driver.wait(helper.elementDisappears(By.css(".popup")), ANIMATION_TIMEOUT);
             }, 'TimeoutError');
             
@@ -94,7 +95,7 @@ describe('[edit-buttons] MSOE UI', () => {
     describe('[Save]', () => {
         it('should generate a index-key pair and append it to the url', async () => {
             await driver.findElement(By.xpath("//*[text()='Save']")).click();
-            var urlChanged = await helper.errorThrownCheck(async () => {
+            var urlChanged = await helper.noSuchErrorThrownCheck(async () => {
                 await driver.wait(async () => {
                     return (await driver.getCurrentUrl()) != home;
                 }, REDIRECT_TIMEOUT);
@@ -122,7 +123,7 @@ describe('[edit-buttons] MSOE UI', () => {
     describe('[Toolbox]', () => {
         it('should show sidebar toolbox', async () => {
             await driver.findElement(By.xpath("//*[text()='Toolbox']")).click();
-            var toolboxShown = await helper.errorThrownCheck(async () => {
+            var toolboxShown = await helper.noSuchErrorThrownCheck(async () => {
                 await driver.wait(helper.elementWithState(By.id('toolbox'), 'visible'), ANIMATION_TIMEOUT);
             }, 'TimeoutError');
             
@@ -133,7 +134,7 @@ describe('[edit-buttons] MSOE UI', () => {
             const toolboxButton = await driver.findElement(By.xpath("//*[text()='Toolbox']"));
             const offColor = await toolboxButton.getCssValue("color");
             await toolboxButton.click();
-            var colorChanged = await helper.errorThrownCheck(async () => {
+            var colorChanged = await helper.noSuchErrorThrownCheck(async () => {
                 await driver.wait(async () => {
                     const color = await toolboxButton.getCssValue("color");
                     return color != offColor;
@@ -144,7 +145,7 @@ describe('[edit-buttons] MSOE UI', () => {
             
             await toolboxButton.click();
             
-            var toolboxHidden = await helper.errorThrownCheck(async () => {
+            var toolboxHidden = await helper.noSuchErrorThrownCheck(async () => {
                 await driver.wait(helper.elementWithoutState(By.id('toolbox'), 'visible'), ANIMATION_TIMEOUT);
             }, 'TimeoutError');
             
@@ -155,7 +156,7 @@ describe('[edit-buttons] MSOE UI', () => {
     describe('[QR Code]', () => {
         it('should show warning message when the sheet is not saved', async () => {
             await driver.findElement(By.xpath("//*[text()='QR Code']")).click();
-            var QRWarnShown = await helper.errorThrownCheck(async () => {
+            var QRWarnShown = await helper.noSuchErrorThrownCheck(async () => {
                 await driver.wait(helper.elementAppears(By.xpath('//*[text()="You need to save the sheet before generating QR code."]')), ANIMATION_TIMEOUT);
             }, 'TimeoutError');
             

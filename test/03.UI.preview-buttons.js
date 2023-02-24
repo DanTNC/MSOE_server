@@ -41,7 +41,7 @@ describe('[preview-buttons] MSOE UI', () => {
             await driver.findElement(By.xpath('//*[text()="Preview"]')).click();
             await driver.wait(until.elementIsVisible(driver.findElement(By.xpath('//*[text()="Play"]'))), ANIMATION_TIMEOUT);
             await driver.findElement(By.xpath("//*[text()='Play']")).click();
-            var musicPlayed = await helper.errorThrownCheck(async () => {
+            var musicPlayed = await helper.noSuchErrorThrownCheck(async () => {
                 await driver.wait(until.elementLocated(By.css('.cursor')), ANIMATION_TIMEOUT);
             }, 'TimeoutError');
             
@@ -54,7 +54,7 @@ describe('[preview-buttons] MSOE UI', () => {
             await driver.findElement(By.xpath('//*[text()="Preview"]')).click();
             await driver.wait(until.elementIsVisible(driver.findElement(By.xpath('//*[text()="Play"]'))), ANIMATION_TIMEOUT);
             await driver.findElement(By.xpath("//*[text()='Play']")).click();
-            var textBecomesStop = await helper.errorThrownCheck(async () => {
+            var textBecomesStop = await helper.noSuchErrorThrownCheck(async () => {
                 await driver.wait(until.elementLocated(By.xpath('//*[text()="Stop"]')), ANIMATION_TIMEOUT);
             }, 'TimeoutError');
             
@@ -69,7 +69,7 @@ describe('[preview-buttons] MSOE UI', () => {
             await driver.wait(until.elementIsVisible(driver.findElement(By.xpath('//*[text()="Play"]'))), ANIMATION_TIMEOUT);
             await driver.findElement(By.xpath("//*[text()='Play']")).click();
             await driver.wait(until.elementLocated(By.css('.cursor')), ANIMATION_TIMEOUT);
-            var textBecomesPlay = await helper.errorThrownCheck(async () => {
+            var textBecomesPlay = await helper.noSuchErrorThrownCheck(async () => {
                 await driver.wait(until.elementLocated(By.xpath('//*[text()="Play"]')), ANIMATION_TIMEOUT * notes.length);
             }, 'TimeoutError');
             
@@ -85,7 +85,7 @@ describe('[preview-buttons] MSOE UI', () => {
             await driver.findElement(By.xpath("//*[text()='Play']")).click();
             await driver.wait(until.elementLocated(By.css('.cursor')), ANIMATION_TIMEOUT);
             await driver.findElement(By.xpath("//*[text()='Stop']")).click();
-            var textBecomesPlay = await helper.errorThrownCheck(async () => {
+            var textBecomesPlay = await helper.noSuchErrorThrownCheck(async () => {
                 await driver.wait(until.elementLocated(By.xpath('//*[text()="Play"]')), ANIMATION_TIMEOUT * notes.length);
             }, 'TimeoutError');
             
@@ -123,7 +123,7 @@ describe('[preview-buttons] MSOE UI', () => {
             await driver.wait(until.elementIsVisible(driver.findElement(By.xpath('//*[text()="Share"]'))), ANIMATION_TIMEOUT);
             await driver.findElement(By.xpath("//*[text()='Share']")).click();
             
-            var fileDownloaded = await helper.errorThrownCheck(async () => {
+            var fileDownloaded = await helper.noSuchErrorThrownCheck(async () => {
                 driver.wait(() => {
                     return fs.existsSync(path.resolve(tempDir, title + '.midi'));
                 }, DOWNLOAD_TIMEOUT);

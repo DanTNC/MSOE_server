@@ -30,7 +30,7 @@ describe('[unsaved-changes] MSOE UI', () => {
         await driver.navigate().refresh();
         await driver.wait(until.elementIsNotVisible(driver.findElement(By.id('preloader'))), PRE_LOADER_TIMEOUT);
         const warnMessage = await helper.checkWarningMessage();
-        const buttonShown = await helper.errorThrownCheck(async () => {
+        const buttonShown = await helper.noSuchErrorThrownCheck(async () => {
             await driver.wait(until.elementIsVisible(
                 driver.findElement(By.xpath("//*[text()='Discard Unsaved Changes']"))
             ), ANIMATION_TIMEOUT);
@@ -49,7 +49,7 @@ describe('[unsaved-changes] MSOE UI', () => {
         await driver.navigate().refresh();
         await driver.wait(until.elementIsNotVisible(driver.findElement(By.id('preloader'))), PRE_LOADER_TIMEOUT);
         const warnMessage = await helper.checkWarningMessage();
-        const buttonShown = await helper.errorThrownCheck(async () => {
+        const buttonShown = await helper.noSuchErrorThrownCheck(async () => {
             await driver.wait(until.elementIsVisible(
                 driver.findElement(By.xpath("//*[text()='Discard Unsaved Changes']"))
             ), ANIMATION_TIMEOUT);
@@ -78,7 +78,7 @@ describe('[unsaved-changes] MSOE UI', () => {
         await driver.findElement(By.css('#forceupdatecheck')).click();
         await driver.wait(until.elementIsNotVisible(driver.findElement(By.id('preloader'))), PRE_LOADER_TIMEOUT);
         const currentUrl = await driver.getCurrentUrl();
-        const buttonShown = await helper.errorThrownCheck(async () => {
+        const buttonShown = await helper.noSuchErrorThrownCheck(async () => {
             await driver.wait(until.elementIsVisible(
                 driver.findElement(By.xpath("//*[text()='Discard Unsaved Changes']"))
             ), ANIMATION_TIMEOUT);

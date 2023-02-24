@@ -27,7 +27,7 @@ describe('[meter] MSOE UI', () => {
     it('should highlight key and insert corresponding note when clicked', async () => {
         const key = helper.randomChoice(keys);
         await driver.findElement(By.id(key)).click();
-        var colorChanged = await helper.errorThrownCheck(async () => {
+        var colorChanged = await helper.noSuchErrorThrownCheck(async () => {
             await driver.wait(async () => {
                 return (await driver.findElement(By.id(key)).getCssValue('background-color')) != "rgba(255, 255, 255, 1)";
             }, ANIMATION_TIMEOUT);
@@ -40,7 +40,7 @@ describe('[meter] MSOE UI', () => {
     it('should highlight key when a note is inserted', async () => {
         await driver.actions().sendKeys('z').perform();
         
-        var colorChanged = await helper.errorThrownCheck(async () => {
+        var colorChanged = await helper.noSuchErrorThrownCheck(async () => {
             await driver.wait(async () => {
                 return (await driver.findElement(By.id('C')).getCssValue('background-color')) != "rgba(255, 255, 255, 1)";
             }, ANIMATION_TIMEOUT);

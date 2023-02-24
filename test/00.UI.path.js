@@ -37,7 +37,7 @@ describe('[path] MSOE UI', () => {
         await helper.goTo();
         await driver.findElement(By.id('infomodal')).click();
         await driver.wait(helper.elementWithState(By.id('modaldiv1'), 'hidden'), ANIMATION_TIMEOUT);
-        var modalAppears = await helper.errorThrownCheck(async () => {
+        var modalAppears = await helper.noSuchErrorThrownCheck(async () => {
             await driver.wait(helper.elementWithState(By.id('modaldiv2'), 'visible'), ANIMATION_TIMEOUT);
         }, 'TimeoutError');
         
@@ -59,7 +59,7 @@ describe('[path] MSOE UI', () => {
     it('should redirect to homepage if the sheet index is invalid', async () => {
         const invalidIndex = defaultIndex.substr(1);
         await driver.get(home + generatePathByIndexKey(false, invalidIndex));
-        var redirected = await helper.errorThrownCheck(async () => {
+        var redirected = await helper.noSuchErrorThrownCheck(async () => {
             await driver.wait(async () => {
                 return (await driver.getCurrentUrl()) == home;
             }, REDIRECT_TIMEOUT);
@@ -71,7 +71,7 @@ describe('[path] MSOE UI', () => {
     it('should redirect to view-only mode if the sheet key is incorrect', async () => {
         const invalidKey = defaultKey.substr(1);
         await driver.get(home + generatePathByIndexKey(true, defaultIndex, invalidKey));
-        var redirected = await helper.errorThrownCheck(async () => {
+        var redirected = await helper.noSuchErrorThrownCheck(async () => {
             await driver.wait(async () => {
                 return (await driver.getCurrentUrl()) == home + generatePathByIndexKey(false, defaultIndex);
             }, REDIRECT_TIMEOUT);

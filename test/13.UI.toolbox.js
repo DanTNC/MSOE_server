@@ -31,7 +31,7 @@ describe('[toolbox] MSOE UI', () => {
         await driver.findElement(By.id('submit')).sendKeys(Key.ENTER);
         await driver.wait(helper.elementWithState(By.id('modaldiv2'), 'hidden'), ANIMATION_TIMEOUT);
         await driver.findElement(By.xpath('//*[text()="Toolbox"]')).click();
-        await driver.wait(helper.elementWithoutState(By.id('sidebar'), 'animating'), ANIMATION_TIMEOUT);
+        await helper.waitAnimatedShowing(By.id('toolbox'));
     });
     
     it('should insert corresponding chord notes when entering chord names', async () => {

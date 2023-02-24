@@ -23,7 +23,7 @@ describe('[manual] MSOE UI', () => {
         await driver.findElement(By.id('submit')).sendKeys(Key.ENTER);
         await driver.wait(helper.elementWithState(By.id('modaldiv2'), 'hidden'), ANIMATION_TIMEOUT);
         await driver.findElement(By.xpath('//*[text()="Manual"]')).click();
-        await driver.wait(helper.elementWithoutState(By.id('sidebar'), 'animating'), ANIMATION_TIMEOUT);
+        await helper.waitAnimatedShowing(By.id('sidebar'));
     });
     
     it('should change font size when font-size button is clicked', async () => {
@@ -44,7 +44,7 @@ describe('[manual] MSOE UI', () => {
         const widenIcon = await driver.findElement(By.css('#manual_window>i.angle.double.left.icon'));
         await driver.wait(until.elementIsVisible(widenIcon));
         await widenIcon.click();
-        const manualWiden = await helper.errorThrownCheck(async () => {
+        const manualWiden = await helper.noSuchErrorThrownCheck(async () => {
             await driver.wait(async () => {
                 return (await driver.findElement(By.id('sidebar')).getCssValue('width')) == `${screen.width}px`;
             }, ANIMATION_TIMEOUT);
@@ -64,7 +64,7 @@ describe('[manual] MSOE UI', () => {
         const narrowenIconBy = By.css('#manual_window>i.angle.double.right.icon');
         await driver.wait(helper.elementAppears(narrowenIconBy));
         await driver.findElement(narrowenIconBy).click();
-        const manualNarrowen = await helper.errorThrownCheck(async () => {
+        const manualNarrowen = await helper.noSuchErrorThrownCheck(async () => {
             await driver.wait(async () => {
                 return (await driver.findElement(By.id('sidebar')).getCssValue('width')) == defaultWidth;
             }, ANIMATION_TIMEOUT);

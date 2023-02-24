@@ -4,7 +4,7 @@ module.exports = {
         height: 768
     },
     PRE_LOADER_TIMEOUT: 5000,
-    ANIMATION_TIMEOUT: 5000,
+    ANIMATION_TIMEOUT: 10000,
     REDIRECT_TIMEOUT: 10000,
     DOWNLOAD_TIMEOUT: 10000,
 };
