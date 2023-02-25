@@ -39,6 +39,13 @@ describe('[toolbox] MSOE UI', () => {
         await driver.findElement(By.id('chordsym')).sendKeys(chordSymbol, Key.ENTER);
         expect(await driver.executeScript("return MSOE.getNoteOf('path.note.l0.m0.v0:eq(0)', 0)")).to.equal("$" + chords[chordSymbol]);
     });
+
+    it('should insert corresponding chord notes when entering root note and formula', async () => {
+        const chordSymbol = helper.randomChoice(Object.keys(chords));
+        await driver.findElement(By.id('chordroot')).sendKeys(chordSymbol[0]);
+        await driver.findElement(By.id('chordform')).sendKeys(chordSymbol.length == 1 ? '1,3,5' : '1,b3,5', Key.ENTER);
+        expect(await driver.executeScript("return MSOE.getNoteOf('path.note.l0.m0.v0:eq(0)', 0)")).to.equal("$" + chords[chordSymbol]);
+    });
     
     after(async () => driver.quit());
 });
